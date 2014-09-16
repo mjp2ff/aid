@@ -8,29 +8,39 @@ import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-/*
- * A edu.virginia.aid.Driver is used to analyze a file, parse out the code and comments, and
- * split it up into the different methods contained. The edu.virginia.aid.Driver then calls
- * out to individual method analysis tools.
+/**
+ * A edu.virginia.aid.Driver is used to analyze a file, parse out the code and comments, and split
+ * it up into the different methods contained. The edu.virginia.aid.Driver then calls out to
+ * individual method analysis tools.
+ * 
+ * @author Matt Pearson-Beck & Jeff Principe
+ *
  */
 public class Driver {
 
+	/**
+	 * Data read in from a file.
+	 */
 	private String fileData;
 
 	/**
+	 * Creates a new Driver based on some file's data.
 	 * 
-	 * @param fileData The text of the file to be analyzed.
+	 * @param fileData
+	 *            The text of the file to be analyzed.
 	 */
 	public Driver(String fileData) {
 		this.fileData = fileData;
 	}
 
 	/**
+	 * Parses a file into an AST, then gets the methods from the AST.
+	 * 
 	 * @param fileData
 	 *            The text of the file to be analyzed.
 	 * @return A list of method declarations in this file.
 	 */
-	public List<MethodDeclaration> parseFile() {
+	public List<MethodDeclaration> getMethodsFromFile() {
 
 		// Create parser handle through Java 1.7
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -44,6 +54,13 @@ public class Driver {
 		return this.findMethods(ast);
 	}
 
+	/**
+	 * Finds the methods inside a parsed AST for a file.
+	 * 
+	 * @param cu
+	 *            the AST for a Java file.
+	 * @return A list of methods contained in that file.
+	 */
 	private List<MethodDeclaration> findMethods(CompilationUnit cu) {
 		MethodVisitor mv = new MethodVisitor();
 		mv.clearMethods();
@@ -73,6 +90,8 @@ public class Driver {
 	}
 
 	/**
+	 * Reads the comments from a method from an AST.
+	 * 
 	 * @param method
 	 *            The method whose comments we're reading.
 	 * @return The comment, as a string.

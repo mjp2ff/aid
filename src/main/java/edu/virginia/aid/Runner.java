@@ -22,7 +22,7 @@ public class Runner {
 		Driver driver = new Driver(fileData);
 
 		// Parse this file to get the appropriate data.
-		List<MethodDeclaration> methods = driver.parseFile();
+		List<MethodDeclaration> methods = driver.getMethodsFromFile();
 
 		// Handle the methods appropriately.
 		driver.handleMethods(methods);
