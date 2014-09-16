@@ -4,7 +4,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
