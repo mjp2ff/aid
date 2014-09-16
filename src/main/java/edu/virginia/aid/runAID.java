@@ -44,7 +44,6 @@ public class runAID {
 			String cString = fileData.substring(start, start + length);
 			System.out.println(cString);
 		}
-
 	}
 	// Test on /home/matt/Documents/aid/src/edu.virginia.aid.HelloWorld.java
 }
