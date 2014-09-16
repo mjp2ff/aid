@@ -1,3 +1,5 @@
+package edu.virginia.aid;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,5 +46,5 @@ public class runAID {
 		}
 
 	}
-	// Test on /home/matt/Documents/aid/src/HelloWorld.java
+	// Test on /home/matt/Documents/aid/src/edu.virginia.aid.HelloWorld.java
 }

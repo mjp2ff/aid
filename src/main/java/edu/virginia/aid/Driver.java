@@ -1,10 +1,12 @@
+package edu.virginia.aid;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /*
- * A Driver is used to analyze a file, parse out the code and comments, and
- * split it up into the different methods contained. The Driver then calls
+ * A edu.virginia.aid.Driver is used to analyze a file, parse out the code and comments, and
+ * split it up into the different methods contained. The edu.virginia.aid.Driver then calls
  * out to individual method analysis tools.
  */
 public class Driver {
