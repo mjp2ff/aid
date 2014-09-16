@@ -44,6 +44,8 @@ public class Runner {
             String cString = fileData.substring(start, start + length);
             System.out.println(cString);
         }
+
+        s.close();
 	}
 	// Matt: Test on D:\Documents\aid\src\main\java\edu\virginia\aid\TestClass.java
 }
