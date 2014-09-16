@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 
-public class runAID {
+public class Runner {
 
 	public static void main(String[] args) {
 		System.out.print("Input full path of file to read: ");
