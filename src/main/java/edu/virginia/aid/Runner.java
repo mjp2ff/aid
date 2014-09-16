@@ -6,19 +6,37 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-
 
 public class Runner {
 
 	public static void main(String[] args) {
 		System.out.print("Input full path of file to read: ");
 		Scanner s = new Scanner(System.in);
-		
-		// Read in file path.
-		final String filePath = s.nextLine();
 
+		// Read in file
+		final String filePath = s.nextLine();
+		final String fileData = readFile(filePath);
+
+		// Initialize driver.
+		Driver driver = new Driver(fileData);
+
+		// Parse this file to get the appropriate data.
+		List<MethodDeclaration> methods = driver.parseFile();
+
+		// Handle the methods appropriately.
+		driver.handleMethods(methods);
+
+		// Close the scanner.
+		s.close();
+	}
+
+	/**
+	 * @param filePath
+	 *            The full path to the file to be read.
+	 * @return The text of the specified file.
+	 */
+	public static String readFile(String filePath) {
 		// Read all data from specified file.
 		String fileData = "";
 		try {
@@ -27,25 +45,8 @@ public class Runner {
 			System.out.println("Error reading file from path " + filePath);
 			e.printStackTrace();
 		}
-
-		// Initialize driver to this file.
-		Driver driver = new Driver(fileData);
-
-		// Parse this file to get the appropriate data.
-		List<MethodDeclaration> methods = driver.parseFile();
-
-        for (MethodDeclaration method : methods) {
-            System.out.println(method);
-
-            // Read each comment data.
-            Comment c = method.getJavadoc();
-            int start = c.getStartPosition();
-            int length = c.getLength();
-            String cString = fileData.substring(start, start + length);
-            System.out.println(cString);
-        }
-
-        s.close();
+		return fileData;
 	}
-	// Matt: Test on D:\Documents\aid\src\main\java\edu\virginia\aid\TestClass.java
+
+	// Matt: test on D:\Documents\aid\src\main\java\edu\virginia\aid\TestClass.java
 }

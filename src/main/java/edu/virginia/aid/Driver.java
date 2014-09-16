@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
@@ -14,14 +15,21 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  */
 public class Driver {
 
-	// String representing the data in a file to analyze.
 	private String fileData;
 
-	// Initialize a driver to a specific file.
+	/**
+	 * 
+	 * @param fileData The text of the file to be analyzed.
+	 */
 	public Driver(String fileData) {
 		this.fileData = fileData;
 	}
 
+	/**
+	 * @param fileData
+	 *            The text of the file to be analyzed.
+	 * @return A list of method declarations in this file.
+	 */
 	public List<MethodDeclaration> parseFile() {
 
 		// Create parser handle through Java 1.7
@@ -33,13 +41,47 @@ public class Driver {
 
 		// Parse the file into an AST
 		CompilationUnit ast = (CompilationUnit) parser.createAST(null);
-        return findMethods(ast);
+		return this.findMethods(ast);
 	}
 
-    private List<MethodDeclaration> findMethods(CompilationUnit cu) {
-        MethodVisitor mv = new MethodVisitor();
-        mv.clearMethods();
-        cu.accept(mv);
-        return mv.getMethods();
-    }
+	private List<MethodDeclaration> findMethods(CompilationUnit cu) {
+		MethodVisitor mv = new MethodVisitor();
+		mv.clearMethods();
+		cu.accept(mv);
+		return mv.getMethods();
+	}
+
+	/**
+	 * Handles the methods read in from the file.
+	 * 
+	 * @param methods
+	 *            The methods to be analyzed.
+	 */
+	public void handleMethods(List<MethodDeclaration> methods) {
+		// Print the content and comments of each method.
+		for (int i = 0; i < methods.size(); ++i) {
+			MethodDeclaration m = methods.get(i);
+
+			// Print the method itself.
+			System.out.println("Method " + i + ":");
+			System.out.println(m);
+
+			// Read each comment data.
+			System.out.println("Comments for method " + i + ":");
+			System.out.println(this.readComment(m));
+		}
+	}
+
+	/**
+	 * @param method
+	 *            The method whose comments we're reading.
+	 * @return The comment, as a string.
+	 */
+	public String readComment(MethodDeclaration method) {
+		Comment c = method.getJavadoc();
+		int start = c.getStartPosition();
+		int length = c.getLength();
+		String cString = this.fileData.substring(start, start + length);
+		return cString;
+	}
 }
