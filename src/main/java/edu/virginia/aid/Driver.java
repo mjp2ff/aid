@@ -3,6 +3,9 @@ package edu.virginia.aid;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import java.util.List;
 
 /*
  * A edu.virginia.aid.Driver is used to analyze a file, parse out the code and comments, and
@@ -19,7 +22,7 @@ public class Driver {
 		this.fileData = fileData;
 	}
 
-	public CompilationUnit parseFile() {
+	public List<MethodDeclaration> parseFile() {
 
 		// Create parser handle through Java 1.7
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -28,7 +31,15 @@ public class Driver {
 		parser.setSource(this.fileData.toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-		// Return the created AST created from this file.
-		return (CompilationUnit) parser.createAST(null);
+		// Parse the file into an AST
+		CompilationUnit ast = (CompilationUnit) parser.createAST(null);
+        return findMethods(ast);
 	}
+
+    private List<MethodDeclaration> findMethods(CompilationUnit cu) {
+        MethodVisitor mv = new MethodVisitor();
+        mv.clearMethods();
+        cu.accept(mv);
+        return mv.getMethods();
+    }
 }

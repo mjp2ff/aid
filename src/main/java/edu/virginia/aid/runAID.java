@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import sun.security.provider.MD2;
 
 
 public class runAID {
@@ -32,18 +34,18 @@ public class runAID {
 		Driver driver = new Driver(fileData);
 
 		// Parse this file to get the appropriate data.
-		CompilationUnit cu = driver.parseFile();
+		List<MethodDeclaration> methods = driver.parseFile();
 
-		// Get comment list from parsed AST.
-		List<Comment> comments = cu.getCommentList();
-		
-		// Read each comment data.
-		for (Comment c : comments) {
-			int start = c.getStartPosition();
-			int length = c.getLength();
-			String cString = fileData.substring(start, start + length);
-			System.out.println(cString);
-		}
+        for (MethodDeclaration method : methods) {
+            System.out.println(method);
+
+            // Read each comment data.
+            Comment c = method.getJavadoc();
+            int start = c.getStartPosition();
+            int length = c.getLength();
+            String cString = fileData.substring(start, start + length);
+            System.out.println(cString);
+        }
 	}
 	// Test on /home/matt/Documents/aid/src/edu.virginia.aid.HelloWorld.java
 }

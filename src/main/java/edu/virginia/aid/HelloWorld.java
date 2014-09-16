@@ -9,5 +9,15 @@ public class HelloWorld {
 	public static void main(String[] args) {
 		// Here's another comment too.
 		System.out.println("Hello world!");
+        anotherMethod("Hello World");
 	}
+
+    /**
+     * Another method
+     */
+    public static void anotherMethod(String hello) {
+        /* Some block comment */
+        String me = hello;
+        System.out.println(me);
+    }
 }
