@@ -45,5 +45,5 @@ public class runAID {
 			System.out.println(cString);
 		}
 	}
-	// Test on /home/matt/Documents/aid/src/edu.virginia.aid.HelloWorld.java
+	// Matt: Test on D:\Documents\aid\src\main\java\edu\virginia\aid\TestClass.java
 }
