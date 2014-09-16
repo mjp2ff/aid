@@ -1,11 +1,11 @@
 package edu.virginia.aid;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-
-import java.util.List;
 
 /*
  * A edu.virginia.aid.Driver is used to analyze a file, parse out the code and comments, and

@@ -1,6 +1,6 @@
 package edu.virginia.aid;
 
-public class HelloWorld {
+public class TestClass {
 
 	/**
 	 * Here's some block comments about my method with words.

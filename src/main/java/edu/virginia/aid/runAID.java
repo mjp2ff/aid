@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import sun.security.provider.MD2;
 
 
 public class runAID {
