@@ -1,4 +1,5 @@
-# AID - Assisted Improvement of Documentation
+# AID
+## Assisted Improvement of Documentation
 
 * Matt Pearson-Beck
 * Jeff Principe
