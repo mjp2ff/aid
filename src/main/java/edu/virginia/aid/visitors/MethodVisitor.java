@@ -1,4 +1,4 @@
-package edu.virginia.aid;
+package edu.virginia.aid.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
- * A edu.virginia.aid.MethodVisitor is used to manage a list of methods.
+ * A edu.virginia.aid.visitors.MethodVisitor is used to manage a list of methods.
  * 
  * @author Matt Pearson-Beck & Jeff Principe
  *

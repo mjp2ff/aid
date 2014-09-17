@@ -2,6 +2,8 @@ package edu.virginia.aid;
 
 import java.util.List;
 
+import edu.virginia.aid.detectors.IdentifierDetector;
+import edu.virginia.aid.visitors.MethodVisitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Comment;
@@ -36,8 +38,6 @@ public class Driver {
 	/**
 	 * Parses a file into an AST, then gets the methods from the AST.
 	 * 
-	 * @param fileData
-	 *            The text of the file to be analyzed.
 	 * @return A list of method declarations in this file.
 	 */
 	public List<MethodDeclaration> getMethodsFromFile() {
@@ -86,6 +86,11 @@ public class Driver {
 			// Read each comment data.
 			System.out.println("Comments for method " + i + ":");
 			System.out.println(this.readComment(m));
+
+            // Process methods
+            MethodProcessor processor = new MethodProcessor(m);
+            processor.addFeatureDetector(new IdentifierDetector());
+            processor.runDetectors();
 		}
 	}
 
