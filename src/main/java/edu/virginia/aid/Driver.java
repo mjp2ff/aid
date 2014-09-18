@@ -2,8 +2,10 @@ package edu.virginia.aid;
 
 import java.util.List;
 
+import edu.virginia.aid.detectors.CommentDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
 import edu.virginia.aid.visitors.MethodVisitor;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Comment;
@@ -80,32 +82,19 @@ public class Driver {
 			MethodDeclaration m = methods.get(i);
 
 			// Print the method itself.
-			System.out.println("Method " + i + ":");
-			System.out.println(m);
-
-			// Read each comment data.
-			System.out.println("Comments for method " + i + ":");
-			System.out.println(this.readComment(m));
-
-            // Process methods
+			System.out.println("Method " + i + ": " + m.getName());
             MethodProcessor processor = new MethodProcessor(m);
-            processor.addFeatureDetector(new IdentifierDetector());
-            processor.runDetectors();
-		}
-	}
 
-	/**
-	 * Reads the comments from a method from an AST.
-	 * 
-	 * @param method
-	 *            The method whose comments we're reading.
-	 * @return The comment, as a string.
-	 */
-	public String readComment(MethodDeclaration method) {
-		Comment c = method.getJavadoc();
-		int start = c.getStartPosition();
-		int length = c.getLength();
-		String cString = this.fileData.substring(start, start + length);
-		return cString;
+			// Add detector to process comments.
+            processor.addFeatureDetector(new CommentDetector(this.fileData));
+            // Add detector to process methods.
+            processor.addFeatureDetector(new IdentifierDetector());
+
+            // Run all detectors
+            processor.runDetectors();
+
+            // Separator between methods.
+            System.out.println("================");
+		}
 	}
 }

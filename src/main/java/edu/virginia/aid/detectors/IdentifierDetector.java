@@ -2,6 +2,7 @@ package edu.virginia.aid.detectors;
 
 import edu.virginia.aid.MethodFeatures;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
+
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -21,11 +22,12 @@ public class IdentifierDetector implements FeatureDetector {
      * @param method The method to process
      * @param features The parsed features object to update when processing
      */
-    @Override
     public void process(MethodDeclaration method, MethodFeatures features) {
         VariableDeclarationVisitor visitor = new VariableDeclarationVisitor();
         visitor.clearDeclarations();
         method.accept(visitor);
+
+		System.out.println("====== Identifiers: ");
 
         List<VariableDeclaration> declarations = visitor.getDeclarations();
         for (VariableDeclaration declaration : declarations) {

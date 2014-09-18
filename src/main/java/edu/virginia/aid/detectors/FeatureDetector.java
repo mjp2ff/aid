@@ -16,6 +16,6 @@ public interface FeatureDetector {
      * @param method The method to process
      * @param features The parsed features object to update when processing
      */
-    public void process(MethodDeclaration method, MethodFeatures features);
+	public void process(MethodDeclaration method, MethodFeatures features);
 
 }

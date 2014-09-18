@@ -47,6 +47,4 @@ public class Runner {
 		}
 		return fileData;
 	}
-
-	// Matt: test on D:\Documents\aid\src\main\java\edu\virginia\aid\TestClass.java
 }
