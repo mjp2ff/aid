@@ -1,7 +1,9 @@
 package edu.virginia.aid.detectors;
 
+import edu.virginia.aid.IdentifierProperties;
 import edu.virginia.aid.MethodFeatures;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -9,7 +11,7 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import java.util.List;
 
 /**
- * Feature detector for finding and tagging variable declarations, including paramters and local variables
+ * Feature detector for finding and tagging variable declarations, including parameters and local variables
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
@@ -29,8 +31,8 @@ public class IdentifierDetector implements FeatureDetector {
 
         List<VariableDeclaration> declarations = visitor.getDeclarations();
         for (VariableDeclaration declaration : declarations) {
-            SimpleName name = declaration.getName();
-            System.out.println(name);
+            IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier());
+            features.addIdentifier(identifier);
         }
     }
 }

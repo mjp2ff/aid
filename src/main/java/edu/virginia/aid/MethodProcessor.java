@@ -49,7 +49,7 @@ public class MethodProcessor {
      * @return Parsed method information
      */
     public MethodFeatures runDetectors() {
-        MethodFeatures features = new MethodFeatures();
+        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier());
         for (FeatureDetector detector : detectors) {
             detector.process(method, features);
         }

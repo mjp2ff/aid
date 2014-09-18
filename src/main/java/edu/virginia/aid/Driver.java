@@ -90,7 +90,9 @@ public class Driver {
             // Process methods
             MethodProcessor processor = new MethodProcessor(m);
             processor.addFeatureDetector(new IdentifierDetector());
-            processor.runDetectors();
+            MethodFeatures methodFeatures = processor.runDetectors();
+            System.out.println("Processed method : " + methodFeatures.getMethodName());
+            System.out.println("Identifiers: " + methodFeatures.getIdentifierNames());
 		}
 	}
 
