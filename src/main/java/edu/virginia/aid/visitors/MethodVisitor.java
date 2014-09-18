@@ -42,6 +42,8 @@ public class MethodVisitor extends ASTVisitor {
 	 *            The method to add.
 	 */
 	@Override
+	// TODO: For some reason this is stripping out internal comments in the method.
+	//     we need to fix this if we want to analyze internal (non-Javadoc) comments.
 	public boolean visit(MethodDeclaration node) {
 		methods.add(node);
 		return false;

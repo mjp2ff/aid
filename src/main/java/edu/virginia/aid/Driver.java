@@ -81,9 +81,8 @@ public class Driver {
 		for (int i = 0; i < methods.size(); ++i) {
 			MethodDeclaration m = methods.get(i);
 
-			// Print the method itself.
+			// Print the method name.
 			System.out.println("Method " + i + ": " + m.getName());
-			System.out.println(m);
             MethodProcessor processor = new MethodProcessor(m);
 
 			// Add detector to process comments.
