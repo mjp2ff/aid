@@ -83,6 +83,7 @@ public class Driver {
 
 			// Print the method itself.
 			System.out.println("Method " + i + ": " + m.getName());
+			System.out.println(m);
             MethodProcessor processor = new MethodProcessor(m);
 
 			// Add detector to process comments.
@@ -94,7 +95,7 @@ public class Driver {
             processor.runDetectors();
 
             // Separator between methods.
-            System.out.println("================");
+            System.out.println("----------------");
 		}
 	}
 }
