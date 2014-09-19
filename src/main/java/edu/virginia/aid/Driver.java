@@ -1,7 +1,10 @@
 package edu.virginia.aid;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.detectors.CommentDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
 import edu.virginia.aid.visitors.MethodVisitor;
@@ -12,8 +15,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
- * A edu.virginia.aid.Driver is used to analyze a file, parse out the code and comments, and split
- * it up into the different methods contained. The edu.virginia.aid.Driver then calls out to
+ * A Driver is used to analyze a file, parse out the code and comments, and split
+ * it up into the different methods contained. The Driver then calls out to
  * individual method analysis tools.
  * 
  * @author Matt Pearson-Beck & Jeff Principe
@@ -75,7 +78,9 @@ public class Driver {
 	 * @param methods
 	 *            The methods to be analyzed.
 	 */
-	public void handleMethods(List<MethodDeclaration> methods) {
+	public List<MethodFeatures> handleMethods(List<MethodDeclaration> methods) {
+		List<MethodFeatures> methodFeaturesList = new ArrayList<MethodFeatures>();
+
 		// Print the content and comments of each method.
 		for (int i = 0; i < methods.size(); ++i) {
 			MethodDeclaration m = methods.get(i);
@@ -94,6 +99,28 @@ public class Driver {
             System.out.println("Identifiers: " + methodFeatures.getIdentifierNames());
 
             System.out.println("----------------");
+
+            methodFeaturesList.add(methodFeatures);
 		}
+
+        return methodFeaturesList;
 	}
+
+    /**
+     * Performs comparison check on each method and sorts them from most to least different
+     *
+     * @param methodFeaturesList Feature information for each method
+     * @return Sorted list of differences for each method
+     */
+    public List<MethodDifferences> compareAndRank(List<MethodFeatures> methodFeaturesList) {
+        List<MethodDifferences> differences = new ArrayList<MethodDifferences>();
+
+        for (MethodFeatures methodFeatures : methodFeaturesList) {
+            differences.add(methodFeatures.getDifferences());
+        }
+
+        Collections.sort(differences);
+
+        return differences;
+    }
 }

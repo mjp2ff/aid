@@ -1,5 +1,8 @@
 package edu.virginia.aid;
 
+import edu.virginia.aid.comparison.Difference;
+import edu.virginia.aid.comparison.MethodDifferences;
+
 import java.util.*;
 
 /**
@@ -12,11 +15,15 @@ public class MethodFeatures {
     private String methodName;
     private Map<String, Boolean> booleanFeatures;
     private List<IdentifierProperties> identifiers;
+    private List<CommentInfo> comments;
+    private String javadoc;
 
     public MethodFeatures(String methodName) {
         this.methodName = methodName;
         this.booleanFeatures = new HashMap<String, Boolean>();
         this.identifiers = new ArrayList<IdentifierProperties>();
+        this.comments = new ArrayList<CommentInfo>();
+        this.javadoc = "";
     }
 
     /**
@@ -126,5 +133,55 @@ public class MethodFeatures {
         }
 
         return names;
+    }
+
+    /**
+     * Adds a comment to the method's information
+     *
+     * @param comment The comment to add
+     */
+    public void addComment(CommentInfo comment) {
+        comments.add(comment);
+    }
+
+    /**
+     * Gets and returns all of the comments associated with the method
+     *
+     * @return The list of all comments associated with the method
+     */
+    public List<CommentInfo> getComments() {
+        return comments;
+    }
+
+    public String getJavadoc() {
+        return javadoc;
+    }
+
+    public void setJavadoc(String javadoc) {
+        this.javadoc = javadoc;
+    }
+
+    /**
+     * Find and return a list of differences between the method contents and its comments
+     *
+     * @return The list of differences between the comments and the method
+     */
+    public MethodDifferences getDifferences() {
+        MethodDifferences differences = new MethodDifferences(methodName);
+
+        for (String identifier : getIdentifierNames()) {
+            boolean foundInComment = false;
+            for (CommentInfo comment : comments) {
+                if (comment.getCommentText().contains(identifier)) {
+                    foundInComment = true;
+                }
+            }
+
+            if (!foundInComment) {
+                differences.add(new Difference("", identifier, 1));
+            }
+        }
+
+        return differences;
     }
 }

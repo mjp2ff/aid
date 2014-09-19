@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.virginia.aid.comparison.Difference;
+import edu.virginia.aid.comparison.MethodDifferences;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class Runner {
@@ -20,7 +22,19 @@ public class Runner {
 		List<MethodDeclaration> methods = driver.getMethodsFromFile();
 
 		// Handle the methods appropriately.
-		driver.handleMethods(methods);
+		List<MethodFeatures> methodFeaturesList = driver.handleMethods(methods);
+
+        // Get differences for each method and rank them by most different to least different
+        List<MethodDifferences> differences = driver.compareAndRank(methodFeaturesList);
+
+        System.out.println("Printing out method differences");
+        System.out.println("=============================");
+        for (MethodDifferences methodDifferences : differences) {
+            System.out.println("Total difference score for " + methodDifferences.getMethodName() + ": " + methodDifferences.getDifferenceScore());
+            for (Difference difference : methodDifferences) {
+                System.out.println("\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead");
+            }
+        }
 	}
 
 	/**

@@ -6,14 +6,15 @@ public class TestClass {
 	 * Here's some block comments about my method with words. We use this file to test out our
 	 * stuff!
 	 */
-	public static void main(String[] args) {
+	public static void main() {
 		// Here's another comment too.
-		System.out.println("Hello world!");
+        String notInComments = "Hello world!";
+		System.out.println("notInComments");
 		anotherMethod("Hello World");
 	}
 
 	/**
-	 * Another method
+	 * hello me
 	 */
 	public static void anotherMethod(String hello) {
 		/* Some block comment */

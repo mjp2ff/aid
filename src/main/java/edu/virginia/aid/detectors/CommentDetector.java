@@ -1,9 +1,11 @@
 package edu.virginia.aid.detectors;
 
+import edu.virginia.aid.CommentInfo;
 import edu.virginia.aid.MethodFeatures;
 import edu.virginia.aid.visitors.CommentVisitor;
 
 import org.eclipse.jdt.core.dom.Comment;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import java.util.List;
@@ -41,7 +43,7 @@ public class CommentDetector implements FeatureDetector {
 	public void process(MethodDeclaration method, MethodFeatures features) {
 		CommentVisitor visitor = new CommentVisitor();
 		visitor.clearComments();
-		method.accept(visitor);
+        method.accept(visitor);
 
 		System.out.println("====== Comments: ");
 		
@@ -53,6 +55,7 @@ public class CommentDetector implements FeatureDetector {
 			int startPos = comment.getStartPosition();
 			int endPos = startPos + comment.getLength();
 			String commentString = this.fileData.substring(startPos, endPos);
+            features.addComment(new CommentInfo(commentString, startPos, endPos));
 			System.out.println(commentString);
 		}
 	}
