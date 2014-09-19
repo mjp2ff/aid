@@ -81,18 +81,18 @@ public class Driver {
 			MethodDeclaration m = methods.get(i);
 
 			// Print the method name.
-			System.out.println("Method " + i + ": " + m.getName());
+			System.out.println("Method " + i);
             MethodProcessor processor = new MethodProcessor(m);
 
 			// Add detector to process comments.
             processor.addFeatureDetector(new CommentDetector(this.fileData));
             // Add detector to process methods.
             processor.addFeatureDetector(new IdentifierDetector());
-
             // Run all detectors
-            processor.runDetectors();
+            MethodFeatures methodFeatures = processor.runDetectors();
+            System.out.println("Processed method : " + methodFeatures.getMethodName());
+            System.out.println("Identifiers: " + methodFeatures.getIdentifierNames());
 
-            // Separator between methods.
             System.out.println("----------------");
 		}
 	}
