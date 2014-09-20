@@ -19,13 +19,10 @@ public class Runner {
 		Driver driver = new Driver(fileData);
 
 		// Parse this file to get the appropriate data.
-		List<MethodDeclaration> methods = driver.getMethodsFromFile();
-
-		// Handle the methods appropriately.
-		List<MethodFeatures> methodFeaturesList = driver.handleMethods(methods);
+		List<MethodFeatures> methods = driver.getMethodsFromFile();
 
         // Get differences for each method and rank them by most different to least different
-        List<MethodDifferences> differences = driver.compareAndRank(methodFeaturesList);
+        List<MethodDifferences> differences = driver.compareAndRank(methods);
 
         System.out.println("Printing out method differences");
         System.out.println("=============================");

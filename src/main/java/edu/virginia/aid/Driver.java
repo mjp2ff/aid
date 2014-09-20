@@ -7,7 +7,8 @@ import java.util.List;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.detectors.CommentDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
-import edu.virginia.aid.visitors.MethodVisitor;
+import edu.virginia.aid.detectors.ParameterDetector;
+import edu.virginia.aid.visitors.ClassVisitor;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -41,10 +42,10 @@ public class Driver {
 
 	/**
 	 * Parses a file into an AST, then gets the methods from the AST.
-	 * 
-	 * @return A list of method declarations in this file.
+	 *
+	 * @return A list of methods with feature information in this file.
 	 */
-	public List<MethodDeclaration> getMethodsFromFile() {
+	public List<MethodFeatures> getMethodsFromFile() {
 
 		// Create parser handle through Java 1.7
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -55,30 +56,27 @@ public class Driver {
 
 		// Parse the file into an AST
 		CompilationUnit ast = (CompilationUnit) parser.createAST(null);
-		return this.findMethods(ast);
-	}
 
-	/**
-	 * Finds the methods inside a parsed AST for a file.
-	 * 
-	 * @param cu
-	 *            the AST for a Java file.
-	 * @return A list of methods contained in that file.
-	 */
-	private List<MethodDeclaration> findMethods(CompilationUnit cu) {
-		MethodVisitor mv = new MethodVisitor();
-		mv.clearMethods();
-		cu.accept(mv);
-		return mv.getMethods();
-	}
+        // Get class information
+        ClassInformation classInformation = getClassInformation(ast);
+        System.out.println(classInformation);
+
+		return handleMethods(classInformation);
+    }
+
+    private ClassInformation getClassInformation(CompilationUnit cu) {
+        ClassVisitor classVisitor = new ClassVisitor();
+        cu.accept(classVisitor);
+        return classVisitor.getClassInformation();
+    }
 
 	/**
 	 * Handles the methods read in from the file.
 	 * 
-	 * @param methods
-	 *            The methods to be analyzed.
+	 * @param classInformation The class whose methods are to be analyzed
 	 */
-	public List<MethodFeatures> handleMethods(List<MethodDeclaration> methods) {
+	private List<MethodFeatures> handleMethods(ClassInformation classInformation) {
+        List<MethodDeclaration> methods = classInformation.getMethodDeclarations();
 		List<MethodFeatures> methodFeaturesList = new ArrayList<MethodFeatures>();
 
 		// Print the content and comments of each method.
@@ -89,10 +87,12 @@ public class Driver {
 			System.out.println("Method " + i);
             MethodProcessor processor = new MethodProcessor(m);
 
-			// Add detector to process comments.
+			// Add detector to process comments
             processor.addFeatureDetector(new CommentDetector(this.fileData));
-            // Add detector to process methods.
+            // Add detector to process methods
             processor.addFeatureDetector(new IdentifierDetector());
+            // Add detector to process parameters
+            processor.addFeatureDetector(new ParameterDetector());
             // Run all detectors
             MethodFeatures methodFeatures = processor.runDetectors();
             System.out.println("Processed method : " + methodFeatures.getMethodName());
@@ -100,6 +100,7 @@ public class Driver {
 
             System.out.println("----------------");
 
+            System.out.println(methodFeatures);
             methodFeaturesList.add(methodFeatures);
 		}
 

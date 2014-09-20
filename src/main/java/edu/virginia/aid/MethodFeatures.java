@@ -14,14 +14,18 @@ public class MethodFeatures {
 
     private String methodName;
     private Map<String, Boolean> booleanFeatures;
-    private List<IdentifierProperties> identifiers;
+    private List<IdentifierProperties> parameters;
+    private List<IdentifierProperties> localVariables;
+    private List<IdentifierProperties> fields;
     private List<CommentInfo> comments;
     private String javadoc;
 
     public MethodFeatures(String methodName) {
         this.methodName = methodName;
         this.booleanFeatures = new HashMap<String, Boolean>();
-        this.identifiers = new ArrayList<IdentifierProperties>();
+        this.parameters = new ArrayList<IdentifierProperties>();
+        this.localVariables = new ArrayList<IdentifierProperties>();
+        this.fields = new ArrayList<IdentifierProperties>();
         this.comments = new ArrayList<CommentInfo>();
         this.javadoc = "";
     }
@@ -87,38 +91,17 @@ public class MethodFeatures {
      * @param properties Identifier information
      */
     public void addIdentifier(IdentifierProperties properties) {
-        identifiers.add(properties);
-    }
-
-    /**
-     * Removes all identifiers present with the given name
-     *
-     * @param name The name of the identifier(s) to remove
-     */
-    public void removeIdentifierByName(String name) {
-        for (IdentifierProperties identifier : identifiers) {
-            if (identifier.getName() == name) {
-                identifiers.remove(identifier);
-            }
+        switch (properties.getContext()) {
+            case FORMAL_PARAMETER:
+                parameters.add(properties);
+                break;
+            case LOCAL_VARIABLE:
+                localVariables.add(properties);
+                break;
+            case FIELD:
+                fields.add(properties);
+                break;
         }
-    }
-
-    /**
-     * Finds and returns all identifiers with the given name
-     *
-     * @param name The name of the identifier(s) to remove
-     * @return All identifiers with the given name
-     */
-    public List<IdentifierProperties> getIdentifiersByName(String name) {
-        List<IdentifierProperties> identifiersToReturn = new ArrayList<IdentifierProperties>();
-
-        for (IdentifierProperties identifier : identifiers) {
-            if (identifier.getName() == name) {
-                identifiersToReturn.add(identifier);
-            }
-        }
-
-        return identifiersToReturn;
     }
 
     /**
@@ -128,7 +111,19 @@ public class MethodFeatures {
      */
     public Set<String> getIdentifierNames() {
         Set<String> names = new HashSet<String>();
-        for (IdentifierProperties identifier : identifiers) {
+
+        // Get Parameters
+        for (IdentifierProperties identifier : parameters) {
+            names.add(identifier.getName());
+        }
+
+        // Get Local Variables
+        for (IdentifierProperties identifier : localVariables) {
+            names.add(identifier.getName());
+        }
+
+        // Get Fields
+        for (IdentifierProperties identifier : fields) {
             names.add(identifier.getName());
         }
 
@@ -183,5 +178,13 @@ public class MethodFeatures {
         }
 
         return differences;
+    }
+
+    @Override
+    public String toString() {
+        return "Method " + methodName + ":\n" +
+                "\tParameters: " + parameters + "\n" +
+                "\tLocal Variables: " + localVariables + "\n" +
+                "\tFields: " + fields + "\n";
     }
 }

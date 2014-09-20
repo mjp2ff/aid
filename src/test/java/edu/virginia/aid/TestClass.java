@@ -2,6 +2,9 @@ package edu.virginia.aid;
 
 public class TestClass {
 
+    public String field1;
+    public boolean anotherField = false;
+
 	/**
 	 * Here's some block comments about my method with words. We use this file to test out our
 	 * stuff!

@@ -24,13 +24,14 @@ public class IdentifierDetector implements FeatureDetector {
     public void process(MethodDeclaration method, MethodFeatures features) {
         VariableDeclarationVisitor visitor = new VariableDeclarationVisitor();
         visitor.clearDeclarations();
-        method.accept(visitor);
+        method.getBody().accept(visitor);
 
 		System.out.println("====== Identifiers: ");
 
         List<VariableDeclaration> declarations = visitor.getDeclarations();
         for (VariableDeclaration declaration : declarations) {
             IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier());
+            identifier.setContext(IdentifierProperties.IdentifierContext.LOCAL_VARIABLE);
             features.addIdentifier(identifier);
         }
     }
