@@ -1,7 +1,7 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.IdentifierProperties;
-import edu.virginia.aid.MethodFeatures;
+import edu.virginia.aid.data.IdentifierProperties;
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -22,6 +22,7 @@ public class IdentifierDetector implements FeatureDetector {
      * @param method The method to process
      * @param features The parsed features object to update when processing
      */
+	@Override
     public void process(MethodDeclaration method, MethodFeatures features) {
         VariableDeclarationVisitor visitor = new VariableDeclarationVisitor();
         visitor.clearDeclarations();

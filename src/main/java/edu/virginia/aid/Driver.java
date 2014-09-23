@@ -9,18 +9,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import edu.virginia.aid.comparison.AntBuildfileParser;
-import edu.virginia.aid.comparison.Difference;
-import edu.virginia.aid.comparison.MethodDifferences;
-import edu.virginia.aid.detectors.CommentDetector;
-import edu.virginia.aid.detectors.IdentifierDetector;
-import edu.virginia.aid.detectors.ParameterDetector;
-import edu.virginia.aid.visitors.ClassVisitor;
-
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import edu.virginia.aid.comparison.AntBuildfileParser;
+import edu.virginia.aid.comparison.Difference;
+import edu.virginia.aid.comparison.MethodDifferences;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.detectors.CommentDetector;
+import edu.virginia.aid.detectors.IdentifierDetector;
+import edu.virginia.aid.detectors.ParameterDetector;
+import edu.virginia.aid.detectors.StemmingProcessor;
+import edu.virginia.aid.detectors.StoplistProcessor;
+import edu.virginia.aid.visitors.ClassVisitor;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -99,16 +103,20 @@ public class Driver {
 
 			// Print the method name.
 			System.out.println("Method " + i);
-            MethodProcessor processor = new MethodProcessor(m);
+            MethodProcessor methodProcessor = new MethodProcessor(m);
 
 			// Add detector to process comments
-            processor.addFeatureDetector(new CommentDetector(fileData));
+            methodProcessor.addFeatureDetector(new CommentDetector(fileData));
             // Add detector to process methods
-            processor.addFeatureDetector(new IdentifierDetector());
+            methodProcessor.addFeatureDetector(new IdentifierDetector());
             // Add detector to process parameters
-            processor.addFeatureDetector(new ParameterDetector());
+            methodProcessor.addFeatureDetector(new ParameterDetector());
+            // Add detector to remove words in stoplist.
+            methodProcessor.addFeatureDetector(new StoplistProcessor());
+            // Add detector to reduce words to stems.
+            methodProcessor.addFeatureDetector(new StemmingProcessor());
             // Run all detectors
-            MethodFeatures methodFeatures = processor.runDetectors();
+            MethodFeatures methodFeatures = methodProcessor.runDetectors();
             System.out.println("Processed method : " + methodFeatures.getMethodName());
             System.out.println("Identifiers: " + methodFeatures.getIdentifierNames());
 

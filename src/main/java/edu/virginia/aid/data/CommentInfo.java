@@ -1,4 +1,4 @@
-package edu.virginia.aid;
+package edu.virginia.aid.data;
 
 /**
  * Data wrapper with information about an individual comment

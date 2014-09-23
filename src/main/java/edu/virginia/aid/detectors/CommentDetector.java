@@ -1,14 +1,13 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.CommentInfo;
-import edu.virginia.aid.MethodFeatures;
-import edu.virginia.aid.visitors.CommentVisitor;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-import java.util.List;
+import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.visitors.CommentVisitor;
 
 /**
  * Feature detector for finding and tagging comments
@@ -40,6 +39,7 @@ public class CommentDetector implements FeatureDetector {
 	 * @param features
 	 *            The parsed features object to update when processing
 	 */
+	@Override
 	public void process(MethodDeclaration method, MethodFeatures features) {
 		CommentVisitor visitor = new CommentVisitor();
 		visitor.clearComments();
