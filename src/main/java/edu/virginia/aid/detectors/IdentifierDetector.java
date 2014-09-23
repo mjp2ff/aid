@@ -22,6 +22,7 @@ public class IdentifierDetector implements FeatureDetector {
      * @param method The method to process
      * @param features The parsed features object to update when processing
      */
+	@Override
     public void process(MethodDeclaration method, MethodFeatures features) {
         VariableDeclarationVisitor visitor = new VariableDeclarationVisitor();
         visitor.clearDeclarations();

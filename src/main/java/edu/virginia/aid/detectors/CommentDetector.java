@@ -39,6 +39,7 @@ public class CommentDetector implements FeatureDetector {
 	 * @param features
 	 *            The parsed features object to update when processing
 	 */
+	@Override
 	public void process(MethodDeclaration method, MethodFeatures features) {
 		CommentVisitor visitor = new CommentVisitor();
 		visitor.clearComments();

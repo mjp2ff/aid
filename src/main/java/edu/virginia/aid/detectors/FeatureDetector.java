@@ -19,4 +19,7 @@ public interface FeatureDetector {
      */
 	public void process(MethodDeclaration method, MethodFeatures features);
 
+	// TODO: Rename this class to FeatureProcessor
+	// TODO: Rename the containing package to edu.virginia.aid.processors
+
 }
