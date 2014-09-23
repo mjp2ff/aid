@@ -1,9 +1,16 @@
 package edu.virginia.aid;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import edu.virginia.aid.comparison.AntBuildfileParser;
+import edu.virginia.aid.comparison.Difference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.detectors.CommentDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
@@ -16,7 +23,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
- * A Driver is used to analyze a file, parse out the code and comments, and split
+ * A Driver is used to analyze a file or project, parse out the code and comments, and split
  * it up into the different methods contained. The Driver then calls out to
  * individual method analysis tools.
  * 
@@ -25,33 +32,40 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  */
 public class Driver {
 
-	/**
-	 * Data read in from a file.
-	 */
-	private String fileData;
+    /**
+     * Finds and parses each source file in an Ant Java project, returning information
+     * for each method
+     *
+     * @param projectDirectory The directory of the project to load
+     * @return A list of methods with feature information in the source files for this project
+     */
+    public List<MethodFeatures> getMethodsFromAntProject(String projectDirectory) {
+        AntBuildfileParser antParser = new AntBuildfileParser(projectDirectory);
+        Set<File> sourceFiles = antParser.getSourceFiles();
 
-	/**
-	 * Creates a new Driver based on some file's data.
-	 * 
-	 * @param fileData
-	 *            The text of the file to be analyzed.
-	 */
-	public Driver(String fileData) {
-		this.fileData = fileData;
-	}
+        // Hold methods made so far
+        List<MethodFeatures> methods = new ArrayList<MethodFeatures>();
+
+        for (File sourceFile : sourceFiles) {
+            methods.addAll(getMethodsFromFile(readFile(sourceFile.getPath())));
+        }
+
+        return methods;
+    }
 
 	/**
 	 * Parses a file into an AST, then gets the methods from the AST.
 	 *
+     * @param fileData Source of a single file to analyze
 	 * @return A list of methods with feature information in this file.
 	 */
-	public List<MethodFeatures> getMethodsFromFile() {
+	public List<MethodFeatures> getMethodsFromFile(String fileData) {
 
 		// Create parser handle through Java 1.7
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 
 		// Point to appropriate data read from file.
-		parser.setSource(this.fileData.toCharArray());
+		parser.setSource(fileData.toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
 		// Parse the file into an AST
@@ -61,7 +75,7 @@ public class Driver {
         ClassInformation classInformation = getClassInformation(ast);
         System.out.println(classInformation);
 
-		return handleMethods(classInformation);
+		return handleMethods(classInformation, fileData);
     }
 
     private ClassInformation getClassInformation(CompilationUnit cu) {
@@ -75,7 +89,7 @@ public class Driver {
 	 * 
 	 * @param classInformation The class whose methods are to be analyzed
 	 */
-	private List<MethodFeatures> handleMethods(ClassInformation classInformation) {
+	private List<MethodFeatures> handleMethods(ClassInformation classInformation, String fileData) {
         List<MethodDeclaration> methods = classInformation.getMethodDeclarations();
 		List<MethodFeatures> methodFeaturesList = new ArrayList<MethodFeatures>();
 
@@ -88,7 +102,7 @@ public class Driver {
             MethodProcessor processor = new MethodProcessor(m);
 
 			// Add detector to process comments
-            processor.addFeatureDetector(new CommentDetector(this.fileData));
+            processor.addFeatureDetector(new CommentDetector(fileData));
             // Add detector to process methods
             processor.addFeatureDetector(new IdentifierDetector());
             // Add detector to process parameters
@@ -123,5 +137,71 @@ public class Driver {
         Collections.sort(differences);
 
         return differences;
+    }
+
+
+    /**
+	 * @return The text of the specified file.
+	 */
+	public static String readFile(String filePath) {
+		String fileData = "";
+
+		// Read all data from specified file.
+        try {
+            fileData = new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            System.out.println("Error reading file from path " + filePath);
+		}
+
+		return fileData;
+	}
+
+    /**
+     * Runs tool on input files as specified in the command line parameters. There are two modes, either project or file,
+     * set using the -projects or -files flag as shown below.
+     *
+     * Usage:
+     *      java Driver [-projects|-files] project1/file1 project2/file2 ...
+     *
+     * @param args Command line arguments
+     */
+    public static void main(String[] args) {
+        Driver driver = new Driver();
+
+        if (args[0].equals("-files")) {
+            for(int i = 1; i < args.length; i++) {
+                // Parse this file to get the appropriate data.
+                List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(args[i]));
+
+                // Get differences for each method and rank them by most different to least different
+                List<MethodDifferences> differences = driver.compareAndRank(methods);
+
+                System.out.println("Printing out method differences");
+                System.out.println("=============================");
+                for (MethodDifferences methodDifferences : differences) {
+                    System.out.println("Total difference score for " + methodDifferences.getMethodName() + ": " + methodDifferences.getDifferenceScore());
+                    for (Difference difference : methodDifferences) {
+                        System.out.println("\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead");
+                    }
+                }
+            }
+        } else if (args[0].equals("-projects")) {
+            for(int i = 1; i < args.length; i++) {
+                // Parse this file to get the appropriate data.
+                List<MethodFeatures> methods = driver.getMethodsFromAntProject(args[i]);
+
+                // Get differences for each method and rank them by most different to least different
+                List<MethodDifferences> differences = driver.compareAndRank(methods);
+
+                System.out.println("Printing out method differences");
+                System.out.println("=============================");
+                for (MethodDifferences methodDifferences : differences) {
+                    System.out.println("Total difference score for " + methodDifferences.getMethodName() + ": " + methodDifferences.getDifferenceScore());
+                    for (Difference difference : methodDifferences) {
+                        System.out.println("\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead");
+                    }
+                }
+            }
+        }
     }
 }
