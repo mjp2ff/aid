@@ -1,4 +1,4 @@
-package edu.virginia.aid;
+package edu.virginia.aid.data;
 
 import edu.virginia.aid.comparison.Difference;
 import edu.virginia.aid.comparison.MethodDifferences;

@@ -1,4 +1,4 @@
-package edu.virginia.aid;
+package edu.virginia.aid.data;
 
 /**
  * Data wrapper for information about an individual variable declared/referenced in a method

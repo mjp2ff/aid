@@ -5,8 +5,8 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-import edu.virginia.aid.CommentInfo;
-import edu.virginia.aid.MethodFeatures;
+import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.CommentVisitor;
 
 /**

@@ -1,6 +1,8 @@
 package edu.virginia.aid;
 
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.detectors.FeatureDetector;
+
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import java.util.ArrayList;

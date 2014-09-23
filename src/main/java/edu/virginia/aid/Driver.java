@@ -10,6 +10,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.comparison.MethodDifferences;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.detectors.CommentDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
 import edu.virginia.aid.detectors.ParameterDetector;

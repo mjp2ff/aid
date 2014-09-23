@@ -1,8 +1,9 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.IdentifierProperties;
-import edu.virginia.aid.MethodFeatures;
+import edu.virginia.aid.data.IdentifierProperties;
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
+
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 

@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import edu.virginia.aid.comparison.Difference;
 import edu.virginia.aid.comparison.MethodDifferences;
+import edu.virginia.aid.data.MethodFeatures;
 
 public class Runner {
 

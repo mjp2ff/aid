@@ -1,4 +1,4 @@
-package edu.virginia.aid;
+package edu.virginia.aid.data;
 
 import java.util.ArrayList;
 import java.util.HashSet;

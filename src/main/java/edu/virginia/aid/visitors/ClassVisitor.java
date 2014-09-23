@@ -1,7 +1,8 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.ClassInformation;
-import edu.virginia.aid.IdentifierProperties;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.IdentifierProperties;
+
 import org.eclipse.jdt.core.dom.*;
 
 /**
