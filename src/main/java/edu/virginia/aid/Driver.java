@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.detectors.CommentDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
 import edu.virginia.aid.detectors.ParameterDetector;
 import edu.virginia.aid.visitors.ClassVisitor;
-
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * A Driver is used to analyze a file, parse out the code and comments, and split

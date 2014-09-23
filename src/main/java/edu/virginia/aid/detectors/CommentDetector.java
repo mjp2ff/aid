@@ -1,14 +1,13 @@
 package edu.virginia.aid.detectors;
 
+import java.util.List;
+
+import org.eclipse.jdt.core.dom.Comment;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
 import edu.virginia.aid.CommentInfo;
 import edu.virginia.aid.MethodFeatures;
 import edu.virginia.aid.visitors.CommentVisitor;
-
-import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-
-import java.util.List;
 
 /**
  * Feature detector for finding and tagging comments

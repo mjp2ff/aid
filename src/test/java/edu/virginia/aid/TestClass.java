@@ -11,9 +11,9 @@ public class TestClass {
 	 */
 	public static void main() {
 		// Here's another comment too.
-        String notInComments = "Hello world!";
+		String notInComments = "Hello world!";
 		System.out.println("notInComments");
-		anotherMethod("Hello World");
+		anotherMethod(notInComments);
 	}
 
 	/**

@@ -1,13 +1,11 @@
 package edu.virginia.aid;
 
-import edu.virginia.aid.comparison.MethodDifferences;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * Information relevant to a method obtained from the containing class

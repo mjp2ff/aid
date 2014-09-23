@@ -1,14 +1,14 @@
 package edu.virginia.aid.comparison;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Wrapper for tracking differences between a method and it's comments
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class MethodDifferences extends ArrayList<Difference> implements Comparable {
+@SuppressWarnings("serial")
+public class MethodDifferences extends ArrayList<Difference> implements Comparable<MethodDifferences> {
 
     private String methodName = "";
 
@@ -37,8 +37,8 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
      * @return Comparison value
      */
     @Override
-    public int compareTo(Object o) {
-        return ((MethodDifferences) o).getDifferenceScore() - this.getDifferenceScore();
+    public int compareTo(MethodDifferences m) {
+        return m.getDifferenceScore() - this.getDifferenceScore();
     }
 
     public String getMethodName() {
