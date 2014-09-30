@@ -14,9 +14,7 @@ import edu.virginia.aid.data.MethodFeatures;
  */
 public class StemmingProcessor implements FeatureDetector {
 
-	static final String[] DEFAULT_SUFFIXES = { "a", "an", "and", "are", "as", "at", "be", "by",
-			"for", "from", "has", "he", "in", "is", "it", "its", "of", "on", "that", "the", "to",
-			"was", "were", "will", "with" };
+	static final String[] DEFAULT_SUFFIXES = { "ion", "ions", "ive", "ed", "ing" };
 
 	/**
 	 * Processes the comments, reducing words down to appropriate stems.

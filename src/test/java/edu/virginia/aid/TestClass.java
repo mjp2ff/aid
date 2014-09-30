@@ -11,6 +11,8 @@ public class TestClass {
 	 */
 	public static void main(String[] args) {
 		// Here's another comment too.
+		String the = "this should be ignored by stoplist";
+		String tested = "should say test";
 		String notInComments = "Hello world!";
 		System.out.println("notInComments");
 		anotherMethod(notInComments);
