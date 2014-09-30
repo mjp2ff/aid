@@ -172,7 +172,7 @@ public class Driver {
             if (args[0].equals("-files")) {
                 for(int i = 1; i < args.length; i++) {
                     // Parse this file to get the appropriate data
-                    List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(args[i]));
+                    List<MethodFeatures> methods = driver.getMethodsFromFile(args[i]);
 
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = driver.compareAndRank(methods);
@@ -193,7 +193,7 @@ public class Driver {
         } else {
         	final String DEFAULT_FILEPATH = "src\\test\\java\\edu\\virginia\\aid\\TestClass.java";
         	// Parse our sample test file to get the appropriate data
-        	List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(DEFAULT_FILEPATH));
+        	List<MethodFeatures> methods = driver.getMethodsFromFile(DEFAULT_FILEPATH);
 
         	// Get differences for each method and rank them by most different to least different
         	List<MethodDifferences> differences = driver.compareAndRank(methods);
