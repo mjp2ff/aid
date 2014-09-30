@@ -168,26 +168,37 @@ public class Driver {
     public static void main(String[] args) {
         Driver driver = new Driver();
 
-        if (args[0].equals("-files")) {
-            for(int i = 1; i < args.length; i++) {
-                // Parse this file to get the appropriate data.
-                List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(args[i]));
+        if (args.length > 0) {
+            if (args[0].equals("-files")) {
+                for(int i = 1; i < args.length; i++) {
+                    // Parse this file to get the appropriate data
+                    List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(args[i]));
 
-                // Get differences for each method and rank them by most different to least different
-                List<MethodDifferences> differences = driver.compareAndRank(methods);
+                    // Get differences for each method and rank them by most different to least different
+                    List<MethodDifferences> differences = driver.compareAndRank(methods);
 
-                System.out.println(differences);
-            }
-        } else if (args[0].equals("-projects")) {
-            for(int i = 1; i < args.length; i++) {
-                // Parse this file to get the appropriate data.
-                List<MethodFeatures> methods = driver.getMethodsFromAntProject(args[i]);
+                    System.out.println(differences);
+                }
+            } else if (args[0].equals("-projects")) {
+                for(int i = 1; i < args.length; i++) {
+                    // Parse this file to get the appropriate data
+                    List<MethodFeatures> methods = driver.getMethodsFromAntProject(args[i]);
 
-                // Get differences for each method and rank them by most different to least different
-                List<MethodDifferences> differences = driver.compareAndRank(methods);
+                    // Get differences for each method and rank them by most different to least different
+                    List<MethodDifferences> differences = driver.compareAndRank(methods);
 
-                System.out.println(differences);
-            }
+                    System.out.println(differences);
+                }
+            }        	
+        } else {
+        	final String DEFAULT_FILEPATH = "src\\test\\java\\edu\\virginia\\aid\\TestClass.java";
+        	// Parse our sample test file to get the appropriate data
+        	List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(DEFAULT_FILEPATH));
+
+        	// Get differences for each method and rank them by most different to least different
+        	List<MethodDifferences> differences = driver.compareAndRank(methods);
+
+        	System.out.println(differences);
         }
     }
 }

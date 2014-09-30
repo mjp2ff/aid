@@ -9,7 +9,7 @@ public class TestClass {
 	 * Here's some block comments about my method with words. We use this file to test out our
 	 * stuff!
 	 */
-	public static void main() {
+	public static void main(String[] args) {
 		// Here's another comment too.
 		String notInComments = "Hello world!";
 		System.out.println("notInComments");
