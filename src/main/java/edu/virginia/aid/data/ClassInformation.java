@@ -36,6 +36,10 @@ public class ClassInformation {
         return this.className;
     }
 
+    public String getFilepath() {
+        return filepath;
+    }
+
     /**
      * Adds the given field to the class's fields
      *

@@ -12,6 +12,8 @@ import java.util.*;
  */
 public class MethodFeatures {
 
+    private String filepath;
+    private String className;
     private String methodName;
     private Map<String, Boolean> booleanFeatures;
     private List<IdentifierProperties> parameters;
@@ -20,8 +22,10 @@ public class MethodFeatures {
     private List<CommentInfo> comments;
     private String javadoc;
 
-    public MethodFeatures(String methodName) {
+    public MethodFeatures(String methodName, String className, String filepath) {
         this.methodName = methodName;
+        this.className = className;
+        this.filepath = filepath;
         this.booleanFeatures = new HashMap<String, Boolean>();
         this.parameters = new ArrayList<IdentifierProperties>();
         this.localVariables = new ArrayList<IdentifierProperties>();
@@ -37,6 +41,14 @@ public class MethodFeatures {
      */
     public String getMethodName() {
         return this.methodName;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public String getClassName() {
+        return className;
     }
 
     /**
@@ -162,7 +174,7 @@ public class MethodFeatures {
      * @return The list of differences between the comments and the method
      */
     public MethodDifferences getDifferences() {
-        MethodDifferences differences = new MethodDifferences(methodName);
+        MethodDifferences differences = new MethodDifferences(methodName, className, filepath);
 
         for (String identifier : getIdentifierNames()) {
             boolean foundInComment = false;

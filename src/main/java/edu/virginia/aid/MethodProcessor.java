@@ -27,13 +27,18 @@ public class MethodProcessor {
      */
     private MethodDeclaration method;
 
+    private String className;
+    private String filepath;
+
     /**
      * Creates a new MethodProcessor with the method to process
      *
      * @param method The method to process
      */
-    public MethodProcessor(MethodDeclaration method) {
+    public MethodProcessor(MethodDeclaration method, String className, String filepath) {
         this.method = method;
+        this.className = className;
+        this.filepath = filepath;
     }
 
     /**
@@ -51,7 +56,7 @@ public class MethodProcessor {
      * @return Parsed method information
      */
     public MethodFeatures runDetectors() {
-        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier());
+        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier(), this.className, this.filepath);
         for (FeatureDetector detector : detectors) {
             detector.process(method, features);
         }

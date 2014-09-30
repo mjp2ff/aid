@@ -10,10 +10,14 @@ import java.util.ArrayList;
 @SuppressWarnings("serial")
 public class MethodDifferences extends ArrayList<Difference> implements Comparable<MethodDifferences> {
 
-    private String methodName = "";
+    private String methodName;
+    private String className;
+    private String filepath;
 
-    public MethodDifferences(String methodName) {
+    public MethodDifferences(String methodName, String className, String filepath) {
         this.methodName = methodName;
+        this.className = className;
+        this.filepath = filepath;
     }
 
     /**
@@ -45,13 +49,21 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
         return methodName;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
     public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
     @Override
     public String toString() {
-        String result = "Total difference score for " + methodName + ": " + getDifferenceScore() + "\n";
+        String result = "Total difference score for " + className + "." + methodName + ": " + getDifferenceScore() + "\n";
         for (Difference difference : this) {
             result += "\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead\n";
         }

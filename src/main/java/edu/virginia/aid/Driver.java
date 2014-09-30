@@ -101,7 +101,7 @@ public class Driver {
 		for (MethodDeclaration m : methods) {
 
 			// Print the method name.
-            MethodProcessor methodProcessor = new MethodProcessor(m);
+            MethodProcessor methodProcessor = new MethodProcessor(m, classInformation.getClassName(), classInformation.getFilepath());
 
 			// Add detector to process comments
             methodProcessor.addFeatureDetector(new CommentDetector(fileData));
