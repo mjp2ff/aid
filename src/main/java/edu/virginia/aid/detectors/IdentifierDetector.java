@@ -31,8 +31,6 @@ public class IdentifierDetector implements FeatureDetector {
             methodBody.accept(visitor);
         }
 
-		System.out.println("====== Identifiers: ");
-
         List<VariableDeclaration> declarations = visitor.getDeclarations();
         for (VariableDeclaration declaration : declarations) {
             IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier());

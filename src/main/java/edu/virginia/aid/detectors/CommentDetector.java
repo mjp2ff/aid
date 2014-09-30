@@ -45,18 +45,13 @@ public class CommentDetector implements FeatureDetector {
 		visitor.clearComments();
         method.accept(visitor);
 
-		System.out.println("====== Comments: ");
-		
 		List<Comment> comments = visitor.getComments();
-
-		System.out.println("Found " + comments.size() + " comments");
 
 		for (Comment comment : comments) {
 			int startPos = comment.getStartPosition();
 			int endPos = startPos + comment.getLength();
 			String commentString = this.fileData.substring(startPos, endPos);
             features.addComment(new CommentInfo(commentString, startPos, endPos));
-			System.out.println(commentString);
 		}
 	}
 }

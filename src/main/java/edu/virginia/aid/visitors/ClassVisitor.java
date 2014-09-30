@@ -10,9 +10,14 @@ import org.eclipse.jdt.core.dom.*;
  */
 public class ClassVisitor extends ASTVisitor {
 
+    private String filepath;
     private ClassInformation classInformation = null;
     public ClassInformation getClassInformation() {
         return classInformation;
+    }
+
+    public ClassVisitor(String filepath) {
+        this.filepath = filepath;
     }
 
     /**
@@ -23,7 +28,7 @@ public class ClassVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(TypeDeclaration node) {
-        classInformation = new ClassInformation(node.getName().getIdentifier());
+        classInformation = new ClassInformation(node.getName().getIdentifier(), this.filepath);
 
         // Extract field information
         for (FieldDeclaration field : node.getFields()) {
@@ -37,7 +42,7 @@ public class ClassVisitor extends ASTVisitor {
             }
         }
 
-        // Extract method decalration information
+        // Extract method declaration information
         for (MethodDeclaration methodDeclaration : node.getMethods()) {
             classInformation.addMethodDeclaration(methodDeclaration);
         }

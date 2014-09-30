@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.comparison.AntBuildfileParser;
-import edu.virginia.aid.comparison.Difference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.MethodFeatures;
@@ -51,7 +50,7 @@ public class Driver {
         List<MethodFeatures> methods = new ArrayList<MethodFeatures>();
 
         for (File sourceFile : sourceFiles) {
-            methods.addAll(getMethodsFromFile(readFile(sourceFile.getPath())));
+            methods.addAll(getMethodsFromFile(sourceFile.getPath()));
         }
 
         return methods;
@@ -60,10 +59,12 @@ public class Driver {
 	/**
 	 * Parses a file into an AST, then gets the methods from the AST.
 	 *
-     * @param fileData Source of a single file to analyze
+     * @param filepath The path to the file containing source code
 	 * @return A list of methods with feature information in this file.
 	 */
-	public List<MethodFeatures> getMethodsFromFile(String fileData) {
+	public List<MethodFeatures> getMethodsFromFile(String filepath) {
+
+        String fileData = readFile(filepath);
 
 		// Create parser handle through Java 1.7
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -76,14 +77,13 @@ public class Driver {
 		CompilationUnit ast = (CompilationUnit) parser.createAST(null);
 
         // Get class information
-        ClassInformation classInformation = getClassInformation(ast);
-        System.out.println(classInformation);
+        ClassInformation classInformation = getClassInformation(ast, filepath);
 
 		return handleMethods(classInformation, fileData);
     }
 
-    private ClassInformation getClassInformation(CompilationUnit cu) {
-        ClassVisitor classVisitor = new ClassVisitor();
+    private ClassInformation getClassInformation(CompilationUnit cu, String filepath) {
+        ClassVisitor classVisitor = new ClassVisitor(filepath);
         cu.accept(classVisitor);
         return classVisitor.getClassInformation();
     }
@@ -98,11 +98,9 @@ public class Driver {
 		List<MethodFeatures> methodFeaturesList = new ArrayList<MethodFeatures>();
 
 		// Print the content and comments of each method.
-		for (int i = 0; i < methods.size(); ++i) {
-			MethodDeclaration m = methods.get(i);
+		for (MethodDeclaration m : methods) {
 
 			// Print the method name.
-			System.out.println("Method " + i);
             MethodProcessor methodProcessor = new MethodProcessor(m);
 
 			// Add detector to process comments
@@ -117,12 +115,6 @@ public class Driver {
             methodProcessor.addFeatureDetector(new StemmingProcessor());
             // Run all detectors
             MethodFeatures methodFeatures = methodProcessor.runDetectors();
-            System.out.println("Processed method : " + methodFeatures.getMethodName());
-            System.out.println("Identifiers: " + methodFeatures.getIdentifierNames());
-
-            System.out.println("----------------");
-
-            System.out.println(methodFeatures);
             methodFeaturesList.add(methodFeatures);
 		}
 
@@ -184,14 +176,7 @@ public class Driver {
                 // Get differences for each method and rank them by most different to least different
                 List<MethodDifferences> differences = driver.compareAndRank(methods);
 
-                System.out.println("Printing out method differences");
-                System.out.println("=============================");
-                for (MethodDifferences methodDifferences : differences) {
-                    System.out.println("Total difference score for " + methodDifferences.getMethodName() + ": " + methodDifferences.getDifferenceScore());
-                    for (Difference difference : methodDifferences) {
-                        System.out.println("\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead");
-                    }
-                }
+                System.out.println(differences);
             }
         } else if (args[0].equals("-projects")) {
             for(int i = 1; i < args.length; i++) {
@@ -201,14 +186,7 @@ public class Driver {
                 // Get differences for each method and rank them by most different to least different
                 List<MethodDifferences> differences = driver.compareAndRank(methods);
 
-                System.out.println("Printing out method differences");
-                System.out.println("=============================");
-                for (MethodDifferences methodDifferences : differences) {
-                    System.out.println("Total difference score for " + methodDifferences.getMethodName() + ": " + methodDifferences.getDifferenceScore());
-                    for (Difference difference : methodDifferences) {
-                        System.out.println("\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead");
-                    }
-                }
+                System.out.println(differences);
             }
         }
     }

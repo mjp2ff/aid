@@ -16,16 +16,20 @@ public class ClassInformation {
 
     private String className;
 
+    // File path
+    private String filepath;
+
     // Fields
     private List<IdentifierProperties> fields;
 
     // Method Declarations
     private List<MethodDeclaration> methodDeclarations;
 
-    public ClassInformation(String className) {
+    public ClassInformation(String className, String filepath) {
         this.className = className;
-        fields = new ArrayList<IdentifierProperties>();
-        methodDeclarations = new ArrayList<MethodDeclaration>();
+        this.filepath = filepath;
+        fields = new ArrayList<>();
+        methodDeclarations = new ArrayList<>();
     }
 
     public String getClassName() {

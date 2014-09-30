@@ -33,7 +33,7 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
     /**
      * Sorts from highest difference score to lowest difference score
      *
-     * @param o MethodDifferences to compare to
+     * @param m MethodDifferences to compare to
      * @return Comparison value
      */
     @Override
@@ -47,5 +47,14 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    @Override
+    public String toString() {
+        String result = "Total difference score for " + methodName + ": " + getDifferenceScore() + "\n";
+        for (Difference difference : this) {
+            result += "\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead\n";
+        }
+        return result;
     }
 }
