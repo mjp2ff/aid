@@ -31,13 +31,14 @@ public class StoplistProcessor implements FeatureDetector {
 	public void process(MethodDeclaration method, MethodFeatures features) {
 
 		// Handle Javadoc from features first.
-		String javadoc = features.getJavadoc();
-		features.setJavadoc(this.handleString(features.getJavadoc());
+		String newJavadoc = this.checkStoplist(features.getJavadoc());
+		features.setJavadoc(newJavadoc);
 
 		// Next handle internal comments.
 		List<CommentInfo> comments = features.getComments();
 		for (CommentInfo c : comments) {
-			c.setCommentText(this.handleString(c.getCommentText()));
+			String newCommentText = this.checkStoplist(c.getCommentText());
+			c.setCommentText(newCommentText);
 		}
 	}
 
@@ -48,7 +49,7 @@ public class StoplistProcessor implements FeatureDetector {
 	 *            The given string, to be run through the stoplist.
 	 * @return The original string with any 'stoplist words' removed.
 	 */
-	private String handleString(String s) {
+	private String checkStoplist(String s) {
 		String[] split = s.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
 		String newS = "";
 		for (String word : split) {
