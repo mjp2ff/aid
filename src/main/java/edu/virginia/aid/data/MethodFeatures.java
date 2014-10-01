@@ -129,26 +129,26 @@ public class MethodFeatures {
     }
 
     /**
-     * Finds and returns all identifier names in this method
+     * Finds and returns all identifier processed names in this method
      *
-     * @return Set of all identifier names in the method
+     * @return Set of all identifier processed names in the method
      */
-    public Set<String> getIdentifierNames() {
+    public Set<String> getIdentifierProcessedNames() {
         Set<String> names = new HashSet<String>();
 
         // Get Parameters
         for (IdentifierProperties identifier : parameters) {
-            names.add(identifier.getName());
+            names.add(identifier.getProcessedName());
         }
 
         // Get Local Variables
         for (IdentifierProperties identifier : localVariables) {
-            names.add(identifier.getName());
+            names.add(identifier.getProcessedName());
         }
 
         // Get Fields
         for (IdentifierProperties identifier : fields) {
-            names.add(identifier.getName());
+            names.add(identifier.getProcessedName());
         }
 
         return names;
@@ -188,7 +188,7 @@ public class MethodFeatures {
     public MethodDifferences getDifferences() {
         MethodDifferences differences = new MethodDifferences(methodName, className, filepath);
 
-        for (String identifier : getIdentifierNames()) {
+        for (String identifier : getIdentifierProcessedNames()) {
             boolean foundInComment = false;
             for (CommentInfo comment : comments) {
                 if (comment.getCommentText().contains(identifier)) {

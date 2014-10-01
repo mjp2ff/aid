@@ -11,9 +11,14 @@ public class TestClass {
 	 */
 	public static void main(String[] args) {
 		// Here's another comment too.
+		String tested = "should say test, and match comment";
+		String testing = "also OK";
+
 		String the = "this should be ignored by stoplist";
-		String tested = "should say test";
 		String notInComments = "Hello world!";
+		String and = "ignore";
+		String has = "ignore";
+		String running = "should be runn";
 		System.out.println("notInComments");
 		anotherMethod(notInComments);
 	}

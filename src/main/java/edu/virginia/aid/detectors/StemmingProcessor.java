@@ -64,12 +64,16 @@ public class StemmingProcessor implements FeatureDetector {
 		String newS = "";
 		for (String word : split) {
 			// If only this were functional :(
+			boolean matchedSuffix = false;
 			for (String suffix : DEFAULT_SUFFIXES) {
 				if (word.endsWith(suffix)) {
 					newS += word.substring(0, word.lastIndexOf(suffix)) + " ";
-				} else {
-					newS += word + " ";
+					matchedSuffix = true;
+					break;
 				}
+			}
+			if (!matchedSuffix) {
+				newS += word + " ";
 			}
 		}
 		return newS.trim();

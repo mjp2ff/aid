@@ -47,7 +47,7 @@ public class StoplistProcessor implements FeatureDetector {
 		for (IdentifierProperties parameter : features.getParameters()) {
 			parameter.setProcessedName(this.checkStoplist(parameter.getName()));
 		}
-		for (IdentifierProperties localVariable : features.getLocalVariables()) {
+		for (IdentifierProperties localVariable : features.getLocalVariables()) {;
 			localVariable.setProcessedName(this.checkStoplist(localVariable.getName()));
 		}
 		for (IdentifierProperties field : features.getFields()) {

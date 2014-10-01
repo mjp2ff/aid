@@ -109,10 +109,10 @@ public class Driver {
             methodProcessor.addFeatureDetector(new IdentifierDetector());
             // Add detector to process parameters
             methodProcessor.addFeatureDetector(new ParameterDetector());
-            // Add detector to remove words in stoplist.
-            methodProcessor.addFeatureDetector(new StoplistProcessor());
             // Add detector to reduce words to stems.
             methodProcessor.addFeatureDetector(new StemmingProcessor());
+            // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
+            methodProcessor.addFeatureDetector(new StoplistProcessor());
             // Run all detectors
             MethodFeatures methodFeatures = methodProcessor.runDetectors();
             methodFeaturesList.add(methodFeatures);
