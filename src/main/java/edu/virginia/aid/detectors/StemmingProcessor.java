@@ -1,10 +1,12 @@
 package edu.virginia.aid.detectors;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 
 /**
@@ -36,6 +38,17 @@ public class StemmingProcessor implements FeatureDetector {
 		for (CommentInfo c : comments) {
 			String newCommentText = this.removeSuffixes(c.getCommentText());
 			c.setCommentText(newCommentText);
+		}
+
+		// Finally, handle identifiers (parameters, local variables, fields).
+		for (IdentifierProperties parameter : features.getParameters()) {
+			parameter.setProcessedName(this.removeSuffixes(parameter.getName()));
+		}
+		for (IdentifierProperties localVariable : features.getLocalVariables()) {
+			localVariable.setProcessedName(this.removeSuffixes(localVariable.getName()));
+		}
+		for (IdentifierProperties field : features.getFields()) {
+			field.setProcessedName(this.removeSuffixes(field.getName()));
 		}
 	}
 

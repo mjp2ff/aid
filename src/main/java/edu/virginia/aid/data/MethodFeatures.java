@@ -43,12 +43,12 @@ public class MethodFeatures {
         return this.methodName;
     }
 
-    public String getFilepath() {
-        return filepath;
-    }
-
     public String getClassName() {
         return className;
+    }
+
+    public String getFilepath() {
+        return filepath;
     }
 
     /**
@@ -97,6 +97,18 @@ public class MethodFeatures {
         return booleanFeatures.get(name);
     }
 
+    public List<IdentifierProperties> getParameters() {
+    	return parameters;
+    }
+
+    public List<IdentifierProperties> getLocalVariables() {
+    	return localVariables;
+    }
+
+    public List<IdentifierProperties> getFields() {
+    	return fields;
+    }
+    
     /**
      * Adds the identifier to the method's identifier list
      *

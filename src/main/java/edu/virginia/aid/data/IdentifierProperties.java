@@ -13,6 +13,11 @@ public class IdentifierProperties {
     private String type;
     private IdentifierContext context;
 
+    /**
+     * The name above after stemming/stoplist processing.
+     */
+    private String processedName;
+
     public IdentifierProperties(String name) {
         this.name = name;
         this.type = null;
@@ -37,6 +42,10 @@ public class IdentifierProperties {
         this.name = name;
     }
 
+    public void setProcessedName(String processedName) {
+    	this.processedName = processedName;
+    }
+
     public String getType() {
         return this.type;
     }
@@ -47,6 +56,10 @@ public class IdentifierProperties {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getProcessedName() {
+    	return this.processedName;
     }
 
     @Override
