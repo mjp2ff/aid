@@ -1,5 +1,6 @@
 package edu.virginia.aid;
 
+@SuppressWarnings("unused")
 public class TestClass {
 
     public String field1;

@@ -16,6 +16,10 @@ public class IdentifierProperties {
 	private IdentifierContext context;
 
 	/**
+	 * Whether or not the identifier has been processed at all.
+	 */
+	private boolean hasBeenProcessed;
+	/**
 	 * The name above after stemming/stoplist processing.
 	 */
 	private String processedName;
@@ -24,12 +28,16 @@ public class IdentifierProperties {
 		this.name = name;
 		this.type = null;
 		this.context = null;
+		this.hasBeenProcessed = false;
+		this.processedName = name;
 	}
 
 	public IdentifierProperties(String name, String type, IdentifierContext context) {
 		this.name = name;
 		this.type = type;
 		this.context = context;
+		this.hasBeenProcessed = false;
+		this.processedName = name;
 	}
 
 	public void setType(String type) {
@@ -46,6 +54,7 @@ public class IdentifierProperties {
 
 	public void setProcessedName(String processedName) {
 		this.processedName = processedName;
+		this.hasBeenProcessed = true;
 	}
 
 	public String getType() {
@@ -58,6 +67,10 @@ public class IdentifierProperties {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public boolean hasBeenProcessed() {
+		return this.hasBeenProcessed;
 	}
 
 	public String getProcessedName() {

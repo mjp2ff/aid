@@ -2,7 +2,6 @@ package edu.virginia.aid.detectors;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
@@ -45,13 +44,13 @@ public class StoplistProcessor implements FeatureDetector {
 
 		// Finally, handle identifiers (parameters, local variables, fields).
 		for (IdentifierProperties parameter : features.getParameters()) {
-			parameter.setProcessedName(this.checkStoplist(parameter.getName()));
+			parameter.setProcessedName(this.checkStoplist(parameter.getProcessedName()));
 		}
-		for (IdentifierProperties localVariable : features.getLocalVariables()) {;
-			localVariable.setProcessedName(this.checkStoplist(localVariable.getName()));
+		for (IdentifierProperties localVariable : features.getLocalVariables()) {
+			localVariable.setProcessedName(this.checkStoplist(localVariable.getProcessedName()));
 		}
 		for (IdentifierProperties field : features.getFields()) {
-			field.setProcessedName(this.checkStoplist(field.getName()));
+			field.setProcessedName(this.checkStoplist(field.getProcessedName()));
 		}
 	}
 

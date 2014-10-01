@@ -138,17 +138,23 @@ public class MethodFeatures {
 
         // Get Parameters
         for (IdentifierProperties identifier : parameters) {
-            names.add(identifier.getProcessedName());
+        	if (identifier.hasBeenProcessed()) {
+                names.add(identifier.getProcessedName());
+        	}
         }
 
         // Get Local Variables
         for (IdentifierProperties identifier : localVariables) {
-            names.add(identifier.getProcessedName());
+        	if (identifier.hasBeenProcessed()) {
+                names.add(identifier.getProcessedName());
+        	}
         }
 
         // Get Fields
         for (IdentifierProperties identifier : fields) {
-            names.add(identifier.getProcessedName());
+        	if (identifier.hasBeenProcessed()) {
+                names.add(identifier.getProcessedName());
+        	}
         }
 
         return names;

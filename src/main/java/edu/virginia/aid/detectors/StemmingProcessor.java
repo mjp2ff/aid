@@ -1,7 +1,6 @@
 package edu.virginia.aid.detectors;
 
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
@@ -42,13 +41,13 @@ public class StemmingProcessor implements FeatureDetector {
 
 		// Finally, handle identifiers (parameters, local variables, fields).
 		for (IdentifierProperties parameter : features.getParameters()) {
-			parameter.setProcessedName(this.removeSuffixes(parameter.getName()));
+			parameter.setProcessedName(this.removeSuffixes(parameter.getProcessedName()));
 		}
 		for (IdentifierProperties localVariable : features.getLocalVariables()) {
-			localVariable.setProcessedName(this.removeSuffixes(localVariable.getName()));
+			localVariable.setProcessedName(this.removeSuffixes(localVariable.getProcessedName()));
 		}
 		for (IdentifierProperties field : features.getFields()) {
-			field.setProcessedName(this.removeSuffixes(field.getName()));
+			field.setProcessedName(this.removeSuffixes(field.getProcessedName()));
 		}
 	}
 
