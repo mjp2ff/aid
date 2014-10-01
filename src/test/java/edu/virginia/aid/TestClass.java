@@ -15,6 +15,9 @@ public class TestClass {
 		String tested = "should say test, and match comment";
 		String testing = "also OK";
 
+		String nest = "not mentioned";
+		String nested = "duplicate of previous";
+
 		String the = "this should be ignored by stoplist";
 		String notInComments = "Hello world!";
 		String and = "ignore";
