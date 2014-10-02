@@ -1,12 +1,11 @@
 package edu.virginia.aid.visitors;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Visitor that finds and stores each VariableDeclaration in an ASTNode subtree
@@ -21,10 +20,16 @@ public class VariableDeclarationVisitor extends ASTVisitor {
     private List<VariableDeclaration> declarations = new ArrayList<VariableDeclaration>();
 
     /**
+     * Field variable usages found while traversing the AST
+     */
+    private Set<String> fieldUsages = new HashSet<>();
+
+    /**
      * Clears out the list of declarations
      */
     public void clearDeclarations() {
-        declarations = new ArrayList<VariableDeclaration>();
+        declarations = new ArrayList<>();
+        fieldUsages = new HashSet<>();
     }
 
     /**
@@ -34,6 +39,15 @@ public class VariableDeclarationVisitor extends ASTVisitor {
      */
     public List<VariableDeclaration> getDeclarations() {
         return declarations;
+    }
+
+    /**
+     * Returns the list of fields used in a method
+     *
+     * @return List of used field names
+     */
+    public Set<String> getFieldUsages() {
+        return fieldUsages;
     }
 
     /**
@@ -62,4 +76,15 @@ public class VariableDeclarationVisitor extends ASTVisitor {
         return false;
     }
 
+    /**
+     * Adds each accessed field name to the set of those accessed
+     *
+     * @param node
+     * @return false
+     */
+    @Override
+    public boolean visit(FieldAccess node) {
+        fieldUsages.add(node.getName().getIdentifier());
+        return false;
+    }
 }

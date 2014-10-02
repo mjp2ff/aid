@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -49,9 +46,13 @@ public class Driver {
         // Hold methods made so far
         List<MethodFeatures> methods = new ArrayList<MethodFeatures>();
 
+        System.out.print("Processed 0 methods");
         for (File sourceFile : sourceFiles) {
             methods.addAll(getMethodsFromFile(sourceFile.getPath()));
+            System.out.print("\rProcessed " + methods.size() + " methods");
         }
+
+        System.out.println();
 
         return methods;
     }
@@ -101,7 +102,7 @@ public class Driver {
 		for (MethodDeclaration m : methods) {
 
 			// Print the method name.
-            MethodProcessor methodProcessor = new MethodProcessor(m, classInformation.getClassName(), classInformation.getFilepath());
+            MethodProcessor methodProcessor = new MethodProcessor(m, classInformation, classInformation.getFilepath());
 
 			// Add detector to process comments
             methodProcessor.addFeatureDetector(new CommentDetector(fileData));
@@ -157,11 +158,36 @@ public class Driver {
 	}
 
     /**
+     * Provides interactive interface for displaying method differences given a list of differences to display
+     *
+     * @param rankedDifferences The differences to display
+     * @param methodsPerPage The number of methods to show per page
+     * @param keyboard Scanner for collecting user input
+     */
+    public static void displayDifferences(List<MethodDifferences> rankedDifferences, int methodsPerPage, Scanner keyboard) {
+        int displayIndex = 0;
+
+        while (displayIndex < rankedDifferences.size()) {
+            for (int i = 0; i < methodsPerPage && displayIndex < rankedDifferences.size(); i++, displayIndex++) {
+                System.out.println(rankedDifferences.get(displayIndex));
+            }
+
+            System.out.print("\n" + (displayIndex) + "/" + rankedDifferences.size() + " displayed.");
+            if (displayIndex >= rankedDifferences.size()) {
+                System.out.println();
+            } else {
+                System.out.print(" Display next " + Math.max(methodsPerPage, rankedDifferences.size() - displayIndex) + " methods? (y/n): ");
+            }
+            if (!keyboard.nextLine().equalsIgnoreCase("y")) break;
+        }
+    }
+
+    /**
      * Runs tool on input files as specified in the command line parameters. There are two modes, either project or file,
      * set using the -projects or -files flag as shown below.
      *
      * Usage:
-     *      java Driver [-projects|-files] project1/file1 project2/file2 ...
+     *      java Driver [-projects|-files] [project1/file1 project2/file2 ...]
      *
      * @param args Command line arguments
      */
@@ -191,14 +217,84 @@ public class Driver {
                 }
             }        	
         } else {
-        	final String DEFAULT_FILEPATH = "src\\test\\java\\edu\\virginia\\aid\\TestClass.java";
-        	// Parse our sample test file to get the appropriate data
-        	List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(DEFAULT_FILEPATH));
+            Scanner keyboard = new Scanner(System.in);
 
-        	// Get differences for each method and rank them by most different to least different
-        	List<MethodDifferences> differences = driver.compareAndRank(methods);
+            String mode;
+            do {
+                System.out.print("Would you like to load a project or a file? (p/f): ");
+                mode = keyboard.nextLine();
+            } while (!mode.equalsIgnoreCase("p") && !mode.equalsIgnoreCase("f"));
 
-        	System.out.println(differences);
+            if (mode.equalsIgnoreCase("p")) {
+                String projectPath;
+                do {
+                    System.out.print("Provide the path to the project to analyze (q to exit): ");
+                    projectPath = keyboard.nextLine();
+
+                    if (!projectPath.equalsIgnoreCase("q")) {
+                        try {
+                            List<MethodFeatures> methods = driver.getMethodsFromAntProject(projectPath);
+
+                            String analysisMode;
+                            do {
+                                System.out.print("Would you like to analyze methods from a class, file or the entire project? (c/f/p): ");
+                                analysisMode = keyboard.nextLine();
+
+                                if (analysisMode.equalsIgnoreCase("c")) {
+                                    System.out.print("Please specify class name: ");
+                                    String className = keyboard.nextLine();
+
+                                    List<MethodFeatures> classMethods = new ArrayList<>();
+                                    for (MethodFeatures method : methods) {
+                                        if (method.getParentClass().getClassName().equals(className)) {
+                                            classMethods.add(method);
+                                        }
+                                    }
+
+                                    displayDifferences(driver.compareAndRank(classMethods), 10, keyboard);
+                                } else if (analysisMode.equalsIgnoreCase("f")) {
+                                    System.out.print("Please specify the file path: ");
+                                    String filePath = keyboard.nextLine();
+
+                                    List<MethodFeatures> fileMethods = new ArrayList<>();
+                                    for (MethodFeatures method : methods) {
+                                        if (method.getFilepath().equals(filePath)) {
+                                            fileMethods.add(method);
+                                        }
+                                    }
+
+                                    displayDifferences(driver.compareAndRank(fileMethods), 10, keyboard);
+                                } else if (analysisMode.equalsIgnoreCase("p")) {
+                                    displayDifferences(driver.compareAndRank(methods), 10, keyboard);
+                                }
+
+                            } while (!analysisMode.matches("c|f|p"));
+
+                            System.out.println();
+                        } catch (Exception e) {
+                            System.out.println("Error: " + e);
+                        }
+                    }
+
+                } while (!projectPath.equalsIgnoreCase("q"));
+            } else if (mode.equalsIgnoreCase("f")) {
+                String filePath;
+                do {
+                    System.out.print("Provide the path to the file to analyze (q to exit): ");
+                    filePath = keyboard.nextLine();
+
+                    if (!filePath.equalsIgnoreCase("q")) {
+                        try {
+                            List<MethodFeatures> methods = driver.getMethodsFromFile(filePath);
+                            List<MethodDifferences> differences = driver.compareAndRank(methods);
+                            displayDifferences(differences, 10, keyboard);
+                        } catch (Exception e) {
+                            System.out.println("Error: " + e);
+                        }
+                    }
+
+                } while (!filePath.equalsIgnoreCase("q"));
+            }
         }
     }
 }

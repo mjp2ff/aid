@@ -1,5 +1,6 @@
 package edu.virginia.aid;
 
+import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.detectors.FeatureDetector;
 
@@ -27,7 +28,7 @@ public class MethodProcessor {
      */
     private MethodDeclaration method;
 
-    private String className;
+    private ClassInformation parentClass;
     private String filepath;
 
     /**
@@ -35,9 +36,9 @@ public class MethodProcessor {
      *
      * @param method The method to process
      */
-    public MethodProcessor(MethodDeclaration method, String className, String filepath) {
+    public MethodProcessor(MethodDeclaration method, ClassInformation parentClass, String filepath) {
         this.method = method;
-        this.className = className;
+        this.parentClass = parentClass;
         this.filepath = filepath;
     }
 
@@ -56,7 +57,7 @@ public class MethodProcessor {
      * @return Parsed method information
      */
     public MethodFeatures runDetectors() {
-        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier(), this.className, this.filepath);
+        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier(), this.parentClass, this.filepath);
         for (FeatureDetector detector : detectors) {
             detector.process(method, features);
         }

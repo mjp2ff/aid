@@ -34,7 +34,8 @@ public class ClassVisitor extends ASTVisitor {
         for (FieldDeclaration field : node.getFields()) {
             for (Object o : field.fragments()) {
                 if (o instanceof VariableDeclarationFragment) {
-                    IdentifierProperties identifier = new IdentifierProperties(((VariableDeclarationFragment) o).getName().getIdentifier());
+                    VariableDeclarationFragment variable = (VariableDeclarationFragment) o;
+                    IdentifierProperties identifier = new IdentifierProperties(variable.getName().getIdentifier());
                     identifier.setContext(IdentifierProperties.IdentifierContext.FIELD);
                     classInformation.addField(identifier);
                     break;

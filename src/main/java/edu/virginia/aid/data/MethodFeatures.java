@@ -13,7 +13,7 @@ import java.util.*;
 public class MethodFeatures {
 
     private String filepath;
-    private String className;
+    private ClassInformation parentClass;
     private String methodName;
     private Map<String, Boolean> booleanFeatures;
     private List<IdentifierProperties> parameters;
@@ -22,9 +22,9 @@ public class MethodFeatures {
     private List<CommentInfo> comments;
     private String javadoc;
 
-    public MethodFeatures(String methodName, String className, String filepath) {
+    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath) {
         this.methodName = methodName;
-        this.className = className;
+        this.parentClass = parentClass;
         this.filepath = filepath;
         this.booleanFeatures = new HashMap<String, Boolean>();
         this.parameters = new ArrayList<IdentifierProperties>();
@@ -47,8 +47,8 @@ public class MethodFeatures {
         return filepath;
     }
 
-    public String getClassName() {
-        return className;
+    public ClassInformation getParentClass() {
+        return parentClass;
     }
 
     /**
@@ -174,7 +174,7 @@ public class MethodFeatures {
      * @return The list of differences between the comments and the method
      */
     public MethodDifferences getDifferences() {
-        MethodDifferences differences = new MethodDifferences(methodName, className, filepath);
+        MethodDifferences differences = new MethodDifferences(methodName, parentClass.getClassName(), filepath);
 
         for (String identifier : getIdentifierNames()) {
             boolean foundInComment = false;

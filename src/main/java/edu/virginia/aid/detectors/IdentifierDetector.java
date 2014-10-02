@@ -24,18 +24,26 @@ public class IdentifierDetector implements FeatureDetector {
      */
 	@Override
     public void process(MethodDeclaration method, MethodFeatures features) {
-        VariableDeclarationVisitor visitor = new VariableDeclarationVisitor();
-        visitor.clearDeclarations();
+        VariableDeclarationVisitor declarationVisitor = new VariableDeclarationVisitor();
+        declarationVisitor.clearDeclarations();
+
         Block methodBody = method.getBody();
         if (methodBody != null) {
-            methodBody.accept(visitor);
+            methodBody.accept(declarationVisitor);
         }
 
-        List<VariableDeclaration> declarations = visitor.getDeclarations();
+        List<VariableDeclaration> declarations = declarationVisitor.getDeclarations();
         for (VariableDeclaration declaration : declarations) {
             IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier());
             identifier.setContext(IdentifierProperties.IdentifierContext.LOCAL_VARIABLE);
             features.addIdentifier(identifier);
+        }
+
+        for (String fieldName : declarationVisitor.getFieldUsages()) {
+            IdentifierProperties field = features.getParentClass().getFieldByName(fieldName);
+            if (field != null) {
+                features.addIdentifier(features.getParentClass().getFieldByName(fieldName));
+            }
         }
     }
 }
