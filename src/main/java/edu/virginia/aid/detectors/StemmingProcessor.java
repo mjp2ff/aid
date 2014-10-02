@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 
 /**
@@ -14,9 +15,7 @@ import edu.virginia.aid.data.MethodFeatures;
  */
 public class StemmingProcessor implements FeatureDetector {
 
-	static final String[] DEFAULT_SUFFIXES = { "a", "an", "and", "are", "as", "at", "be", "by",
-			"for", "from", "has", "he", "in", "is", "it", "its", "of", "on", "that", "the", "to",
-			"was", "were", "will", "with" };
+	static final String[] DEFAULT_SUFFIXES = { "ion", "ions", "ive", "ed", "ing" };
 
 	/**
 	 * Processes the comments, reducing words down to appropriate stems.
@@ -39,6 +38,17 @@ public class StemmingProcessor implements FeatureDetector {
 			String newCommentText = this.removeSuffixes(c.getCommentText());
 			c.setCommentText(newCommentText);
 		}
+
+		// Finally, handle identifiers (parameters, local variables, fields).
+		for (IdentifierProperties parameter : features.getParameters()) {
+			parameter.setProcessedName(this.removeSuffixes(parameter.getProcessedName()));
+		}
+		for (IdentifierProperties localVariable : features.getLocalVariables()) {
+			localVariable.setProcessedName(this.removeSuffixes(localVariable.getProcessedName()));
+		}
+		for (IdentifierProperties field : features.getFields()) {
+			field.setProcessedName(this.removeSuffixes(field.getProcessedName()));
+		}
 	}
 
 	/**
@@ -53,12 +63,16 @@ public class StemmingProcessor implements FeatureDetector {
 		String newS = "";
 		for (String word : split) {
 			// If only this were functional :(
+			boolean matchedSuffix = false;
 			for (String suffix : DEFAULT_SUFFIXES) {
 				if (word.endsWith(suffix)) {
 					newS += word.substring(0, word.lastIndexOf(suffix)) + " ";
-				} else {
-					newS += word + " ";
+					matchedSuffix = true;
+					break;
 				}
+			}
+			if (!matchedSuffix) {
+				newS += word + " ";
 			}
 		}
 		return newS.trim();

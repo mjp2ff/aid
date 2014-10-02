@@ -110,10 +110,10 @@ public class Driver {
             methodProcessor.addFeatureDetector(new IdentifierDetector());
             // Add detector to process parameters
             methodProcessor.addFeatureDetector(new ParameterDetector());
-            // Add detector to remove words in stoplist.
-            methodProcessor.addFeatureDetector(new StoplistProcessor());
             // Add detector to reduce words to stems.
             methodProcessor.addFeatureDetector(new StemmingProcessor());
+            // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
+            methodProcessor.addFeatureDetector(new StoplistProcessor());
             // Run all detectors
             MethodFeatures methodFeatures = methodProcessor.runDetectors();
             methodFeaturesList.add(methodFeatures);
@@ -198,7 +198,7 @@ public class Driver {
             if (args[0].equals("-files")) {
                 for(int i = 1; i < args.length; i++) {
                     // Parse this file to get the appropriate data
-                    List<MethodFeatures> methods = driver.getMethodsFromFile(readFile(args[i]));
+                    List<MethodFeatures> methods = driver.getMethodsFromFile(args[i]);
 
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = driver.compareAndRank(methods);
