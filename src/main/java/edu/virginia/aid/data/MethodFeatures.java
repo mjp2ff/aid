@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class MethodFeatures {
+public class MethodFeatures extends SourceElement {
 
     private String filepath;
     private ClassInformation parentClass;
@@ -22,15 +22,17 @@ public class MethodFeatures {
     private List<CommentInfo> comments;
     private String javadoc;
 
-    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath) {
+    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final String sourceContext) {
+        super(startPos, endPos, sourceContext);
+
         this.methodName = methodName;
         this.parentClass = parentClass;
         this.filepath = filepath;
-        this.booleanFeatures = new HashMap<String, Boolean>();
-        this.parameters = new ArrayList<IdentifierProperties>();
-        this.localVariables = new ArrayList<IdentifierProperties>();
-        this.fields = new ArrayList<IdentifierProperties>();
-        this.comments = new ArrayList<CommentInfo>();
+        this.booleanFeatures = new HashMap<>();
+        this.parameters = new ArrayList<>();
+        this.localVariables = new ArrayList<>();
+        this.fields = new ArrayList<>();
+        this.comments = new ArrayList<>();
         this.javadoc = "";
     }
 

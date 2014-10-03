@@ -18,7 +18,7 @@ public class ParameterDetector implements FeatureDetector {
         for (Object o : method.parameters()) {
             if (o instanceof VariableDeclaration) {
                 VariableDeclaration parameter = (VariableDeclaration) o;
-                features.addIdentifier(new IdentifierProperties(parameter.getName().getIdentifier(), "", IdentifierProperties.IdentifierContext.FORMAL_PARAMETER));
+                features.addIdentifier(new IdentifierProperties(parameter.getName().getIdentifier(), "", IdentifierProperties.IdentifierContext.FORMAL_PARAMETER, parameter.getStartPosition(), parameter.getStartPosition() + parameter.getLength(), features.getSourceContext()));
             }
         }
     }

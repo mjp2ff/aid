@@ -5,7 +5,7 @@ package edu.virginia.aid.data;
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class IdentifierProperties {
+public class IdentifierProperties extends SourceElement {
 
 	public enum IdentifierContext {
 		LOCAL_VARIABLE, FORMAL_PARAMETER, FIELD
@@ -24,7 +24,9 @@ public class IdentifierProperties {
 	 */
 	private String processedName;
 
-	public IdentifierProperties(String name) {
+	public IdentifierProperties(String name, int startPos, int endPos, final String sourceContext) {
+        super(startPos, endPos, sourceContext);
+
 		this.name = name;
 		this.type = null;
 		this.context = null;
@@ -32,7 +34,9 @@ public class IdentifierProperties {
 		this.processedName = name;
 	}
 
-	public IdentifierProperties(String name, String type, IdentifierContext context) {
+	public IdentifierProperties(String name, String type, IdentifierContext context, int startPos, int endPos, final String sourceContext) {
+        super(startPos, endPos, sourceContext);
+
 		this.name = name;
 		this.type = type;
 		this.context = context;

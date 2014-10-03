@@ -17,21 +17,6 @@ import edu.virginia.aid.visitors.CommentVisitor;
 public class CommentDetector implements FeatureDetector {
 
 	/**
-	 * Data read in from a file.
-	 */
-	private String fileData;
-
-	/**
-	 * Creates a new CommentDetector based on some file's data.
-	 * 
-	 * @param fileData
-	 *            The text of the file to be analyzed.
-	 */
-	public CommentDetector(String fileData) {
-		this.fileData = fileData;
-	}
-
-	/**
 	 * Processes the method, adding each identifier found to the MethodFeatures
 	 *
 	 * @param method
@@ -50,8 +35,7 @@ public class CommentDetector implements FeatureDetector {
 		for (Comment comment : comments) {
 			int startPos = comment.getStartPosition();
 			int endPos = startPos + comment.getLength();
-			String commentString = this.fileData.substring(startPos, endPos);
-            features.addComment(new CommentInfo(commentString, startPos, endPos));
+            features.addComment(new CommentInfo(startPos, endPos, features.getSourceContext()));
 		}
 	}
 }

@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class ClassInformation {
+public class ClassInformation extends SourceElement {
 
     private String className;
 
@@ -25,7 +25,9 @@ public class ClassInformation {
     // Method Declarations
     private List<MethodDeclaration> methodDeclarations;
 
-    public ClassInformation(String className, String filepath) {
+    public ClassInformation(String className, String filepath, int startPos, int endPos, final String sourceContext) {
+        super(startPos, endPos, sourceContext);
+
         this.className = className;
         this.filepath = filepath;
         fields = new ArrayList<>();

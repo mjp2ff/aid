@@ -41,9 +41,9 @@ public abstract class MethodParser {
 		CompilationUnit ast = (CompilationUnit) parser.createAST(null);
 
         // Get class information
-        ClassInformation classInformation = getClassInformation(ast, filepath);
+        ClassInformation classInformation = getClassInformation(ast, filepath, fileData);
 
-		return handleMethods(classInformation, fileData);
+		return handleMethods(classInformation);
     }
 
     /**
@@ -62,8 +62,8 @@ public abstract class MethodParser {
 		return fileData;
 	}
 
-    protected ClassInformation getClassInformation(CompilationUnit cu, String filepath) {
-        ClassVisitor classVisitor = new ClassVisitor(filepath);
+    protected ClassInformation getClassInformation(CompilationUnit cu, String filepath, final String fileData) {
+        ClassVisitor classVisitor = new ClassVisitor(filepath, fileData);
         cu.accept(classVisitor);
         return classVisitor.getClassInformation();
     }
@@ -73,9 +73,9 @@ public abstract class MethodParser {
 	 *
 	 * @param classInformation The class whose methods are to be analyzed
 	 */
-	private List<MethodFeatures> handleMethods(ClassInformation classInformation, String fileData) {
+	private List<MethodFeatures> handleMethods(ClassInformation classInformation) {
 
-        List<MethodFeatures> methodFeaturesList = new ArrayList<MethodFeatures>();
+        List<MethodFeatures> methodFeaturesList = new ArrayList<>();
 
         if (classInformation != null) {
             List<MethodDeclaration> methods = classInformation.getMethodDeclarations();
@@ -87,7 +87,7 @@ public abstract class MethodParser {
                 MethodProcessor methodProcessor = new MethodProcessor(m, classInformation, classInformation.getFilepath());
 
                 // Add detector to process comments
-                methodProcessor.addFeatureDetector(new CommentDetector(fileData));
+                methodProcessor.addFeatureDetector(new CommentDetector());
                 // Add detector to process methods
                 methodProcessor.addFeatureDetector(new IdentifierDetector());
                 // Add detector to process parameters

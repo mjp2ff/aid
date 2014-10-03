@@ -34,7 +34,7 @@ public class IdentifierDetector implements FeatureDetector {
 
         List<VariableDeclaration> declarations = declarationVisitor.getDeclarations();
         for (VariableDeclaration declaration : declarations) {
-            IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier());
+            IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier(), declaration.getStartPosition(), declaration.getStartPosition() + declaration.getLength(), features.getSourceContext());
             identifier.setContext(IdentifierProperties.IdentifierContext.LOCAL_VARIABLE);
             features.addIdentifier(identifier);
         }

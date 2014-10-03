@@ -11,13 +11,15 @@ import org.eclipse.jdt.core.dom.*;
 public class ClassVisitor extends ASTVisitor {
 
     private String filepath;
+    private final String fileData;
     private ClassInformation classInformation = null;
     public ClassInformation getClassInformation() {
         return classInformation;
     }
 
-    public ClassVisitor(String filepath) {
+    public ClassVisitor(String filepath, final String fileData) {
         this.filepath = filepath;
+        this.fileData = fileData;
     }
 
     /**
@@ -28,14 +30,14 @@ public class ClassVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(TypeDeclaration node) {
-        classInformation = new ClassInformation(node.getName().getIdentifier(), this.filepath);
+        classInformation = new ClassInformation(node.getName().getIdentifier(), this.filepath, node.getStartPosition(), node.getStartPosition() + node.getLength(), fileData);
 
         // Extract field information
         for (FieldDeclaration field : node.getFields()) {
             for (Object o : field.fragments()) {
                 if (o instanceof VariableDeclarationFragment) {
                     VariableDeclarationFragment variable = (VariableDeclarationFragment) o;
-                    IdentifierProperties identifier = new IdentifierProperties(variable.getName().getIdentifier());
+                    IdentifierProperties identifier = new IdentifierProperties(variable.getName().getIdentifier(), variable.getStartPosition(), variable.getStartPosition() + variable.getLength(), fileData);
                     identifier.setContext(IdentifierProperties.IdentifierContext.FIELD);
                     classInformation.addField(identifier);
                     break;

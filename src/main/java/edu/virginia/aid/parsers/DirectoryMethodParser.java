@@ -49,7 +49,6 @@ public class DirectoryMethodParser extends MethodParser {
      *
      * @return The processed methods in the directory
      */
-    @Override
     public List<MethodFeatures> parseMethods() {
         Set<File> sourceFiles = getDirectorySourceFiles(new File(directory));
 

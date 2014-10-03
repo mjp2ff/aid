@@ -57,7 +57,7 @@ public class MethodProcessor {
      * @return Parsed method information
      */
     public MethodFeatures runDetectors() {
-        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier(), this.parentClass, this.filepath);
+        MethodFeatures features = new MethodFeatures(method.getName().getIdentifier(), this.parentClass, this.filepath, method.getStartPosition(), method.getStartPosition() + method.getLength(), parentClass.getSourceContext());
         for (FeatureDetector detector : detectors) {
             detector.process(method, features);
         }
