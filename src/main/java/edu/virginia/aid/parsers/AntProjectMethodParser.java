@@ -112,7 +112,7 @@ public class AntProjectMethodParser extends DirectoryMethodParser {
         System.out.print("Processed 0 methods");
         for (File sourceFile : sourceFiles) {
             methods.addAll(getMethodsFromFile(sourceFile.getPath()));
-            System.out.print("\rProcessed " + methods.size() + "methods");
+            System.out.print("\rProcessed " + methods.size() + " methods");
         }
 
         System.out.println();

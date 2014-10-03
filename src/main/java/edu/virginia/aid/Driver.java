@@ -9,6 +9,7 @@ import edu.virginia.aid.parsers.FileMethodParser;
 
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.parsers.MethodParser;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -92,7 +93,7 @@ public class Driver {
             if (args[0].equals("-files")) {
                 for(int i = 1; i < args.length; i++) {
 
-                    FileMethodParser parser = new FileMethodParser(args[i]);
+                    MethodParser parser = new FileMethodParser(args[i]);
 
                     // Parse this file to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -105,7 +106,7 @@ public class Driver {
             } else if (args[0].equals("-projects")) {
                 for(int i = 1; i < args.length; i++) {
 
-                    AntProjectMethodParser parser = new AntProjectMethodParser(args[i]);
+                    MethodParser parser = new AntProjectMethodParser(args[i]);
 
                     // Parse this file to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -118,7 +119,7 @@ public class Driver {
             } else if (args[0].equals("-directories")) {
                 for(int i = 1; i < args.length; i++) {
 
-                    DirectoryMethodParser parser = new DirectoryMethodParser(args[i]);
+                    MethodParser parser = new DirectoryMethodParser(args[i]);
 
                     // Parse this directory to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -136,7 +137,7 @@ public class Driver {
 
                 if (!projectPath.equalsIgnoreCase("q")) {
 
-                    AntProjectMethodParser parser = new AntProjectMethodParser(projectPath);
+                    MethodParser parser = new AntProjectMethodParser(projectPath);
 
                     List<MethodFeatures> methods = parser.parseMethods();
 
@@ -180,7 +181,7 @@ public class Driver {
 
                     if (!filePath.equalsIgnoreCase("q")) {
 
-                        FileMethodParser parser = new FileMethodParser(filePath);
+                        MethodParser parser = new FileMethodParser(filePath);
 
                         List<MethodFeatures> methods = parser.parseMethods();
 
