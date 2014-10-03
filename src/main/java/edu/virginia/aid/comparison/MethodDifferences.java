@@ -63,7 +63,7 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
 
     @Override
     public String toString() {
-        String result = "Total difference score for " + className + "." + methodName + ": " + getDifferenceScore() + "\n";
+        String result = "Total difference score for " + className + "." + methodName + " (" + filepath + "): " + getDifferenceScore() + "\n";
         for (Difference difference : this) {
             result += "\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead\n";
         }
