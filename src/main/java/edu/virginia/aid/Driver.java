@@ -1,29 +1,14 @@
 package edu.virginia.aid;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import edu.virginia.aid.parsers.AntProjectMethodParser;
 import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.comparison.MethodDifferences;
-import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.detectors.CommentDetector;
-import edu.virginia.aid.detectors.IdentifierDetector;
-import edu.virginia.aid.detectors.ParameterDetector;
-import edu.virginia.aid.detectors.StemmingProcessor;
-import edu.virginia.aid.detectors.StoplistProcessor;
-import edu.virginia.aid.visitors.ClassVisitor;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -103,8 +88,6 @@ public class Driver {
      * @param args Command line arguments
      */
     public static void main(String[] args) {
-        Driver driver = new Driver();
-
         if (args.length > 0) {
             if (args[0].equals("-files")) {
                 for(int i = 1; i < args.length; i++) {
