@@ -1,5 +1,6 @@
-package edu.virginia.aid.comparison;
+package edu.virginia.aid.parsers;
 
+import edu.virginia.aid.data.MethodFeatures;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -11,7 +12,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,24 +23,24 @@ import java.util.Set;
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class AntBuildfileParser {
+public class AntProjectMethodParser extends DirectoryMethodParser {
 
-    String projectDirectory;
     Document buildFile;
 
     /**
      * Creates a new buildfile parser, pointing it to the build.xml file in the given
      * project directory
      *
-     * @param projectDirectory The directory of the project for which to analyze a buildfile
+     * @param directory The directory of the project for which to analyze a buildfile
      */
-    public AntBuildfileParser(String projectDirectory) {
-        this.projectDirectory = projectDirectory;
+    public AntProjectMethodParser(String directory) {
+
+        super(directory);
 
         final String buildfileName = "build.xml";
-        String path = ((projectDirectory.charAt(projectDirectory.length() - 1)) == File.separatorChar) ?
-                projectDirectory + buildfileName :
-                projectDirectory + File.separatorChar + buildfileName;
+        String path = ((directory.charAt(directory.length() - 1)) == File.separatorChar) ?
+                directory + buildfileName :
+                directory + File.separatorChar + buildfileName;
 
         File buildfile = new File(path);
 
@@ -59,7 +62,7 @@ public class AntBuildfileParser {
      *
      * @return Set of directories present in the buildfile's javac srcdir attributes
      */
-    public Set<String> getBuildDirectories() {
+    protected Set<String> getBuildDirectories() {
         Set<String> buildDirectories = new HashSet<String>();
         NodeList javacElements = buildFile.getElementsByTagName("javac");
 
@@ -78,14 +81,14 @@ public class AntBuildfileParser {
      *
      * @return Set of java files in the project
      */
-    public Set<File> getSourceFiles() {
+    protected Set<File> getSourceFiles() {
         Set<File> sourceFiles = new HashSet<File>();
         for (String subdirectory : getBuildDirectories()) {
             String srcDirectory;
-            if (projectDirectory.charAt(projectDirectory.length() - 1) == File.separatorChar) {
-                srcDirectory = projectDirectory + subdirectory;
+            if (directory.charAt(directory.length() - 1) == File.separatorChar) {
+                srcDirectory = directory + subdirectory;
             } else {
-                srcDirectory = projectDirectory + File.separatorChar + subdirectory;
+                srcDirectory = directory + File.separatorChar + subdirectory;
             }
 
             File srcFolder = new File(srcDirectory);
@@ -96,30 +99,24 @@ public class AntBuildfileParser {
     }
 
     /**
-     * Recursively finds and returns all source files in a directory
+     * Finds and processes all methods in the project as specified by the Ant buildfile
      *
-     * @param directory The directory to search
-     * @return The set of source files found in the directory
+     * @return The list of processed methods
      */
-    private Set<File> getDirectorySourceFiles(File directory) {
-        Set<File> sourceFiles = new HashSet<File>();
+    @Override
+    public List<MethodFeatures> parseMethods() {
+        Set<File> sourceFiles = getSourceFiles();
 
-        if (directory.isDirectory() && directory.canRead()) {
-            File[] files = directory.listFiles();
+        List<MethodFeatures> methods = new ArrayList<>();
 
-            if (files != null) {
-                for(File file : files) {
-                    if (file.isDirectory()) {
-                        sourceFiles.addAll(getDirectorySourceFiles(file));
-                    } else {
-                        if (file.getName().endsWith(".java")) {
-                            sourceFiles.add(file);
-                        }
-                    }
-                }
-            }
+        System.out.print("Processed 0 methods");
+        for (File sourceFile : sourceFiles) {
+            methods.addAll(getMethodsFromFile(sourceFile.getPath()));
+            System.out.print("\rProcessed " + methods.size() + "methods");
         }
 
-        return sourceFiles;
+        System.out.println();
+
+        return methods;
     }
 }
