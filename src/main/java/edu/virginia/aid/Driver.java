@@ -123,6 +123,11 @@ public class Driver {
 
                     // Parse this directory to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
+
+                    // Get differences for each method and rank them by most different to least different
+                    List<MethodDifferences> differences = compareAndRank(methods);
+
+                    displayDifferences(differences, 10, new Scanner(System.in));
                 }
             }
         } else {
