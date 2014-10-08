@@ -25,13 +25,17 @@ public class ClassInformation extends SourceElement {
     // Method Declarations
     private List<MethodDeclaration> methodDeclarations;
 
+    // Comments
+    private List<CommentInfo> comments;
+
     public ClassInformation(String className, String filepath, int startPos, int endPos, final String sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.className = className;
         this.filepath = filepath;
-        fields = new ArrayList<>();
-        methodDeclarations = new ArrayList<>();
+        this.fields = new ArrayList<>();
+        this.methodDeclarations = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 
     public String getClassName() {
@@ -97,6 +101,24 @@ public class ClassInformation extends SourceElement {
      */
     public List<MethodDeclaration> getMethodDeclarations() {
         return methodDeclarations;
+    }
+
+    /**
+     * Returns all of the Comments in this class.
+     * 
+     * @return The list of comments inside this class.
+     */
+    public List<CommentInfo> getComments() {
+    	return this.comments;
+    }
+
+    /**
+     * Adds a CommentInfo node to the comments
+     * 
+     * @param comment The comment to add
+     */
+    public void addComment(CommentInfo comment) {
+    	comments.add(comment);
     }
 
     @Override

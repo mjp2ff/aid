@@ -5,6 +5,8 @@ import edu.virginia.aid.comparison.MethodDifferences;
 
 import java.util.*;
 
+import org.eclipse.jdt.core.dom.Javadoc;
+
 /**
  * Data wrapper for a feature list for a single method
  *
@@ -19,8 +21,7 @@ public class MethodFeatures extends SourceElement {
     private List<IdentifierProperties> parameters;
     private List<IdentifierProperties> localVariables;
     private List<IdentifierProperties> fields;
-    private List<CommentInfo> comments;
-    private String javadoc;
+    private Javadoc javadoc;
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final String sourceContext) {
         super(startPos, endPos, sourceContext);
@@ -32,8 +33,7 @@ public class MethodFeatures extends SourceElement {
         this.parameters = new ArrayList<>();
         this.localVariables = new ArrayList<>();
         this.fields = new ArrayList<>();
-        this.comments = new ArrayList<>();
-        this.javadoc = "";
+        this.javadoc = null;
     }
 
     /**
@@ -163,28 +163,20 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
-     * Adds a comment to the method's information
-     *
-     * @param comment The comment to add
-     */
-    public void addComment(CommentInfo comment) {
-        comments.add(comment);
-    }
-
-    /**
      * Gets and returns all of the comments associated with the method
      *
      * @return The list of all comments associated with the method
      */
     public List<CommentInfo> getComments() {
-        return comments;
+        return parentClass.getComments();
+        // TODO: Filter this!
     }
 
-    public String getJavadoc() {
+    public Javadoc getJavadoc() {
         return javadoc;
     }
 
-    public void setJavadoc(String javadoc) {
+    public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
     }
 
@@ -198,7 +190,7 @@ public class MethodFeatures extends SourceElement {
 
         for (String identifier : getIdentifierProcessedNames()) {
             boolean foundInComment = false;
-            for (CommentInfo comment : comments) {
+            for (CommentInfo comment : getComments()) {
                 if (comment.getCommentText().contains(identifier)) {
                     foundInComment = true;
                 }

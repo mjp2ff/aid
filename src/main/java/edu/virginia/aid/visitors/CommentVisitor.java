@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LineComment;
 
 /**
@@ -35,18 +34,6 @@ public class CommentVisitor extends ASTVisitor {
 	 */
 	public List<Comment> getComments() {
 		return this.comments;
-	}
-
-	/**
-	 * Adds Javadoc to Comment list when encountered and stops traversal of its subtree
-	 *
-	 * @param node
-	 * @return
-	 */
-	@Override
-	public boolean visit(Javadoc node) {
-		this.comments.add(node);
-		return false;
 	}
 
 	/**

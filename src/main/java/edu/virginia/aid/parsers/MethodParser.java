@@ -2,11 +2,15 @@ package edu.virginia.aid.parsers;
 
 import edu.virginia.aid.MethodProcessor;
 import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.detectors.*;
 import edu.virginia.aid.visitors.ClassVisitor;
+import edu.virginia.aid.visitors.CommentVisitor;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
@@ -65,7 +69,22 @@ public abstract class MethodParser {
     protected ClassInformation getClassInformation(CompilationUnit cu, String filepath, final String fileData) {
         ClassVisitor classVisitor = new ClassVisitor(filepath, fileData);
         cu.accept(classVisitor);
-        return classVisitor.getClassInformation();
+
+        ClassInformation classInformation = classVisitor.getClassInformation();
+
+        // Get all in-line comments (have to do it from CompilationUnit here unfortunately)
+        CommentVisitor commentVisitor = new CommentVisitor();
+		commentVisitor.clearComments();
+		cu.accept(commentVisitor);
+		List<Comment> comments = commentVisitor.getComments();
+
+		for (Comment comment : comments) {
+			int startPos = comment.getStartPosition();
+			int endPos = startPos + comment.getLength();
+            classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
+		}
+
+        return classInformation;
     }
 
 	/**
