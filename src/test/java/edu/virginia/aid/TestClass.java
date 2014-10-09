@@ -18,14 +18,14 @@ public class TestClass {
 	 * Here's a block comment
 	 */
 	public static void aMethod(String tested, String testing, String nest, String nested,
-			String camelCase, String and, String has, String running) {
+			String wordWordWord, String and, String has, String running) {
 		// None of these variables
 		/* are mentioned in any comments. */
 		System.out.println(tested);			// Should be stemmed.
 		System.out.println(testing);		// Should be stemmed.
 		System.out.println(nest);			// OK.
 		System.out.println(nested);			// Should be stemmed.
-		System.out.println(camelCase);		// Should be split.
+		System.out.println(wordWordWord);	// Should be split.
 		System.out.println(and);			// Should be stop listed.
 		System.out.println(has);			// Should be stop listed.
 		System.out.println(running);		// Should be stemmed.
