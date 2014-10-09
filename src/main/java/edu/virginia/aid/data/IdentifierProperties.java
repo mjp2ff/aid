@@ -147,7 +147,7 @@ public class IdentifierProperties extends SourceElement {
      * @return String with spaces instead of camelCase
      */
     private String splitCamelCase(String s) {
-    	String[] wordSplit = "camelValue".split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+    	String[] wordSplit = s.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
     	String newWord = "";
     	for (String w : wordSplit) {
     		newWord += w + " ";
