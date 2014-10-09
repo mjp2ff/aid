@@ -94,7 +94,8 @@ public abstract class MethodParser {
      * @param classInformation The modified class information with the comments added.
      */
     private void processComments(CompilationUnit cu, ClassInformation classInformation) {
-    	List<Comment> comments = (List<Comment>) cu.getCommentList();
+    	@SuppressWarnings("unchecked")
+		List<Comment> comments = (List<Comment>) cu.getCommentList();
     	for (Comment comment : comments) {
     		int startPos = comment.getStartPosition();
     		int endPos = startPos + comment.getLength();
