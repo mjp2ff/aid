@@ -32,11 +32,11 @@ public class SourceElement {
     }
 
     public int getStartPos() {
-    	return startPos;
+        return startPos;
     }
-    
+
     public int getEndPos() {
-    	return endPos;
+        return endPos;
     }
 
     /**

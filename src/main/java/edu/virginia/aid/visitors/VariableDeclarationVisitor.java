@@ -77,7 +77,7 @@ public class VariableDeclarationVisitor extends ASTVisitor {
     }
 
     /**
-     * Adds each accessed field name to the set of those accessed
+     * Adds each accessed field names to the set of those accessed
      *
      * @param node
      * @return false

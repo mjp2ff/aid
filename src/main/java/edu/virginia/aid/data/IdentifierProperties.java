@@ -15,6 +15,9 @@ public class IdentifierProperties extends SourceElement {
 	private String type;
 	private IdentifierContext context;
 
+    private int reads;
+    private int writes;
+
 	/**
 	 * Whether or not the identifier has been processed at all.
 	 */
@@ -32,6 +35,9 @@ public class IdentifierProperties extends SourceElement {
 		this.context = null;
 		this.hasBeenProcessed = false;
 		this.processedName = name;
+
+        this.reads = 0;
+        this.writes = 0;
 	}
 
 	public IdentifierProperties(String name, String type, IdentifierContext context, int startPos, int endPos, final String sourceContext) {
@@ -42,7 +48,28 @@ public class IdentifierProperties extends SourceElement {
 		this.context = context;
 		this.hasBeenProcessed = false;
 		this.processedName = name;
+
+        this.reads = 0;
+        this.writes = 0;
 	}
+
+    /**
+     * Copy constructor
+     *
+     * @param properties Object to copy
+     */
+    public IdentifierProperties(IdentifierProperties properties) {
+        super(properties.getStartPos(), properties.getEndPos(), properties.getSourceContext());
+
+        this.name = properties.getName();
+        this.type = properties.getType();
+        this.context = properties.getContext();
+        this.hasBeenProcessed = properties.hasBeenProcessed();
+        this.processedName = properties.getProcessedName();
+
+        this.reads = 0;
+        this.writes = 0;
+    }
 
 	public void setType(String type) {
 		this.type = type;
@@ -81,7 +108,33 @@ public class IdentifierProperties extends SourceElement {
 		return this.processedName;
 	}
 
-	@Override
+    public int getReads() {
+        return reads;
+    }
+
+    public int getWrites() {
+        return writes;
+    }
+
+    /**
+     * Adds the given amount to the current value of the variable reads
+     *
+     * @param amount The amount to add
+     */
+    public void addReads(int amount) {
+        reads += amount;
+    }
+
+    /**
+     * Adds the given amount to the current value of the variable writes
+     *
+     * @param amount The amount to add
+     */
+    public void addWrites(int amount) {
+        writes += amount;
+    }
+
+    @Override
 	public String toString() {
 		return name;
 	}
