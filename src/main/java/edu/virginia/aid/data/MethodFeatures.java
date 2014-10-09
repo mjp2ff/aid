@@ -170,7 +170,6 @@ public class MethodFeatures extends SourceElement {
     public List<CommentInfo> getComments() {
         return parentClass.getComments();
         // TODO: Filter this!
-        // TODO: Fix it it's broken.
     }
 
     public Javadoc getJavadoc() {
@@ -195,6 +194,11 @@ public class MethodFeatures extends SourceElement {
                 if (comment.getCommentText().contains(identifier)) {
                     foundInComment = true;
                 }
+            }
+            
+            String javadocString = getJavadoc().toString();
+            if (javadocString.contains(identifier)) {
+            	foundInComment = true;
             }
 
             if (!foundInComment) {
