@@ -29,8 +29,8 @@ public class StemmingProcessor implements FeatureDetector {
 	public void process(MethodDeclaration method, MethodFeatures features) {
 
 		// Handle Javadoc from features first.
-		String newJavadoc = this.removeSuffixes(features.getJavadoc());
-		features.setJavadoc(newJavadoc);
+		String newJavadocComment = this.removeSuffixes(features.getJavadoc().getComment());
+		features.getJavadoc().setComment(newJavadocComment);
 
 		// Next handle internal comments.
 		List<CommentInfo> comments = features.getComments();

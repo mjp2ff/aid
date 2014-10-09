@@ -1,9 +1,16 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.ClassInformation;
-import edu.virginia.aid.data.IdentifierProperties;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.BlockComment;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.LineComment;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import org.eclipse.jdt.core.dom.*;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.IdentifierProperties;
 
 /**
  * Finds class definitions in an AST
@@ -50,6 +57,34 @@ public class ClassVisitor extends ASTVisitor {
             classInformation.addMethodDeclaration(methodDeclaration);
         }
 
-        return false;
+        return true;
     }
+
+	/**
+	 * Adds BlockComment to comments for class information and stops traversal of its subtree
+	 *
+	 * @param node
+	 * @return false
+	 */
+	@Override
+	public boolean visit(BlockComment node) {
+		int startPos = node.getStartPosition();
+		int endPos = startPos + node.getLength();
+        classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
+        return false;
+	}
+
+	/**
+	 * Adds LineComment to comments for class information and stops traversal of its subtree
+	 *
+	 * @param node
+	 * @return
+	 */
+	@Override
+	public boolean visit(LineComment node) {
+		int startPos = node.getStartPosition();
+		int endPos = startPos + node.getLength();
+        classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
+        return false;
+	}
 }

@@ -32,8 +32,8 @@ public class StoplistProcessor implements FeatureDetector {
 	public void process(MethodDeclaration method, MethodFeatures features) {
 
 		// Handle Javadoc from features first.
-		String newJavadoc = this.checkStoplist(features.getJavadoc());
-		features.setJavadoc(newJavadoc);
+		String newJavadocComment = this.checkStoplist(features.getJavadoc().getComment());
+		features.getJavadoc().setComment(newJavadocComment);
 
 		// Next handle internal comments.
 		List<CommentInfo> comments = features.getComments();

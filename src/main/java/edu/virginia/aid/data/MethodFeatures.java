@@ -170,6 +170,7 @@ public class MethodFeatures extends SourceElement {
     public List<CommentInfo> getComments() {
         return parentClass.getComments();
         // TODO: Filter this!
+        // TODO: Fix it it's broken.
     }
 
     public Javadoc getJavadoc() {
