@@ -8,6 +8,8 @@ import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 
+import org.tartarus.snowball.*;
+
 /**
  * Feature processor for handling word stemming within comments.
  *
@@ -15,6 +17,7 @@ import edu.virginia.aid.data.MethodFeatures;
  */
 public class StemmingProcessor implements FeatureDetector {
 
+	static final SnowballStemmer stemmer = new org.tartarus.snowball.ext.englishStemmer();
 	static final String[] DEFAULT_SUFFIXES = { "ion", "ions", "ive", "ed", "ing" };
 
 	/**
@@ -28,54 +31,39 @@ public class StemmingProcessor implements FeatureDetector {
 	@Override
 	public void process(MethodDeclaration method, MethodFeatures features) {
 
-		// Handle Javadoc from features first.
+		// TODO: Handle Javadoc from features first.
 //		String newJavadocComment = this.removeSuffixes(features.getJavadoc().getComment());
 //		features.getJavadoc().setComment(newJavadocComment);
 
 		// Next handle internal comments.
 		List<CommentInfo> comments = features.getComments();
-		for (CommentInfo c : comments) {
-			String newCommentText = this.removeSuffixes(c.getCommentText());
+		for (CommentInfo c : comments) {			
+			String newCommentText = this.stem(c.getCommentText());
 			c.setCommentText(newCommentText);
 		}
 
 		// Finally, handle identifiers (parameters, local variables, fields).
 		for (IdentifierProperties parameter : features.getParameters()) {
-			parameter.setProcessedName(this.removeSuffixes(parameter.getProcessedName()));
+			parameter.setProcessedName(this.stem(parameter.getProcessedName()));
 		}
 		for (IdentifierProperties localVariable : features.getLocalVariables()) {
-			localVariable.setProcessedName(this.removeSuffixes(localVariable.getProcessedName()));
+			localVariable.setProcessedName(this.stem(localVariable.getProcessedName()));
 		}
 		for (IdentifierProperties field : features.getFields()) {
-			field.setProcessedName(this.removeSuffixes(field.getProcessedName()));
+			field.setProcessedName(this.stem(field.getProcessedName()));
 		}
 	}
 
 	/**
-	 * Runs a given string through the default suffix-list, stripping any suffixes.
-	 * 
-	 * @param s
-	 *            The given string, to be run through the suffix-list.
-	 * @return The original string with any suffixes removed.
+	 * Helper method to stem words, using Snowball Stemming library.
+	 *
+	 * @param s The string to be stemmed
+	 * @return The stemmed word
 	 */
-	private String removeSuffixes(String s) {
-		String[] split = s.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
-		String newS = "";
-		for (String word : split) {
-			// If only this were functional :(
-			boolean matchedSuffix = false;
-			for (String suffix : DEFAULT_SUFFIXES) {
-				if (word.endsWith(suffix)) {
-					newS += word.substring(0, word.lastIndexOf(suffix)) + " ";
-					matchedSuffix = true;
-					break;
-				}
-			}
-			if (!matchedSuffix) {
-				newS += word + " ";
-			}
-		}
-		return newS.trim();
+	public String stem(String s) {
+		stemmer.setCurrent(s);
+		stemmer.stem();
+		return stemmer.getCurrent();
 	}
 
 }
