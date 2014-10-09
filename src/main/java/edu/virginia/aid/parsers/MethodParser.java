@@ -1,21 +1,26 @@
 package edu.virginia.aid.parsers;
 
-import edu.virginia.aid.MethodProcessor;
-import edu.virginia.aid.data.ClassInformation;
-import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.detectors.*;
-import edu.virginia.aid.visitors.ClassVisitor;
-import edu.virginia.aid.visitors.VariableUsageVisitor;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Comment;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import edu.virginia.aid.MethodProcessor;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.detectors.CommentDetector;
+import edu.virginia.aid.detectors.IdentifierDetector;
+import edu.virginia.aid.detectors.StemmingProcessor;
+import edu.virginia.aid.detectors.StoplistProcessor;
+import edu.virginia.aid.visitors.ClassVisitor;
 
 public abstract class MethodParser {
 
@@ -63,10 +68,39 @@ public abstract class MethodParser {
 		return fileData;
 	}
 
+	/**
+	 * Get the class information from the CompilationUnit
+	 * 
+	 * @param cu The compilation unit for this class
+	 * @param filepath The full path to the file containing this class
+	 * @param fileData The data from the file containing this class
+	 * @return Appropriate information for this class.
+	 */
     protected ClassInformation getClassInformation(CompilationUnit cu, String filepath, final String fileData) {
         ClassVisitor classVisitor = new ClassVisitor(filepath, fileData);
         cu.accept(classVisitor);
-        return classVisitor.getClassInformation();
+        ClassInformation classInformation = classVisitor.getClassInformation();
+
+        // After getting basic information, process comments.
+        processComments(cu, classInformation);
+
+        return classInformation;
+    }
+    
+    /**
+     * Processes the comments from the class information. Must be done here because we need the compilation unit.
+     * 
+     * @param cu The compilation unit for this class
+     * @param classInformation The modified class information with the comments added.
+     */
+    private void processComments(CompilationUnit cu, ClassInformation classInformation) {
+    	@SuppressWarnings("unchecked")
+		List<Comment> comments = (List<Comment>) cu.getCommentList();
+    	for (Comment comment : comments) {
+    		int startPos = comment.getStartPosition();
+    		int endPos = startPos + comment.getLength();
+            classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
+    	}
     }
 
 	/**
@@ -97,6 +131,7 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new StoplistProcessor());
                 // Run all detectors
                 MethodFeatures methodFeatures = methodProcessor.runDetectors();
+
                 methodFeaturesList.add(methodFeatures);
             }
         }
