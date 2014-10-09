@@ -24,15 +24,17 @@ public class TestClass {
 		String has = "ignore";
 		String running = "should be runn";
 		System.out.println("notInComments");
-		anotherMethod(notInComments);
+		anotherMethod(notInComments, notInComments);
 	}
 
 	/**
-	 * hello me
+	 * hello
 	 */
-	public static void anotherMethod(String hello) {
-		/* Some block comment */
+	public static void anotherMethod(String hello, String other) {
+		/* other stuff */
+		// me 
 		String me = hello;
-		System.out.println(me);
+		String stuff = "hi!";
+		System.out.println(me + other + stuff);
 	}
 }

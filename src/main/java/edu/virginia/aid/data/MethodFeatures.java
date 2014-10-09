@@ -168,8 +168,18 @@ public class MethodFeatures extends SourceElement {
      * @return The list of all comments associated with the method
      */
     public List<CommentInfo> getComments() {
-        return parentClass.getComments();
-        // TODO: Filter this!
+        List<CommentInfo> comments = parentClass.getComments();
+
+        // Process comments to only show ones for the current method.
+        List<CommentInfo> processedComments = new ArrayList<CommentInfo>();
+        for (CommentInfo commentInfo : comments) {
+        	if (commentInfo.getStartPos() >= this.getStartPos()
+        			&& commentInfo.getEndPos() <= this.getEndPos()) {
+        		processedComments.add(commentInfo);
+        	}
+        }
+        
+        return processedComments;
     }
 
     public Javadoc getJavadoc() {
@@ -187,7 +197,7 @@ public class MethodFeatures extends SourceElement {
      */
     public MethodDifferences getDifferences() {
         MethodDifferences differences = new MethodDifferences(methodName, parentClass.getClassName(), filepath);
-
+        
         for (String identifier : getIdentifierProcessedNames()) {
             boolean foundInComment = false;
             for (CommentInfo comment : getComments()) {
@@ -200,7 +210,7 @@ public class MethodFeatures extends SourceElement {
             if (javadocString.contains(identifier)) {
             	foundInComment = true;
             }
-
+            
             if (!foundInComment) {
                 differences.add(new Difference("", identifier, 1));
             }

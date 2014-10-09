@@ -57,34 +57,6 @@ public class ClassVisitor extends ASTVisitor {
             classInformation.addMethodDeclaration(methodDeclaration);
         }
 
-        return true;
+        return false;
     }
-
-	/**
-	 * Adds BlockComment to comments for class information and stops traversal of its subtree
-	 *
-	 * @param node
-	 * @return false
-	 */
-	@Override
-	public boolean visit(BlockComment node) {
-		int startPos = node.getStartPosition();
-		int endPos = startPos + node.getLength();
-        classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
-        return false;
-	}
-
-	/**
-	 * Adds LineComment to comments for class information and stops traversal of its subtree
-	 *
-	 * @param node
-	 * @return
-	 */
-	@Override
-	public boolean visit(LineComment node) {
-		int startPos = node.getStartPosition();
-		int endPos = startPos + node.getLength();
-        classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
-        return false;
-	}
 }

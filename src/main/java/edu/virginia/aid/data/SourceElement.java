@@ -31,6 +31,14 @@ public class SourceElement {
         return sourceContext;
     }
 
+    public int getStartPos() {
+    	return startPos;
+    }
+    
+    public int getEndPos() {
+    	return endPos;
+    }
+
     /**
      * Gets source text for the element based on its position information
      *
