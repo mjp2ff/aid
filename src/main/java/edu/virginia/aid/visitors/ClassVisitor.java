@@ -1,15 +1,12 @@
 package edu.virginia.aid.visitors;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.LineComment;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import edu.virginia.aid.data.ClassInformation;
-import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.IdentifierProperties;
 
 /**
