@@ -38,6 +38,10 @@ public class NameVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(MethodInvocation node) {
+        if (node.getExpression() != null) {
+            node.getExpression().accept(this);
+        }
+
         for(Object argument : node.arguments()) {
             if (argument instanceof Expression) {
                 ((Expression) argument).accept(this);

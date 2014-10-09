@@ -196,7 +196,10 @@ public class MethodFeatures extends SourceElement {
     public MethodDifferences getDifferences() {
         MethodDifferences differences = new MethodDifferences(methodName, parentClass.getClassName(), filepath);
 
-        for (String identifier : getIdentifierProcessedNames()) {
+        for (IdentifierProperties field : fields) {
+
+            String identifier = field.getProcessedName();
+
             boolean foundInComment = false;
             for (CommentInfo comment : comments) {
                 if (comment.getCommentText().contains(identifier)) {
@@ -205,7 +208,26 @@ public class MethodFeatures extends SourceElement {
             }
 
             if (!foundInComment) {
-                differences.add(new Difference("", identifier, 1));
+                differences.add(new Difference("", identifier, field.getReads() + (2 * field.getWrites())));
+            }
+        }
+
+        for (IdentifierProperties parameter : parameters) {
+
+            String identifier = parameter.getProcessedName();
+
+            boolean foundInComment = false;
+            for (CommentInfo comment : comments) {
+                if (comment.getCommentText().contains(identifier)) {
+                    foundInComment = true;
+                }
+            }
+
+            if (!foundInComment) {
+                int differenceScore = (2 * parameter.getReads()) + (4 * parameter.getWrites());
+                if (differenceScore > 0) {
+                    differences.add(new Difference("", identifier, differenceScore));
+                }
             }
         }
 

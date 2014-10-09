@@ -12,7 +12,7 @@ public class TestClass {
 	 */
 	public static void main(String[] args) {
 		// Here's another comment too.
-		String tested = "should say test, and match comment";
+		String tested = args.toString();
 		String testing = "also OK";
 
 		String nest = "not mentioned";
