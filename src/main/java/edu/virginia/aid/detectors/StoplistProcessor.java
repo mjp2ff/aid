@@ -40,7 +40,7 @@ public class StoplistProcessor implements FeatureDetector {
 	@Override
 	public void process(MethodDeclaration method, MethodFeatures features) {
 
-		// Handle Javadoc from features first.
+		// TODO: Handle Javadoc from features first.
 		// String newJavadocComment = this.checkStoplist(features.getJavadoc().getComment());
 		// features.getJavadoc().setComment(newJavadocComment);
 
