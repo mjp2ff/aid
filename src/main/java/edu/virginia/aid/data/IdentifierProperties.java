@@ -30,7 +30,7 @@ public class IdentifierProperties extends SourceElement {
 	public IdentifierProperties(String name, int startPos, int endPos, final String sourceContext) {
         super(startPos, endPos, sourceContext);
 
-		this.name = name;
+        this.setName(name);
 		this.type = null;
 		this.context = null;
 		this.hasBeenProcessed = false;
@@ -43,7 +43,7 @@ public class IdentifierProperties extends SourceElement {
 	public IdentifierProperties(String name, String type, IdentifierContext context, int startPos, int endPos, final String sourceContext) {
         super(startPos, endPos, sourceContext);
 
-		this.name = name;
+        this.setName(name);
 		this.type = type;
 		this.context = context;
 		this.hasBeenProcessed = false;
@@ -80,7 +80,7 @@ public class IdentifierProperties extends SourceElement {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = splitCamelCase(name);
 	}
 
 	public void setProcessedName(String processedName) {
@@ -138,4 +138,20 @@ public class IdentifierProperties extends SourceElement {
 	public String toString() {
 		return name;
 	}
+
+    // TODO: Move this method to somewhere it belongs.
+    /**
+     * Helper method to replace camel casing with spaces between words. Regex found from NPE on StackOverflow.
+     * 
+     * @param s String in camelCase form
+     * @return String with spaces instead of camelCase
+     */
+    private String splitCamelCase(String s) {
+    	String[] wordSplit = "camelValue".split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+    	String newWord = "";
+    	for (String w : wordSplit) {
+    		newWord += w + " ";
+        }
+    	return newWord.trim();
+    }
 }
