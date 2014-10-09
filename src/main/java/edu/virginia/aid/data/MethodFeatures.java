@@ -207,6 +207,7 @@ public class MethodFeatures extends SourceElement {
             for (CommentInfo comment : getComments()) {
                 if (comment.getCommentText().contains(identifier)) {
                     foundInComment = true;
+                    break;
                 }
             }
 
@@ -222,7 +223,9 @@ public class MethodFeatures extends SourceElement {
             boolean foundInComment = false;
             for (CommentInfo comment : getComments()) {
                 if (comment.getCommentText().contains(identifier)) {
+                	System.out.println("Found " + identifier);
                     foundInComment = true;
+                    break;
                 }
             }
             

@@ -1,6 +1,5 @@
 package edu.virginia.aid;
 
-@SuppressWarnings("unused")
 public class TestClass {
 
 	public String field1;
@@ -26,7 +25,7 @@ public class TestClass {
 		System.out.println(testing);		// Should be stemmed.
 		System.out.println(nest);			// OK.
 		System.out.println(nested);			// Should be stemmed.
-		System.out.println(camelCase);	// Should be camelCase split.
+		System.out.println(camelCase);		// Should be split.
 		System.out.println(and);			// Should be stop listed.
 		System.out.println(has);			// Should be stop listed.
 		System.out.println(running);		// Should be stemmed.
