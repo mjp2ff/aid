@@ -96,6 +96,19 @@ public class IdentifierProperties extends SourceElement {
 		return this.context;
 	}
 
+    public String getContextString() {
+        switch (this.context) {
+            case FIELD:
+                return "field";
+            case FORMAL_PARAMETER:
+                return "parameter";
+            case LOCAL_VARIABLE:
+                return "variable";
+            default:
+                return "unknown context";
+        }
+    }
+
 	public String getName() {
 		return this.name;
 	}

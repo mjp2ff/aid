@@ -1,8 +1,6 @@
 package edu.virginia.aid.data;
 
-import edu.virginia.aid.comparison.Difference;
-import edu.virginia.aid.comparison.DifferenceWeights;
-import edu.virginia.aid.comparison.MethodDifferences;
+import edu.virginia.aid.comparison.*;
 
 import java.util.*;
 
@@ -227,7 +225,10 @@ public class MethodFeatures extends SourceElement {
             }
 
             if (!foundInComment) {
-                differences.add(new Difference("", identifier, (DifferenceWeights.FIELD_READ * field.getReads()) + (DifferenceWeights.FIELD_WRITE * field.getWrites())));
+                int differenceScore = (DifferenceWeights.FIELD_READ * field.getReads()) + (DifferenceWeights.FIELD_WRITE * field.getWrites());
+                if (differenceScore > 0) {
+                    differences.add(new MissingIdentifierDifference(field, differenceScore));
+                }
             }
         }
 
@@ -251,7 +252,7 @@ public class MethodFeatures extends SourceElement {
             if (!foundInComment) {
                 int differenceScore = (DifferenceWeights.PARAMETER_READ * parameter.getReads()) + (DifferenceWeights.PARAMETER_WRITE * parameter.getWrites());
                 if (differenceScore > 0) {
-                    differences.add(new Difference("", identifier, differenceScore));
+                    differences.add(new MissingIdentifierDifference(parameter, differenceScore));
                 }
             }
         }

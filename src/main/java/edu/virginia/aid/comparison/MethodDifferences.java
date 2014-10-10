@@ -3,6 +3,7 @@ package edu.virginia.aid.comparison;
 import edu.virginia.aid.data.MethodFeatures;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Wrapper for tracking differences between a method and it's comments
@@ -26,7 +27,7 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
     public int getDifferenceScore() {
         int differenceScore = 0;
         for (Difference difference : this) {
-            differenceScore += difference.getDifference();
+            differenceScore += difference.getDifferenceScore();
         }
 
         return differenceScore;
@@ -46,8 +47,9 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
     @Override
     public String toString() {
         String result = "Total difference score for " + method.getParentClass().getClassName() + "." + method.getMethodSignature() + " (" + method.getFilepath() + "): " + getDifferenceScore() + "\n";
+        Collections.sort(this);
         for (Difference difference : this) {
-            result += "\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead\n";
+            result += "\t" + difference.toString() + "\n";
         }
         return result;
     }
