@@ -56,7 +56,7 @@ public class IdentifierDetector implements FeatureDetector {
         }
 
         // Finds corresponding fields for all field usages, adding the discovered fields to MethodFeatures
-        for (String fieldName : declarationVisitor.getFieldUsages()) {
+        for (String fieldName : usageVisitor.getFieldNames()) {
             IdentifierProperties field = features.getParentClass().getFieldByName(fieldName);
             if (field != null) {
                 features.addIdentifier(new IdentifierProperties(field));
@@ -64,7 +64,7 @@ public class IdentifierDetector implements FeatureDetector {
         }
 
         // Adds variable read information to the appropriate variables
-        Map<String, Integer> reads = usageVisitor.getReads();
+        Map<String, Integer> reads = usageVisitor.getIdentifierReads();
         for (String name : reads.keySet()) {
             IdentifierProperties variable = getClosestVariable(name, features);
             if (variable != null) {
@@ -73,11 +73,32 @@ public class IdentifierDetector implements FeatureDetector {
         }
 
         // Adds variable write information to the appropriate variables
-        Map<String, Integer> writes = usageVisitor.getWrites();
+        Map<String, Integer> writes = usageVisitor.getIdentifierWrites();
         for (String name : writes.keySet()) {
             IdentifierProperties variable = getClosestVariable(name, features);
             if (variable != null) {
                 variable.addWrites(writes.get(name));
+            }
+        }
+
+        // Adds field read information to the appropriate field (if present)
+        Map<String, Integer> fieldReads = usageVisitor.getFieldReads();
+        for (String name : fieldReads.keySet()) {
+            for (IdentifierProperties field : features.getFields()) {
+                if (field.getName().equals(name)) {
+                    field.addReads(fieldReads.get(name));
+                    break;
+                }
+            }
+        }
+
+        // Adds field write information to the appropriate field (if present)
+        Map<String, Integer> fieldWrites = usageVisitor.getFieldWrites();
+        for (String name : fieldWrites.keySet()) {
+            for (IdentifierProperties field : features.getFields()) {
+                if (field.getName().equals(name)) {
+                    field.addWrites(fieldWrites.get(name));
+                }
             }
         }
     }

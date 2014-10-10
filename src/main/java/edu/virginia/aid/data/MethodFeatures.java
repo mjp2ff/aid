@@ -225,9 +225,9 @@ public class MethodFeatures extends SourceElement {
                     foundInComment = true;
                 }
             }
-            
-            String javadocString = getJavadoc().toString();
-            if (javadocString.contains(identifier)) {
+
+            Javadoc javadocElem = getJavadoc();
+            if (javadocElem != null && javadocElem.toString().contains(identifier)) {
             	foundInComment = true;
             }
             

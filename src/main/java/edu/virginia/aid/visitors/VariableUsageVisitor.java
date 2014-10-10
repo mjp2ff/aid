@@ -12,25 +12,50 @@ import java.util.*;
  */
 public class VariableUsageVisitor extends NameVisitor {
 
-    private Map<String, Integer> writes = new HashMap<>();
-    private Map<String, Integer> reads = new HashMap<>();
+    private Map<String, Integer> identifierWrites = new HashMap<>();
+    private Map<String, Integer> identifierReads = new HashMap<>();
+    private Map<String, Integer> fieldWrites = new HashMap<>();
+    private Map<String, Integer> fieldReads = new HashMap<>();
 
     private boolean inAssignment = false;
 
-    public Map<String, Integer> getWrites() {
-        return writes;
+    public Map<String, Integer> getIdentifierWrites() {
+        return identifierWrites;
     }
 
-    public Map<String, Integer> getReads() {
+    public Map<String, Integer> getIdentifierReads() {
         Map<String, Integer> totalReads = new HashMap<>();
         Set<String> allNames = new HashSet<>();
-        allNames.addAll(reads.keySet());
-        allNames.addAll(names);
+        allNames.addAll(identifierReads.keySet());
+        allNames.addAll(identifiers);
         for (String name : allNames) {
-            totalReads.put(name, (reads.containsKey(name) ? reads.get(name) : 0) + Collections.frequency(names, name));
+            totalReads.put(name, (identifierReads.containsKey(name) ? identifierReads.get(name) : 0) + Collections.frequency(identifiers, name));
         }
 
         return totalReads;
+    }
+
+    public Map<String, Integer> getFieldWrites() {
+        return fieldWrites;
+    }
+
+    public Map<String, Integer> getFieldReads() {
+        Map<String, Integer> totalReads = new HashMap<>();
+        Set<String> allNames = new HashSet<>();
+        allNames.addAll(fieldReads.keySet());
+        allNames.addAll(fields);
+        for (String name : allNames) {
+            totalReads.put(name, (fieldReads.containsKey(name) ? fieldReads.get(name) : 0) + Collections.frequency(fields, name));
+        }
+
+        return totalReads;
+    }
+
+    public Set<String> getFieldNames() {
+        Set<String> names = new HashSet<>();
+        names.addAll(getFieldReads().keySet());
+        names.addAll(fieldWrites.keySet());
+        return names;
     }
 
     @Override
@@ -39,10 +64,17 @@ public class VariableUsageVisitor extends NameVisitor {
 
         NameVisitor visitor = new NameVisitor();
         lhs.accept(visitor);
-        for (String name : visitor.getNames()) {
-            incrementValue(writes, name);
+        for (String name : visitor.getIdentifiers()) {
+            incrementValue(identifierWrites, name);
             if (inAssignment) {
-                incrementValue(reads, name);
+                incrementValue(identifierReads, name);
+            }
+        }
+
+        for (String name : visitor.getFields()) {
+            incrementValue(fieldWrites, name);
+            if (inAssignment) {
+                incrementValue(fieldReads, name);
             }
         }
 
@@ -51,8 +83,12 @@ public class VariableUsageVisitor extends NameVisitor {
         if (!inAssignment) {
             visitor.clearNames();
             rhs.accept(visitor);
-            for (String name : visitor.getNames()) {
-                incrementValue(reads, name);
+            for (String name : visitor.getIdentifiers()) {
+                incrementValue(identifierReads, name);
+            }
+
+            for (String name : visitor.getFields()) {
+                incrementValue(fieldReads, name);
             }
         }
 

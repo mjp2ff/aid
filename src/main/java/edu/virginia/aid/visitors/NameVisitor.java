@@ -7,14 +7,26 @@ import java.util.List;
 
 public class NameVisitor extends ASTVisitor {
 
-    List<String> names = new ArrayList<>();
+    List<String> identifiers = new ArrayList<>();
+    List<String> fields = new ArrayList<>();
+    List<String> methods = new ArrayList<>();
 
-    public List<String> getNames() {
-        return names;
+    public List<String> getIdentifiers() {
+        return identifiers;
+    }
+
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public List<String> getMethods() {
+        return methods;
     }
 
     public void clearNames() {
-        names = new ArrayList<>();
+        identifiers = new ArrayList<>();
+        fields = new ArrayList<>();
+        methods = new ArrayList<>();
     }
 
     /**
@@ -25,12 +37,12 @@ public class NameVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(SimpleName node) {
-        names.add(node.getIdentifier());
+        identifiers.add(node.getIdentifier());
         return false;
     }
 
     /**
-     * Process method invocations, ignoring the method name and recursively
+     * Process method invocations, processing the method name and recursively
      * processing the arguments to the method.
      *
      * @param node Method invocation ast node
@@ -38,6 +50,9 @@ public class NameVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(MethodInvocation node) {
+
+        methods.add(node.getName().getIdentifier());
+
         if (node.getExpression() != null) {
             node.getExpression().accept(this);
         }
@@ -51,4 +66,15 @@ public class NameVisitor extends ASTVisitor {
         return false;
     }
 
+    /**
+     * Process field accesses, ignoring any internal names
+     *
+     * @param node FieldAccess ast node
+     * @return false
+     */
+    @Override
+    public boolean visit(FieldAccess node) {
+        fields.add(node.getName().getIdentifier());
+        return false;
+    }
 }
