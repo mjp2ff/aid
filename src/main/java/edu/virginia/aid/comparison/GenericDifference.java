@@ -2,14 +2,12 @@ package edu.virginia.aid.comparison;
 
 public class GenericDifference extends Difference {
 
-    private String commentContent;
-    private String methodContent;
+    private String differenceMessage;
 
-    public GenericDifference(String commentContent, String methodContent, int differenceScore) {
+    public GenericDifference(String differenceMessage, int differenceScore) {
         super(differenceScore);
 
-        this.commentContent = commentContent;
-        this.methodContent = methodContent;
+        this.differenceMessage = differenceMessage;
     }
 
     /**
@@ -19,6 +17,6 @@ public class GenericDifference extends Difference {
      */
     @Override
     public String toString() {
-        return "Expected '" + methodContent + "' in comment but got '" + commentContent + "' instead";
+        return differenceMessage;
     }
 }

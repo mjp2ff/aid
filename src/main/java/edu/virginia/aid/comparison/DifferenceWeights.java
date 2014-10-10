@@ -11,4 +11,7 @@ public final class DifferenceWeights {
     public static final int FIELD_READ = 2;
     public static final int FIELD_WRITE = 4;
 
+    // Concepts
+    public static final int METHOD_NAME = 5;
+
 }

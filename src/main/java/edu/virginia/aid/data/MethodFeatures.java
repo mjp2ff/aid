@@ -17,6 +17,7 @@ public class MethodFeatures extends SourceElement {
     private String filepath;
     private ClassInformation parentClass;
     private String methodName;
+    private String processedMethodName;
     private Map<String, Boolean> booleanFeatures;
     private List<IdentifierProperties> parameters;
     private List<IdentifierProperties> localVariables;
@@ -34,6 +35,8 @@ public class MethodFeatures extends SourceElement {
         this.localVariables = new ArrayList<>();
         this.fields = new ArrayList<>();
         this.javadoc = null;
+
+        this.processedMethodName = methodName;
     }
 
     /**
@@ -43,6 +46,14 @@ public class MethodFeatures extends SourceElement {
      */
     public String getMethodName() {
         return this.methodName;
+    }
+
+    public String getProcessedMethodName() {
+        return processedMethodName;
+    }
+
+    public void setProcessedMethodName(String processedMethodName) {
+        this.processedMethodName = processedMethodName;
     }
 
     public String getFilepath() {
@@ -211,6 +222,21 @@ public class MethodFeatures extends SourceElement {
      */
     public MethodDifferences getDifferences() {
         MethodDifferences differences = new MethodDifferences(this);
+
+        // Process the method
+        {
+            boolean foundInComment = false;
+            for (CommentInfo comment : getComments()) {
+                if (comment.getCommentText().contains(processedMethodName)) {
+                    foundInComment = true;
+                    break;
+                }
+            }
+
+            if (!foundInComment) {
+                differences.add(new GenericDifference("The method name (" + methodName + ") is not discussed in the comments", DifferenceWeights.METHOD_NAME));
+            }
+        }
 
         for (IdentifierProperties field : fields) {
 

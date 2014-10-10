@@ -51,6 +51,9 @@ public class StoplistProcessor implements FeatureDetector {
 			c.setCommentText(newCommentText);
 		}
 
+        // Process Method Name
+        features.setProcessedMethodName(features.getProcessedMethodName());
+
 		// Finally, handle identifiers (parameters, local variables, fields).
 		for (IdentifierProperties parameter : features.getParameters()) {
 			parameter.setProcessedName(this.checkStoplist(parameter.getProcessedName()));
