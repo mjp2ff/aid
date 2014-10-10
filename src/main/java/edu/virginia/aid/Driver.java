@@ -137,64 +137,44 @@ public class Driver {
 
             // Project mode
             if (mode.equalsIgnoreCase("p")) {
-                System.out.print("Provide the path to the project to analyze (q to exit): ");
+                System.out.print("Provide the path to the project to analyze: ");
                 String projectPath = keyboard.nextLine();
 
-                if (!projectPath.equalsIgnoreCase("q")) {
+                MethodParser parser = new AntProjectMethodParser(projectPath);
 
-                    MethodParser parser = new AntProjectMethodParser(projectPath);
+                List<MethodFeatures> methods = parser.parseMethods();
 
-                    List<MethodFeatures> methods = parser.parseMethods();
+                String analysisMode = promptUser("Would you like to analyze methods from a class or the entire project? (c/p): ", Pattern.compile("c|p"), keyboard);
 
-                    String analysisMode = promptUser("Would you like to analyze methods from a class, file or the entire project? (c/f/p): ", Pattern.compile("c|f|p"), keyboard);
+                if (analysisMode.equalsIgnoreCase("c")) {
+                    System.out.print("Please specify class name: ");
+                    String className = keyboard.nextLine();
 
-                    if (analysisMode.equalsIgnoreCase("c")) {
-                        System.out.print("Please specify class name: ");
-                        String className = keyboard.nextLine();
-
-                        List<MethodFeatures> classMethods = new ArrayList<>();
-                        for (MethodFeatures method : methods) {
-                            if (method.getParentClass().getClassName().equals(className)) {
-                                classMethods.add(method);
-                            }
+                    List<MethodFeatures> classMethods = new ArrayList<>();
+                    for (MethodFeatures method : methods) {
+                        if (method.getParentClass().getClassName().equals(className)) {
+                            classMethods.add(method);
                         }
-
-                        displayDifferences(compareAndRank(classMethods), 10, keyboard);
-                    } else if (analysisMode.equalsIgnoreCase("f")) {
-                        System.out.print("Please specify the file path: ");
-                        String filePath = keyboard.nextLine();
-
-                        List<MethodFeatures> fileMethods = new ArrayList<>();
-                        for (MethodFeatures method : methods) {
-                            if (method.getFilepath().equals(filePath)) {
-                                fileMethods.add(method);
-                            }
-                        }
-
-                        displayDifferences(compareAndRank(fileMethods), 10, keyboard);
-                    } else if (analysisMode.equalsIgnoreCase("p")) {
-                        displayDifferences(compareAndRank(methods), 10, keyboard);
                     }
 
-                    System.out.println();
+                    displayDifferences(compareAndRank(classMethods), 10, keyboard);
+                } else if (analysisMode.equalsIgnoreCase("p")) {
+                    displayDifferences(compareAndRank(methods), 10, keyboard);
                 }
+
+                System.out.println();
             } else if (mode.equalsIgnoreCase("f")) {
                 String filePath;
-                do {
-                    System.out.print("Provide the path to the file to analyze (q to exit): ");
-                    filePath = keyboard.nextLine();
 
-                    if (!filePath.equalsIgnoreCase("q")) {
+                System.out.print("Provide the path to the file to analyze: ");
+                filePath = keyboard.nextLine();
 
-                        MethodParser parser = new FileMethodParser(filePath);
+                MethodParser parser = new FileMethodParser(filePath);
 
-                        List<MethodFeatures> methods = parser.parseMethods();
+                List<MethodFeatures> methods = parser.parseMethods();
 
-                        List<MethodDifferences> differences = compareAndRank(methods);
-                        displayDifferences(differences, 10, keyboard);
-                    }
-
-                } while (!filePath.equalsIgnoreCase("q"));
+                List<MethodDifferences> differences = compareAndRank(methods);
+                displayDifferences(differences, 10, keyboard);
             }
         }
     }
