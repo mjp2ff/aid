@@ -1,5 +1,7 @@
 package edu.virginia.aid.comparison;
 
+import edu.virginia.aid.data.MethodFeatures;
+
 import java.util.ArrayList;
 
 /**
@@ -10,14 +12,10 @@ import java.util.ArrayList;
 @SuppressWarnings("serial")
 public class MethodDifferences extends ArrayList<Difference> implements Comparable<MethodDifferences> {
 
-    private String methodName;
-    private String className;
-    private String filepath;
+    private MethodFeatures method;
 
-    public MethodDifferences(String methodName, String className, String filepath) {
-        this.methodName = methodName;
-        this.className = className;
-        this.filepath = filepath;
+    public MethodDifferences(MethodFeatures method) {
+        this.method = method;
     }
 
     /**
@@ -45,25 +43,9 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
         return m.getDifferenceScore() - this.getDifferenceScore();
     }
 
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public String getFilepath() {
-        return filepath;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
     @Override
     public String toString() {
-        String result = "Total difference score for " + className + "." + methodName + " (" + filepath + "): " + getDifferenceScore() + "\n";
+        String result = "Total difference score for " + method.getParentClass().getClassName() + "." + method.getMethodSignature() + " (" + method.getFilepath() + "): " + getDifferenceScore() + "\n";
         for (Difference difference : this) {
             result += "\tExpected '" + difference.getMethodContent() + "' in comment but got '" + difference.getCommentContent() + "' instead\n";
         }

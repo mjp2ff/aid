@@ -6,6 +6,7 @@ import edu.virginia.aid.comparison.MethodDifferences;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.Javadoc;
 
 /**
@@ -132,6 +133,20 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
+     * Creates string for method signature
+     *
+     * @return The string representation of the method signature
+     */
+    public String getMethodSignature() {
+        String[] parameterNames = new String[parameters.size()];
+        for (int i = 0; i < parameters.size(); i++) {
+            parameterNames[i] = parameters.get(i).getName();
+        }
+
+        return methodName + "(" + StringUtils.join(parameterNames, ", ") + ")";
+    }
+
+    /**
      * Finds and returns all identifier processed names in this method
      *
      * @return Set of all identifier processed names in the method
@@ -197,7 +212,7 @@ public class MethodFeatures extends SourceElement {
      * @return The list of differences between the comments and the method
      */
     public MethodDifferences getDifferences() {
-        MethodDifferences differences = new MethodDifferences(methodName, parentClass.getClassName(), filepath);
+        MethodDifferences differences = new MethodDifferences(this);
 
         for (IdentifierProperties field : fields) {
 
@@ -246,7 +261,7 @@ public class MethodFeatures extends SourceElement {
 
     @Override
     public String toString() {
-        return "Method " + methodName + ":\n" +
+        return "Method " + getMethodSignature() + ":\n" +
                 "\tParameters: " + parameters + "\n" +
                 "\tLocal Variables: " + localVariables + "\n" +
                 "\tFields: " + fields + "\n";

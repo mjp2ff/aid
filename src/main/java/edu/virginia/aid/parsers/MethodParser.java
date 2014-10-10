@@ -94,13 +94,15 @@ public abstract class MethodParser {
      * @param classInformation The modified class information with the comments added.
      */
     private void processComments(CompilationUnit cu, ClassInformation classInformation) {
-    	@SuppressWarnings("unchecked")
-		List<Comment> comments = (List<Comment>) cu.getCommentList();
-    	for (Comment comment : comments) {
-    		int startPos = comment.getStartPosition();
-    		int endPos = startPos + comment.getLength();
-            classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
-    	}
+        if (classInformation != null) {
+            @SuppressWarnings("unchecked")
+            List<Comment> comments = (List<Comment>) cu.getCommentList();
+            for (Comment comment : comments) {
+                int startPos = comment.getStartPosition();
+                int endPos = startPos + comment.getLength();
+                classInformation.addComment(new CommentInfo(startPos, endPos, classInformation.getSourceContext()));
+            }
+        }
     }
 
 	/**
