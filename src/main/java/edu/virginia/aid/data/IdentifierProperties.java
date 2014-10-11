@@ -27,7 +27,7 @@ public class IdentifierProperties extends SourceElement {
 	 */
 	private String processedName;
 
-	public IdentifierProperties(String name, int startPos, int endPos, final String sourceContext) {
+	public IdentifierProperties(String name, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.setName(name);
@@ -40,7 +40,7 @@ public class IdentifierProperties extends SourceElement {
         this.writes = 0;
 	}
 
-	public IdentifierProperties(String name, String type, IdentifierContext context, int startPos, int endPos, final String sourceContext) {
+	public IdentifierProperties(String name, String type, IdentifierContext context, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.setName(name);

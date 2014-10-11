@@ -9,7 +9,7 @@ public class CommentInfo extends SourceElement {
 
     private String commentText;
 
-    public CommentInfo(int startPos, int endPos, final String sourceContext) {
+    public CommentInfo(int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.commentText = getElementText();

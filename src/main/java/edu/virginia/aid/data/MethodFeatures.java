@@ -24,7 +24,7 @@ public class MethodFeatures extends SourceElement {
     private List<IdentifierProperties> fields;
     private Javadoc javadoc;
 
-    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final String sourceContext) {
+    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.methodName = methodName;

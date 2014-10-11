@@ -1,5 +1,6 @@
 package edu.virginia.aid.visitors;
 
+import edu.virginia.aid.data.SourceContext;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -34,14 +35,16 @@ public class ClassVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(TypeDeclaration node) {
-        classInformation = new ClassInformation(node.getName().getIdentifier(), this.filepath, node.getStartPosition(), node.getStartPosition() + node.getLength(), fileData);
+        SourceContext sourceContext = new SourceContext(fileData);
+
+        classInformation = new ClassInformation(node.getName().getIdentifier(), this.filepath, node.getStartPosition(), node.getStartPosition() + node.getLength(), sourceContext);
 
         // Extract field information
         for (FieldDeclaration field : node.getFields()) {
             for (Object o : field.fragments()) {
                 if (o instanceof VariableDeclarationFragment) {
                     VariableDeclarationFragment variable = (VariableDeclarationFragment) o;
-                    IdentifierProperties identifier = new IdentifierProperties(variable.getName().getIdentifier(), variable.getStartPosition(), variable.getStartPosition() + variable.getLength(), fileData);
+                    IdentifierProperties identifier = new IdentifierProperties(variable.getName().getIdentifier(), variable.getStartPosition(), variable.getStartPosition() + variable.getLength(), sourceContext);
                     identifier.setContext(IdentifierProperties.IdentifierContext.FIELD);
                     classInformation.addField(identifier);
                     break;

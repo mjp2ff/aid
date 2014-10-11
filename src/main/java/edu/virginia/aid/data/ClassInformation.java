@@ -28,7 +28,7 @@ public class ClassInformation extends SourceElement {
     // Comments
     private List<CommentInfo> comments;
 
-    public ClassInformation(String className, String filepath, int startPos, int endPos, final String sourceContext) {
+    public ClassInformation(String className, String filepath, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.className = className;

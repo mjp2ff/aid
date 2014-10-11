@@ -8,7 +8,7 @@ package edu.virginia.aid.data;
 public class SourceElement {
 
     // The source of the file that contains the element
-    private final String sourceContext;
+    private final SourceContext sourceContext;
 
     // Information about the location of the element in the source
     private int startPos;
@@ -21,13 +21,13 @@ public class SourceElement {
      * @param endPos The end position of the element in the source context
      * @param sourceContext The content of the file that contains the element
      */
-    public SourceElement(int startPos, int endPos, final String sourceContext) {
+    public SourceElement(int startPos, int endPos, final SourceContext sourceContext) {
         this.sourceContext = sourceContext;
         this.startPos = startPos;
         this.endPos = endPos;
     }
 
-    public String getSourceContext() {
+    public SourceContext getSourceContext() {
         return sourceContext;
     }
 
@@ -45,7 +45,16 @@ public class SourceElement {
      * @return The element's text
      */
     public String getElementText() {
-        return sourceContext.substring(startPos, endPos);
+        return sourceContext.getText().substring(startPos, endPos);
+    }
+
+    /**
+     * Finds the line number for the element's start
+     *
+     * @return The line number on which the element starts
+     */
+    public int getElementLineNumber() {
+        return sourceContext.getLine(startPos);
     }
 
     @Override
