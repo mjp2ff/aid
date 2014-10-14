@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.virginia.aid.detectors.*;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Comment;
@@ -16,10 +17,6 @@ import edu.virginia.aid.MethodProcessor;
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.detectors.CommentDetector;
-import edu.virginia.aid.detectors.IdentifierDetector;
-import edu.virginia.aid.detectors.StemmingProcessor;
-import edu.virginia.aid.detectors.StoplistProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
 
 public abstract class MethodParser {
@@ -127,10 +124,13 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new CommentDetector());
                 // Add detector to process methods
                 methodProcessor.addFeatureDetector(new IdentifierDetector());
+                // Add detector to process control flow
+                methodProcessor.addFeatureDetector(new ControlFlowDetector());
                 // Add detector to reduce words to stems.
                 methodProcessor.addFeatureDetector(new StemmingProcessor());
                 // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
                 methodProcessor.addFeatureDetector(new StoplistProcessor());
+
                 // Run all detectors
                 MethodFeatures methodFeatures = methodProcessor.runDetectors();
 

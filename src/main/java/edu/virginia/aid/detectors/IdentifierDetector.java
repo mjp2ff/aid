@@ -66,7 +66,7 @@ public class IdentifierDetector implements FeatureDetector {
         // Adds variable read information to the appropriate variables
         Map<String, Integer> reads = usageVisitor.getIdentifierReads();
         for (String name : reads.keySet()) {
-            IdentifierProperties variable = getClosestVariable(name, features);
+            IdentifierProperties variable = features.getClosestVariable(name);
             if (variable != null) {
                 variable.addReads(reads.get(name));
             }
@@ -75,7 +75,7 @@ public class IdentifierDetector implements FeatureDetector {
         // Adds variable write information to the appropriate variables
         Map<String, Integer> writes = usageVisitor.getIdentifierWrites();
         for (String name : writes.keySet()) {
-            IdentifierProperties variable = getClosestVariable(name, features);
+            IdentifierProperties variable = features.getClosestVariable(name);
             if (variable != null) {
                 variable.addWrites(writes.get(name));
             }
@@ -103,36 +103,4 @@ public class IdentifierDetector implements FeatureDetector {
         }
     }
 
-    /**
-     * Finds and returns the closest scoped variable with the given name
-     *
-     * @param name Name of the variable to return
-     * @param method The method to search for variables
-     * @return Closest scoped variable
-     */
-    private static IdentifierProperties getClosestVariable(String name, MethodFeatures method) {
-        // Search local variables
-        for (IdentifierProperties variable : method.getLocalVariables()) {
-            if (variable.getName().equals(name)) {
-                return variable;
-            }
-        }
-
-        // Search parameters
-        for (IdentifierProperties parameter : method.getParameters()) {
-            if (parameter.getName().equals(name)) {
-                return parameter;
-            }
-        }
-
-        // Search fields
-        for (IdentifierProperties field : method.getFields()) {
-            if (field.getName().equals(name)) {
-                return field;
-            }
-        }
-
-        // Return null if none found
-        return null;
-    }
 }

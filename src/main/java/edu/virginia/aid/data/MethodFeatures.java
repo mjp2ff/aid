@@ -23,6 +23,7 @@ public class MethodFeatures extends SourceElement {
     private List<IdentifierProperties> localVariables;
     private List<IdentifierProperties> fields;
     private Javadoc javadoc;
+    private ExpressionInfo returnValue;
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
@@ -35,6 +36,7 @@ public class MethodFeatures extends SourceElement {
         this.localVariables = new ArrayList<>();
         this.fields = new ArrayList<>();
         this.javadoc = null;
+        this.returnValue = null;
 
         this.processedMethodName = methodName;
     }
@@ -62,6 +64,14 @@ public class MethodFeatures extends SourceElement {
 
     public ClassInformation getParentClass() {
         return parentClass;
+    }
+
+    public ExpressionInfo getReturnValue() {
+        return returnValue;
+    }
+
+    public void setReturnValue(ExpressionInfo returnValue) {
+        this.returnValue = returnValue;
     }
 
     /**
@@ -213,6 +223,84 @@ public class MethodFeatures extends SourceElement {
 
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
+    }
+
+    /**
+     * Finds and returns the closest scoped variable with the given name
+     *
+     * @param name Name of the variable to return
+     * @return Closest scoped variable
+     */
+    public IdentifierProperties getClosestVariable(String name) {
+
+        // Search local variables
+        IdentifierProperties localVariable = getLocalVariable(name);
+        if (localVariable != null) {
+            return localVariable;
+        }
+
+        // Search parameters
+        IdentifierProperties parameter = getParameter(name);
+        if (parameter != null) {
+            return parameter;
+        }
+
+        // Search fields
+        IdentifierProperties field = getField(name);
+        if (field != null) {
+            return field;
+        }
+
+        // Return null if none found
+        return null;
+    }
+
+    /**
+     * Finds and returns the local variable with the given name, or null if none exists
+     *
+     * @param name Name of the variable to find
+     * @return Local variable with name or null if none exists
+     */
+    public IdentifierProperties getLocalVariable(String name) {
+        return searchIdentifierList(name, localVariables);
+    }
+
+    /**
+     * Finds and returns the parameter with the given name, or null if none exists
+     *
+     * @param name Name of the parameter to find
+     * @return Parameter with name or null if none exists
+     */
+    public IdentifierProperties getParameter(String name) {
+        return searchIdentifierList(name, parameters);
+    }
+
+    /**
+     * Finds and returns the field with the given name, or null if none exists
+     *
+     * @param name Name of the field to find
+     * @return Field with the name or null if none exists
+     */
+    public IdentifierProperties getField(String name) {
+        return searchIdentifierList(name, fields);
+    }
+
+    /**
+     * Private helper method which finds and returns an identifier from a list if
+     * its name matches the search name, or null if it is not found
+     *
+     * @param name The name of the variable to find
+     * @param list The list to search for the variable name
+     * @return The identifier with the given name or null if not found
+     */
+    private static IdentifierProperties searchIdentifierList(String name, List<IdentifierProperties> list) {
+        for (IdentifierProperties identifier : list) {
+            if (identifier.getName().equals(name)) {
+                return identifier;
+            }
+        }
+
+        return null;
     }
 
     /**
