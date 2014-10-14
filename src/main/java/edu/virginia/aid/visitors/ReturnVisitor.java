@@ -3,6 +3,7 @@ package edu.virginia.aid.visitors;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,8 +13,8 @@ import java.util.Map;
  */
 public class ReturnVisitor extends ASTVisitor {
 
-    public Map<String, Integer> identifierReads;
-    public Map<String, Integer> fieldReads;
+    public Map<String, Integer> identifierReads = new HashMap<>();
+    public Map<String, Integer> fieldReads = new HashMap<>();
 
     /**
      * Gets all identifier and field reads contained within a return statement
@@ -24,9 +25,11 @@ public class ReturnVisitor extends ASTVisitor {
     @Override
     public boolean visit(ReturnStatement node) {
         VariableUsageVisitor usageVisitor = new VariableUsageVisitor();
-        node.getExpression().accept(usageVisitor);
-        identifierReads = usageVisitor.getIdentifierReads();
-        fieldReads = usageVisitor.getFieldReads();
+        if (node.getExpression() != null) {
+            node.getExpression().accept(usageVisitor);
+            identifierReads = usageVisitor.getIdentifierReads();
+            fieldReads = usageVisitor.getFieldReads();
+        }
         return false;
     }
 
