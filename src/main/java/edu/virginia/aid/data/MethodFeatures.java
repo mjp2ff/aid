@@ -314,11 +314,18 @@ public class MethodFeatures extends SourceElement {
         // Process the method
         {
             boolean foundInComment = false;
+            // Check comments for method name
             for (CommentInfo comment : getComments()) {
                 if (comment.getCommentText().contains(processedMethodName)) {
                     foundInComment = true;
                     break;
                 }
+            }
+            
+            // Check javadoc for method name
+            Javadoc javadocElem = getJavadoc();
+            if (javadocElem != null && javadocElem.toString().contains(processedMethodName)) {
+            	foundInComment = true;
             }
 
             if (!foundInComment) {
@@ -331,6 +338,7 @@ public class MethodFeatures extends SourceElement {
             String identifier = field.getProcessedName();
 
             boolean foundInComment = false;
+            // Check comments for field
             for (CommentInfo comment : getComments()) {
                 if (comment.getCommentText().contains(identifier)) {
                     foundInComment = true;
@@ -338,6 +346,12 @@ public class MethodFeatures extends SourceElement {
                 }
             }
 
+            // Check javadoc for method name
+            Javadoc javadocElem = getJavadoc();
+            if (javadocElem != null && javadocElem.toString().contains(identifier)) {
+            	foundInComment = true;
+            }
+            
             if (!foundInComment) {
                 int differenceScore = (DifferenceWeights.FIELD_READ * field.getReads()) + (DifferenceWeights.FIELD_WRITE * field.getWrites());
                 if (differenceScore > 0) {
@@ -351,6 +365,7 @@ public class MethodFeatures extends SourceElement {
             String identifier = parameter.getProcessedName();
 
             boolean foundInComment = false;
+            // Check comments for parameter
             for (CommentInfo comment : getComments()) {
                 if (comment.getCommentText().contains(identifier)) {
                     foundInComment = true;
@@ -358,6 +373,7 @@ public class MethodFeatures extends SourceElement {
                 }
             }
 
+            // Check javadoc for parameter
             Javadoc javadocElem = getJavadoc();
             if (javadocElem != null && javadocElem.toString().contains(identifier)) {
             	foundInComment = true;
