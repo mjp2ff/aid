@@ -1,31 +1,41 @@
 package edu.virginia.aid.visitors;
 
+import edu.virginia.aid.data.*;
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NameVisitor extends ASTVisitor {
 
-    List<String> identifiers = new ArrayList<>();
-    List<String> fields = new ArrayList<>();
-    List<String> methods = new ArrayList<>();
+    List<IdentifierName> identifiers = new ArrayList<>();
+    List<MethodInvocationProperties> methods = new ArrayList<>();
 
-    public List<String> getIdentifiers() {
+    MethodFeatures methodFeatures;
+    boolean writing;
+
+    /**
+     * Creates a visitor with the method and context described below
+     *
+     * @param methodFeatures The containing method
+     * @param writing Whether or not the scope is the lhs of an assignment
+     */
+    public NameVisitor(MethodFeatures methodFeatures, boolean writing) {
+        this.methodFeatures = methodFeatures;
+        this.writing = writing;
+    }
+
+    public List<IdentifierName> getIdentifiers() {
         return identifiers;
     }
 
-    public List<String> getFields() {
-        return fields;
-    }
-
-    public List<String> getMethods() {
+    public List<MethodInvocationProperties> getMethods() {
         return methods;
     }
 
     public void clearNames() {
         identifiers = new ArrayList<>();
-        fields = new ArrayList<>();
         methods = new ArrayList<>();
     }
 
@@ -37,7 +47,13 @@ public class NameVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(SimpleName node) {
-        identifiers.add(node.getIdentifier());
+        identifiers.add(new IdentifierName(node.getIdentifier(),
+                                            IdentifierType.VARIABLE,
+                                            IdentifierScope.LOCAL,
+                                            (writing ? IdentifierUse.WRITE : IdentifierUse.READ),
+                                            node.getStartPosition(),
+                                            node.getStartPosition() + node.getLength(),
+                                            methodFeatures.getSourceContext()));
         return false;
     }
 
@@ -51,7 +67,8 @@ public class NameVisitor extends ASTVisitor {
     @Override
     public boolean visit(MethodInvocation node) {
 
-        methods.add(node.getName().getIdentifier());
+        MethodInvocationProperties methodInvocationProperties = new MethodInvocationProperties(node.getName().getIdentifier(), node.getStartPosition(),
+                node.getLength() + node.getStartPosition(), methodFeatures.getSourceContext());
 
         if (node.getExpression() != null) {
             node.getExpression().accept(this);
@@ -59,7 +76,14 @@ public class NameVisitor extends ASTVisitor {
 
         for(Object argument : node.arguments()) {
             if (argument instanceof Expression) {
-                ((Expression) argument).accept(this);
+                NameVisitor nameVisitor = new NameVisitor(methodFeatures, writing);
+                ((Expression) argument).accept(nameVisitor);
+
+                methodInvocationProperties.addArguments(nameVisitor.getIdentifiers());
+
+                // Update our lists with information from parameters
+                identifiers.addAll(nameVisitor.getIdentifiers());
+                methods.addAll(nameVisitor.getMethods());
             }
         }
 
@@ -74,7 +98,13 @@ public class NameVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(FieldAccess node) {
-        fields.add(node.getName().getIdentifier());
+        identifiers.add(new IdentifierName(node.getName().getIdentifier(),
+                IdentifierType.VARIABLE,
+                IdentifierScope.CLASS,
+                (writing ? IdentifierUse.WRITE : IdentifierUse.READ),
+                node.getStartPosition(),
+                node.getStartPosition() + node.getLength(),
+                methodFeatures.getSourceContext()));
         return false;
     }
 }

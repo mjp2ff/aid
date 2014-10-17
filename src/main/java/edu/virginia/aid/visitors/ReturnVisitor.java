@@ -1,9 +1,13 @@
 package edu.virginia.aid.visitors;
 
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.MethodFeatures;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,8 +17,20 @@ import java.util.Map;
  */
 public class ReturnVisitor extends ASTVisitor {
 
-    public Map<String, Integer> identifierReads = new HashMap<>();
-    public Map<String, Integer> fieldReads = new HashMap<>();
+    private List<IdentifierName> identifierUses;
+
+    private MethodFeatures methodFeatures;
+
+    /**
+     * Creates ReturnVisitor with the given method
+     *
+     * @param methodFeatures The containing method
+     */
+    public ReturnVisitor(MethodFeatures methodFeatures) {
+        this.methodFeatures = methodFeatures;
+
+        this.identifierUses = new ArrayList<>();
+    }
 
     /**
      * Gets all identifier and field reads contained within a return statement
@@ -24,30 +40,15 @@ public class ReturnVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(ReturnStatement node) {
-        VariableUsageVisitor usageVisitor = new VariableUsageVisitor();
+        VariableUsageVisitor usageVisitor = new VariableUsageVisitor(methodFeatures, false);
         if (node.getExpression() != null) {
             node.getExpression().accept(usageVisitor);
-            identifierReads = usageVisitor.getIdentifierReads();
-            fieldReads = usageVisitor.getFieldReads();
+            identifierUses = usageVisitor.getIdentifierUses();
         }
         return false;
     }
 
-    /**
-     * Gets and returns all identifier reads contained within the return statement
-     *
-     * @return Identifier reads within return statement
-     */
-    public Map<String, Integer> getIdentifierReads() {
-        return identifierReads;
-    }
-
-    /**
-     * Gets and returns all field reads contained within the return statement
-     *
-     * @return Field reads within return statement
-     */
-    public Map<String, Integer> getFieldReads() {
-        return fieldReads;
+    public List<IdentifierName> getIdentifierUses() {
+        return identifierUses;
     }
 }

@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.Type;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -17,24 +18,28 @@ public class MethodFeatures extends SourceElement {
     private String filepath;
     private ClassInformation parentClass;
     private String methodName;
+    private Type returnType;
     private String processedMethodName;
     private Map<String, Boolean> booleanFeatures;
     private List<IdentifierProperties> parameters;
     private List<IdentifierProperties> localVariables;
     private List<IdentifierProperties> fields;
+    private List<String> methodInvocations;
     private Javadoc javadoc;
     private ExpressionInfo returnValue;
 
-    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final SourceContext sourceContext) {
+    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.methodName = methodName;
         this.parentClass = parentClass;
         this.filepath = filepath;
+        this.returnType = returnType;
         this.booleanFeatures = new HashMap<>();
         this.parameters = new ArrayList<>();
         this.localVariables = new ArrayList<>();
         this.fields = new ArrayList<>();
+        this.methodInvocations = new ArrayList<>();
         this.javadoc = null;
         this.returnValue = null;
 
@@ -301,6 +306,31 @@ public class MethodFeatures extends SourceElement {
         }
 
         return null;
+    }
+
+    /**
+     * Adds an identifier use to the identifiers in the method
+     *
+     * @param identifierUse The identifier use to add
+     */
+    public void addIdentifierUse(IdentifierName identifierUse) {
+        if (identifierUse.isVariable()) {
+
+            IdentifierProperties identifierProperties;
+            if (!identifierUse.hasClassScope()) {
+                identifierProperties = getClosestVariable(identifierUse.getName());
+            } else {
+                identifierProperties = getField(identifierUse.getName());
+            }
+
+            if (identifierProperties != null) {
+                if (identifierUse.getUse() == IdentifierUse.READ) {
+                    identifierProperties.addReads(1);
+                } else if (identifierUse.getUse() == IdentifierUse.WRITE) {
+                    identifierProperties.addWrites(1);
+                }
+            }
+        }
     }
 
     /**

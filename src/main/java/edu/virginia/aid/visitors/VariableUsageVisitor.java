@@ -1,111 +1,99 @@
 package edu.virginia.aid.visitors;
 
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodInvocationProperties;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 
 import java.util.*;
 
 /**
- * Scans an AST for al variable usages
+ * Scans an AST for all variable usages
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
 public class VariableUsageVisitor extends NameVisitor {
 
-    private Map<String, Integer> identifierWrites = new HashMap<>();
-    private Map<String, Integer> identifierReads = new HashMap<>();
-    private Map<String, Integer> fieldWrites = new HashMap<>();
-    private Map<String, Integer> fieldReads = new HashMap<>();
+    private List<IdentifierName> identifierUses = new ArrayList<>();
+    private List<MethodInvocationProperties> methodInvocations = new ArrayList<>();
 
+    /**
+     * Tracking variable for whether or not the AST is currently in an assignment
+     */
     private boolean inAssignment = false;
 
-    public Map<String, Integer> getIdentifierWrites() {
-        return identifierWrites;
+    /**
+     * Creates a visitor with the method and context described below
+     *
+     * @param methodFeatures The containing method
+     * @param writing        Whether or not the scope is the lhs of an assignment
+     */
+    public VariableUsageVisitor(MethodFeatures methodFeatures, boolean writing) {
+        super(methodFeatures, writing);
     }
 
-    public Map<String, Integer> getIdentifierReads() {
-        Map<String, Integer> totalReads = new HashMap<>();
-        Set<String> allNames = new HashSet<>();
-        allNames.addAll(identifierReads.keySet());
-        allNames.addAll(identifiers);
-        for (String name : allNames) {
-            totalReads.put(name, (identifierReads.containsKey(name) ? identifierReads.get(name) : 0) + Collections.frequency(identifiers, name));
-        }
-
-        return totalReads;
+    public List<IdentifierName> getIdentifierUses() {
+        List<IdentifierName> allIdentifierUses = new ArrayList<>();
+        allIdentifierUses.addAll(identifierUses);
+        allIdentifierUses.addAll(identifiers);
+        return allIdentifierUses;
     }
 
-    public Map<String, Integer> getFieldWrites() {
-        return fieldWrites;
+    public List<MethodInvocationProperties> getMethodInvocations() {
+        List<MethodInvocationProperties> allMethodInvocations = new ArrayList<>();
+        allMethodInvocations.addAll(methodInvocations);
+        allMethodInvocations.addAll(methods);
+        return allMethodInvocations;
     }
 
-    public Map<String, Integer> getFieldReads() {
-        Map<String, Integer> totalReads = new HashMap<>();
-        Set<String> allNames = new HashSet<>();
-        allNames.addAll(fieldReads.keySet());
-        allNames.addAll(fields);
-        for (String name : allNames) {
-            totalReads.put(name, (fieldReads.containsKey(name) ? fieldReads.get(name) : 0) + Collections.frequency(fields, name));
-        }
-
-        return totalReads;
-    }
-
+    /**
+     * Gets all of the names of fields used in the AST
+     *
+     * @return Field names
+     */
     public Set<String> getFieldNames() {
-        Set<String> names = new HashSet<>();
-        names.addAll(getFieldReads().keySet());
-        names.addAll(fieldWrites.keySet());
-        return names;
+        Set<String> fieldNames = new HashSet<>();
+        for (IdentifierName identifier : getIdentifierUses()) {
+            if (identifier.isVariable() && identifier.hasClassScope()) {
+                fieldNames.add(identifier.getName());
+            }
+        }
+
+        return fieldNames;
     }
 
+    /**
+     * Find all reads and writes of variables within an assignment
+     *
+     * @param node
+     * @return
+     */
     @Override
     public boolean visit(Assignment node) {
         Expression lhs = node.getLeftHandSide();
-
-        NameVisitor visitor = new NameVisitor();
+        NameVisitor visitor = new NameVisitor(methodFeatures, true);
         lhs.accept(visitor);
-        for (String name : visitor.getIdentifiers()) {
-            incrementValue(identifierWrites, name);
-            if (inAssignment) {
-                incrementValue(identifierReads, name);
-            }
-        }
+        identifierUses.addAll(visitor.getIdentifiers());
+        methodInvocations.addAll(visitor.getMethods());
 
-        for (String name : visitor.getFields()) {
-            incrementValue(fieldWrites, name);
-            if (inAssignment) {
-                incrementValue(fieldReads, name);
-            }
+        if (inAssignment) {
+            NameVisitor visitor1 = new NameVisitor(methodFeatures, false);
+            lhs.accept(visitor);
+            identifierUses.addAll(visitor1.getIdentifiers());
         }
 
         Expression rhs = node.getRightHandSide();
-
-        if (!inAssignment) {
-            visitor.clearNames();
-            rhs.accept(visitor);
-            for (String name : visitor.getIdentifiers()) {
-                incrementValue(identifierReads, name);
-            }
-
-            for (String name : visitor.getFields()) {
-                incrementValue(fieldReads, name);
-            }
-        }
+        visitor.clearNames();
+        rhs.accept(visitor);
+        identifierUses.addAll(visitor.getIdentifiers());
+        methodInvocations.addAll(visitor.getMethods());
 
         boolean tempInAssignment = inAssignment;
-
         inAssignment = true;
         rhs.accept(this);
         inAssignment = tempInAssignment;
 
         return false;
-    }
-
-    private void incrementValue(Map<String, Integer> map, String key) {
-        if (map.containsKey(key)) {
-            map.put(key, map.get(key) + 1);
-        } else {
-            map.put(key, 1);
-        }
     }
 }
