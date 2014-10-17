@@ -24,6 +24,7 @@ public class MethodFeatures extends SourceElement {
     private List<IdentifierProperties> fields;
     private Javadoc javadoc;
     private ExpressionInfo returnValue;
+    private Map<String, Double> TFIDF;
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
@@ -37,6 +38,7 @@ public class MethodFeatures extends SourceElement {
         this.fields = new ArrayList<>();
         this.javadoc = null;
         this.returnValue = null;
+        this.TFIDF = new HashMap<>();
 
         this.processedMethodName = methodName;
     }
@@ -388,6 +390,44 @@ public class MethodFeatures extends SourceElement {
         }
 
         return differences;
+    }
+
+    public void calculateTFIDF(ArrayList<String> allProjectWords) {
+    	ArrayList<String> currentMethodWords = new ArrayList<>();
+    	
+    	Map<String, Double> TF = new HashMap<>();
+    	Map<String, Double> IDF = new HashMap<>();
+    	
+    	// Add all the words in all the comments for this method to a list.
+    	for (CommentInfo comment : getComments()) {
+    		currentMethodWords.addAll(Arrays.asList(comment.getCommentText().split(" ")));
+    	}
+        Javadoc javadocElem = getJavadoc();
+        currentMethodWords.addAll(Arrays.asList(javadocElem.toString().split(" ")));
+
+        for (String s : currentMethodWords) {
+        	double tf = 0;
+        	double idf = 0;
+        	
+        	if (!TFIDF.containsKey(s)) {
+            	if (!TF.containsKey(s)) {
+                	// Calculate
+            		TF.put(s, tf);
+            	} else {
+            		tf = TF.get(s);
+            	}
+            	
+            	if (!IDF.containsKey(s)) {
+            		// Calculate
+            		IDF.put(s, idf);
+            	} else {
+            		idf = IDF.get(s);
+            	}
+            	
+            	double tfidf = tf*idf;
+            	TFIDF.put(s, tfidf);
+        	}
+        }
     }
 
     @Override
