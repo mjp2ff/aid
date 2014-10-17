@@ -14,4 +14,6 @@ public final class DifferenceWeights {
     // Concepts
     public static final int METHOD_NAME = 5;
 
+    // Structures
+    public static final int ONLY_METHOD_INVOCATION = 4;
 }

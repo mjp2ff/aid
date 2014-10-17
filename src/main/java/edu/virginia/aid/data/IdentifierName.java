@@ -12,6 +12,8 @@ public class IdentifierName extends SourceElement {
     public IdentifierScope scope;
     public IdentifierUse use;
 
+    public String processedName;
+
     /**
      * Creates a new IdentifierName with the name and properties passed in
      *
@@ -30,6 +32,8 @@ public class IdentifierName extends SourceElement {
         this.type = type;
         this.scope = scope;
         this.use = use;
+
+        this.processedName = name;
     }
 
     /**
@@ -91,5 +95,13 @@ public class IdentifierName extends SourceElement {
 
     public IdentifierUse getUse() {
         return use;
+    }
+
+    public String getProcessedName() {
+        return processedName;
+    }
+
+    public void setProcessedName(String processedName) {
+        this.processedName = processedName;
     }
 }

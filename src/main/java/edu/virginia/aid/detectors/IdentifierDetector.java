@@ -3,6 +3,7 @@ package edu.virginia.aid.detectors;
 import edu.virginia.aid.data.IdentifierName;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodInvocationProperties;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
 import edu.virginia.aid.visitors.VariableUsageVisitor;
 import org.eclipse.jdt.core.dom.Block;
@@ -65,6 +66,10 @@ public class IdentifierDetector implements FeatureDetector {
 
         for (IdentifierName identifierName : usageVisitor.getIdentifierUses()) {
            features.addIdentifierUse(identifierName);
+        }
+
+        for (MethodInvocationProperties methodInvocation : usageVisitor.getMethodInvocations()) {
+            features.addMethodInvocation(methodInvocation);
         }
     }
 

@@ -24,7 +24,7 @@ public class MethodFeatures extends SourceElement {
     private List<IdentifierProperties> parameters;
     private List<IdentifierProperties> localVariables;
     private List<IdentifierProperties> fields;
-    private List<String> methodInvocations;
+    private List<MethodInvocationProperties> methodInvocations;
     private Javadoc javadoc;
     private ExpressionInfo returnValue;
 
@@ -334,6 +334,15 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
+     * Adds a method invocation to the list of method invocations within the method
+     *
+     * @param methodInvocation The invocation to add
+     */
+    public void addMethodInvocation(MethodInvocationProperties methodInvocation) {
+        methodInvocations.add(methodInvocation);
+    }
+
+    /**
      * Find and return a list of differences between the method contents and its comments
      *
      * @return The list of differences between the comments and the method
@@ -356,6 +365,7 @@ public class MethodFeatures extends SourceElement {
             }
         }
 
+        // Process fields
         for (IdentifierProperties field : fields) {
 
             String identifier = field.getProcessedName();
@@ -376,6 +386,7 @@ public class MethodFeatures extends SourceElement {
             }
         }
 
+        // Process parameters
         for (IdentifierProperties parameter : parameters) {
 
             String identifier = parameter.getProcessedName();
@@ -401,7 +412,28 @@ public class MethodFeatures extends SourceElement {
             }
         }
 
+        // Process method invocations
+        if (methodInvocations.size() == 1) {
+            MethodInvocationProperties methodInvocation = methodInvocations.get(0);
+
+            boolean foundInComment = false;
+            for (CommentInfo comment : getComments()) {
+                if (comment.getCommentText().contains(methodInvocation.getProcessedName())) {
+                    foundInComment = true;
+                    break;
+                }
+            }
+
+            if (!foundInComment) {
+                differences.add(new GenericDifference("Method " + methodInvocation.getName() + " is invoked but not discussed in comments", DifferenceWeights.ONLY_METHOD_INVOCATION));
+            }
+        }
+
         return differences;
+    }
+
+    public List<MethodInvocationProperties> getMethodInvocations() {
+        return methodInvocations;
     }
 
     @Override
