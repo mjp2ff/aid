@@ -3,6 +3,7 @@ package edu.virginia.aid.detectors;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.virginia.aid.data.MethodInvocationProperties;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.CommentInfo;
@@ -54,7 +55,7 @@ public class StoplistProcessor implements FeatureDetector {
         // Process Method Name
         features.setProcessedMethodName(features.getProcessedMethodName());
 
-		// Finally, handle identifiers (parameters, local variables, fields).
+		// Finally, handle identifiers (parameters, local variables, fields, methods).
 		for (IdentifierProperties parameter : features.getParameters()) {
 			parameter.setProcessedName(this.checkStoplist(parameter.getProcessedName()));
 		}
@@ -64,6 +65,9 @@ public class StoplistProcessor implements FeatureDetector {
 		for (IdentifierProperties field : features.getFields()) {
 			field.setProcessedName(this.checkStoplist(field.getProcessedName()));
 		}
+        for (MethodInvocationProperties methodInvocation : features.getMethodInvocations()) {
+            methodInvocation.setProcessedName(this.checkStoplist(methodInvocation.getProcessedName()));
+        }
 	}
 
 	/**

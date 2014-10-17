@@ -2,6 +2,7 @@ package edu.virginia.aid.detectors;
 
 import java.util.List;
 
+import edu.virginia.aid.data.MethodInvocationProperties;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.CommentInfo;
@@ -45,7 +46,7 @@ public class StemmingProcessor implements FeatureDetector {
         // Process Method Name
         features.setProcessedMethodName(stem(features.getProcessedMethodName()));
 
-		// Finally, handle identifiers (parameters, local variables, fields).
+		// Finally, handle identifiers (parameters, local variables, fields, methods).
 		for (IdentifierProperties parameter : features.getParameters()) {
 			parameter.setProcessedName(this.stem(parameter.getProcessedName()));
 		}
@@ -55,6 +56,9 @@ public class StemmingProcessor implements FeatureDetector {
 		for (IdentifierProperties field : features.getFields()) {
 			field.setProcessedName(this.stem(field.getProcessedName()));
 		}
+        for (MethodInvocationProperties methodInvocation : features.getMethodInvocations()) {
+            methodInvocation.setProcessedName(this.stem(methodInvocation.getProcessedName()));
+        }
 	}
 
 	/**
