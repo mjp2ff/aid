@@ -8,7 +8,7 @@ package edu.virginia.aid.data;
 public class IdentifierProperties extends SourceElement {
 
 	public enum IdentifierContext {
-		LOCAL_VARIABLE, FORMAL_PARAMETER, FIELD
+		LOCAL_VARIABLE, FORMAL_PARAMETER, FIELD, METHOD
 	}
 
 	private String name;
@@ -104,6 +104,8 @@ public class IdentifierProperties extends SourceElement {
                 return "parameter";
             case LOCAL_VARIABLE:
                 return "variable";
+            case METHOD:
+                return "method";
             default:
                 return "unknown context";
         }
