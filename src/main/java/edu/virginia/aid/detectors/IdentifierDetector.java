@@ -72,5 +72,4 @@ public class IdentifierDetector implements FeatureDetector {
             features.addMethodInvocation(methodInvocation);
         }
     }
-
 }

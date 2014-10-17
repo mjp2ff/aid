@@ -10,6 +10,7 @@ public final class DifferenceWeights {
     public static final int PARAMETER_WRITE = 2;
     public static final int FIELD_READ = 2;
     public static final int FIELD_WRITE = 4;
+    public static final int IN_RETURN_STATEMENT = 5;
 
     // Concepts
     public static final int METHOD_NAME = 5;

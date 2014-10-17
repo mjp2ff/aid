@@ -379,7 +379,9 @@ public class MethodFeatures extends SourceElement {
             }
 
             if (!foundInComment) {
-                int differenceScore = (DifferenceWeights.FIELD_READ * field.getReads()) + (DifferenceWeights.FIELD_WRITE * field.getWrites());
+                int differenceScore = (DifferenceWeights.FIELD_READ * field.getReads()) +
+                        (DifferenceWeights.FIELD_WRITE * field.getWrites()) +
+                        (field.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0);
                 if (differenceScore > 0) {
                     differences.add(new MissingIdentifierDifference(field, differenceScore));
                 }
@@ -405,7 +407,9 @@ public class MethodFeatures extends SourceElement {
             }
             
             if (!foundInComment) {
-                int differenceScore = (DifferenceWeights.PARAMETER_READ * parameter.getReads()) + (DifferenceWeights.PARAMETER_WRITE * parameter.getWrites());
+                int differenceScore = (DifferenceWeights.PARAMETER_READ * parameter.getReads()) +
+                        (DifferenceWeights.PARAMETER_WRITE * parameter.getWrites()) +
+                        (parameter.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0);
                 if (differenceScore > 0) {
                     differences.add(new MissingIdentifierDifference(parameter, differenceScore));
                 }

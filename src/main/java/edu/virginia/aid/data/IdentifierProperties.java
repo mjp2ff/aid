@@ -17,6 +17,7 @@ public class IdentifierProperties extends SourceElement {
 
     private int reads;
     private int writes;
+    private boolean inReturnStatement;
 
 	/**
 	 * Whether or not the identifier has been processed at all.
@@ -38,6 +39,7 @@ public class IdentifierProperties extends SourceElement {
 
         this.reads = 0;
         this.writes = 0;
+        this.inReturnStatement = false;
 	}
 
 	public IdentifierProperties(String name, String type, IdentifierContext context, int startPos, int endPos, final SourceContext sourceContext) {
@@ -51,6 +53,7 @@ public class IdentifierProperties extends SourceElement {
 
         this.reads = 0;
         this.writes = 0;
+        this.inReturnStatement = false;
 	}
 
     /**
@@ -69,6 +72,7 @@ public class IdentifierProperties extends SourceElement {
 
         this.reads = 0;
         this.writes = 0;
+        this.inReturnStatement = false;
     }
 
 	public void setType(String type) {
@@ -147,6 +151,29 @@ public class IdentifierProperties extends SourceElement {
      */
     public void addWrites(int amount) {
         writes += amount;
+    }
+
+    public boolean isInReturnStatement() {
+        return inReturnStatement;
+    }
+
+    public void setInReturnStatement(boolean inReturnStatement) {
+        this.inReturnStatement = inReturnStatement;
+    }
+
+    /**
+     * Tests if two IdentifierProperties are equal
+     *
+     * @param o The identifier to compare to
+     * @return Whether or not the two identifiers are equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof IdentifierProperties) {
+            IdentifierProperties other = (IdentifierProperties) o;
+            return this.getName().equals(other.getName()) && this.getContext() == other.getContext();
+        }
+        return false;
     }
 
     @Override

@@ -28,6 +28,7 @@ public class ControlFlowDetector implements FeatureDetector {
             IdentifierProperties identifier = identifierName.getResolvedIdentifier(features);
             if (identifier != null) {
                 returnValue.addIdentifier(identifier);
+                identifier.setInReturnStatement(true);
             }
         }
 
