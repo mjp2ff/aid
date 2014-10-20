@@ -1,14 +1,18 @@
 package edu.virginia.aid;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import edu.virginia.aid.comparison.MethodDifferences;
+import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.parsers.AntProjectMethodParser;
 import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
-
-import edu.virginia.aid.comparison.MethodDifferences;
-import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.parsers.MethodParser;
 
 /**
@@ -30,7 +34,17 @@ public class Driver {
     public static List<MethodDifferences> compareAndRank(List<MethodFeatures> methodFeaturesList) {
         List<MethodDifferences> differences = new ArrayList<MethodDifferences>();
 
+        // Pass one to get words for TFIDF
+        List<List<String>> allProjectWords = new ArrayList<List<String>>();
         for (MethodFeatures methodFeatures : methodFeaturesList) {
+        	for (CommentInfo comment : methodFeatures.getComments()) {
+        		allProjectWords.add(Arrays.asList(comment.getCommentText().split(" ")));
+        	}
+        }
+
+        // Pass two to calculate differences.
+        for (MethodFeatures methodFeatures : methodFeaturesList) {
+        	methodFeatures.calculateTFIDF(allProjectWords);
             differences.add(methodFeatures.getDifferences());
         }
 

@@ -454,7 +454,7 @@ public class MethodFeatures extends SourceElement {
         return differences;
     }
 
-    public void calculateTFIDF(ArrayList<String> allProjectWords) {
+    public void calculateTFIDF(List<List<String>> allProjectWords) {
     	ArrayList<String> currentMethodWords = new ArrayList<>();
     	
     	Map<String, Double> TF = new HashMap<>();
@@ -468,19 +468,25 @@ public class MethodFeatures extends SourceElement {
         currentMethodWords.addAll(Arrays.asList(javadocElem.toString().split(" ")));
 
         for (String s : currentMethodWords) {
-        	double tf = 0;
-        	double idf = 0;
-        	
         	if (!TFIDF.containsKey(s)) {
+        		double tf = 0;
             	if (!TF.containsKey(s)) {
-                	// Calculate
+                	// Calculate logarithmically scaled TF frequency
+            		tf = 1 + Math.log(Collections.frequency(currentMethodWords, s));
             		TF.put(s, tf);
             	} else {
             		tf = TF.get(s);
             	}
-            	
+
+            	double idf = 0;
             	if (!IDF.containsKey(s)) {
-            		// Calculate
+            		// Calculate logarithmically scaled IDF frequency
+            		double totalDocs = allProjectWords.size();
+            		double numDocsContainingWord = 0;
+            		for (List<String> curList : allProjectWords) {
+            			numDocsContainingWord += curList.contains(s) ? 1 : 0;
+            		}
+            		idf = Math.log(totalDocs / numDocsContainingWord);
             		IDF.put(s, idf);
             	} else {
             		idf = IDF.get(s);
