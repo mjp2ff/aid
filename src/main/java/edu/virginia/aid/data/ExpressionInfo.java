@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class ExpressionInfo {
+public class ExpressionInfo implements StringListable {
 
     private List<IdentifierProperties> identifiers = new ArrayList<>();
 
@@ -29,6 +29,14 @@ public class ExpressionInfo {
 
     public List<IdentifierProperties> getIdentifiers() {
         return identifiers;
+    }
+    
+    public List<String> getData() {
+    	ArrayList<String> retVal = new ArrayList<>();
+    	for (IdentifierProperties identifier : identifiers) {
+    		retVal.addAll(identifier.getData());
+    	}
+    	return retVal;
     }
 }
 

@@ -1,11 +1,14 @@
 package edu.virginia.aid.data;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Data wrapper for unresolved identifier names
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class IdentifierName extends SourceElement {
+public class IdentifierName extends SourceElement implements StringListable {
 
     public String name;
     public IdentifierType type;
@@ -103,5 +106,9 @@ public class IdentifierName extends SourceElement {
 
     public void setProcessedName(String processedName) {
         this.processedName = processedName;
+    }
+    
+    public List<String> getData() {
+    	return Arrays.asList(processedName);
     }
 }

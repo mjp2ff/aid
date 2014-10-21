@@ -1,11 +1,15 @@
 package edu.virginia.aid.data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Data wrapper for information about an individual variable declared/referenced in a method
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class IdentifierProperties extends SourceElement {
+public class IdentifierProperties extends SourceElement implements StringListable {
 
 	public enum IdentifierContext {
 		LOCAL_VARIABLE, FORMAL_PARAMETER, FIELD, METHOD
@@ -159,6 +163,10 @@ public class IdentifierProperties extends SourceElement {
 
     public void setInReturnStatement(boolean inReturnStatement) {
         this.inReturnStatement = inReturnStatement;
+    }
+    
+    public List<String> getData() {
+    	return Arrays.asList(processedName);
     }
 
     /**

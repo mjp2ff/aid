@@ -28,6 +28,7 @@ public class MethodFeatures extends SourceElement {
     private Javadoc javadoc;
     private ExpressionInfo returnValue;
     private Map<String, Double> TFIDF;
+    private List<String> allWords;
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
@@ -44,6 +45,7 @@ public class MethodFeatures extends SourceElement {
         this.javadoc = null;
         this.returnValue = null;
         this.TFIDF = new HashMap<>();
+        this.allWords = new ArrayList<>();
 
         this.processedMethodName = methodName;
     }
@@ -137,6 +139,30 @@ public class MethodFeatures extends SourceElement {
 
     public List<IdentifierProperties> getFields() {
     	return fields;
+    }
+
+    public List<String> getAllWords() {
+    	allWords = new ArrayList<>();
+    	allWords.add(processedMethodName);
+    	for (IdentifierProperties identifier : parameters) {
+    		allWords.addAll(identifier.getData());
+    	}
+    	for (IdentifierProperties identifier : localVariables) {
+    		allWords.addAll(identifier.getData());
+    	}
+    	for (IdentifierProperties identifier : fields) {
+    		allWords.addAll(identifier.getData());
+    	}
+    	for (MethodInvocationProperties methodInvocation : methodInvocations) {
+    		allWords.addAll(methodInvocation.getData());
+    	}
+    	for (CommentInfo comment : getComments()) {
+    		allWords.addAll(comment.getData());
+    	}
+    	allWords.addAll(Arrays.asList(javadoc.toString().split(" ")));
+    	allWords.addAll(returnValue.getData());
+    	
+    	return allWords;
     }
     
     /**
@@ -455,17 +481,10 @@ public class MethodFeatures extends SourceElement {
     }
 
     public void calculateTFIDF(List<List<String>> allProjectWords) {
-    	ArrayList<String> currentMethodWords = new ArrayList<>();
+    	List<String> currentMethodWords = getAllWords();
     	
     	Map<String, Double> TF = new HashMap<>();
     	Map<String, Double> IDF = new HashMap<>();
-    	
-    	// Add all the words in all the comments for this method to a list.
-    	for (CommentInfo comment : getComments()) {
-    		currentMethodWords.addAll(Arrays.asList(comment.getCommentText().split(" ")));
-    	}
-        Javadoc javadocElem = getJavadoc();
-        currentMethodWords.addAll(Arrays.asList(javadocElem.toString().split(" ")));
 
         for (String s : currentMethodWords) {
         	if (!TFIDF.containsKey(s)) {
@@ -494,6 +513,7 @@ public class MethodFeatures extends SourceElement {
             	
             	double tfidf = tf*idf;
             	TFIDF.put(s, tfidf);
+            	System.out.println("TFIDF for word " + s + " is: " + tfidf);
         	}
         }
 	}

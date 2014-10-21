@@ -1,11 +1,14 @@
 package edu.virginia.aid.data;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Data wrapper with information about an individual comment
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
-public class CommentInfo extends SourceElement {
+public class CommentInfo extends SourceElement implements StringListable {
 
     private String commentText;
 
@@ -21,5 +24,10 @@ public class CommentInfo extends SourceElement {
 
     public void setCommentText(String commentText) {
         this.commentText = commentText;
+    }
+
+    public List<String> getData() {
+		return Arrays.asList(commentText.split(" "));
+    	
     }
 }
