@@ -17,4 +17,8 @@ public final class DifferenceWeights {
 
     // Structures
     public static final int ONLY_METHOD_INVOCATION = 4;
+
+    // Components
+    public static final int PRIMARY_VERB = 10;
+    public static final int PRIMARY_OBJECT = 10;
 }

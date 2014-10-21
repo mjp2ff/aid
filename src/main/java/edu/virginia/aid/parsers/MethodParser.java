@@ -130,6 +130,8 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new StemmingProcessor());
                 // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
                 methodProcessor.addFeatureDetector(new StoplistProcessor());
+                // Add detector to parse out the information for primary action of the method
+                methodProcessor.addFeatureDetector(new PrimaryActionDetector());
 
                 // Run all detectors
                 MethodFeatures methodFeatures = methodProcessor.runDetectors();

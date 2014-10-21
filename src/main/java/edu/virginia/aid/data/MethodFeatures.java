@@ -21,6 +21,7 @@ public class MethodFeatures extends SourceElement {
     private Type returnType;
     private String processedMethodName;
     private Map<String, Boolean> booleanFeatures;
+    private Map<String, String> stringFeatures;
     private List<IdentifierProperties> parameters;
     private List<IdentifierProperties> localVariables;
     private List<IdentifierProperties> fields;
@@ -30,8 +31,12 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Double> TFIDF;
     private List<String> allWords;
 
+    // Constants
+    public static final String PRIMARY_VERB = "primary verb";
+    public static final String PRIMARY_OBJECT = "primary object";
+
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
-    		Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
+                          Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.methodName = methodName;
@@ -39,6 +44,7 @@ public class MethodFeatures extends SourceElement {
         this.filepath = filepath;
         this.returnType = returnType;
         this.booleanFeatures = new HashMap<>();
+        this.stringFeatures = new HashMap<>();
         this.parameters = new ArrayList<>();
         this.localVariables = new ArrayList<>();
         this.fields = new ArrayList<>();
@@ -101,14 +107,19 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
-     * Removes a boolean feature with the given name
+     * Adds a new string feature with the information passed
      *
-     * @param name Name of the boolean feature to remove
-     * @return Whether or not the boolean feature was removed
+     * @param name Name of the string feature to add
+     * @param value Value of the string feature to add
+     * @return Whether or not the string feature was added
      */
-    public boolean removeBooleanFeature(String name) {
-        booleanFeatures.remove(name);
-        return booleanFeatures.containsKey(name);
+    public boolean addStringFeature(String name, String value) {
+        if (!stringFeatures.containsKey(name)) {
+            stringFeatures.put(name, value);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -121,6 +132,15 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
+     * Returns a map of string features to value for a method
+     *
+     * @return Map of string features to values
+     */
+    public Map<String, String> getStringFeatures() {
+        return stringFeatures;
+    }
+
+    /**
      * Gets and returns the value of the boolean feature with the given name
      *
      * @param name The name of the boolean feature to search for
@@ -128,6 +148,16 @@ public class MethodFeatures extends SourceElement {
      */
     public boolean getBooleanFeature(String name) {
         return booleanFeatures.get(name);
+    }
+
+    /**
+     * Gets and returns the value of the string feature with the given name
+     *
+     * @param name The name of the string feature to search for
+     * @return The value of the feature (or null if it is not present)
+     */
+    public String getStringFeature(String name) {
+        return stringFeatures.get(name);
     }
 
     public List<IdentifierProperties> getParameters() {
@@ -160,12 +190,23 @@ public class MethodFeatures extends SourceElement {
     	for (CommentInfo comment : getComments()) {
     		allWords.addAll(comment.getData());
     	}
-    	allWords.addAll(Arrays.asList(javadoc.toString().split(" ")));
+
+        if (javadoc != null) {
+            allWords.addAll(Arrays.asList(javadoc.toString().split(" ")));
+        }
     	allWords.addAll(returnValue.getData());
     	
     	return allWords;
     }
     
+    public List<IdentifierProperties> getIdentifiers() {
+        List<IdentifierProperties> identifiers = new ArrayList<>();
+        identifiers.addAll(parameters);
+        identifiers.addAll(fields);
+        identifiers.addAll(localVariables);
+        return identifiers;
+    }
+
     /**
      * Adds the identifier to the method's identifier list
      *
@@ -486,6 +527,22 @@ public class MethodFeatures extends SourceElement {
             }
         }
 
+        for (String key : stringFeatures.keySet()) {
+            String value = stringFeatures.get(key);
+            if (!containedInComments(value)) {
+                switch (key) {
+                    case MethodFeatures.PRIMARY_VERB:
+                        differences.add(new GenericDifference("The primary method action (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * TFIDF.get(value)));
+                        break;
+                    case MethodFeatures.PRIMARY_OBJECT:
+                        differences.add(new GenericDifference("The primary object acted upon (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * TFIDF.get(value)));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         return differences;
     }
 
@@ -526,6 +583,24 @@ public class MethodFeatures extends SourceElement {
         }
 	}
         
+    /**
+     * Checks whether a string is contained within the text of the method's comments
+     *
+     * @param term The term to search for
+     * @return Whether or not the term was found in the comments
+     */
+    public boolean containedInComments(String term) {
+        boolean foundInComments = false;
+        for (CommentInfo comment : getComments()) {
+            if (comment.getCommentText().contains(term)) {
+                foundInComments = true;
+                break;
+            }
+        }
+
+        return foundInComments;
+    }
+
     public List<MethodInvocationProperties> getMethodInvocations() {
         return methodInvocations;
     }
