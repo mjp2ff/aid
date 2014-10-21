@@ -17,7 +17,7 @@ public class MissingIdentifierDifference extends Difference {
      * @param identifier The identifier that is missing
      * @param differenceScore The difference score for the identifier
      */
-    public MissingIdentifierDifference(IdentifierProperties identifier, int differenceScore) {
+    public MissingIdentifierDifference(IdentifierProperties identifier, double differenceScore) {
         super(differenceScore);
 
         this.identifier = identifier;

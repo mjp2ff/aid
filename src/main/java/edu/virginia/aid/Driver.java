@@ -1,14 +1,12 @@
 package edu.virginia.aid;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import edu.virginia.aid.comparison.MethodDifferences;
-import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.parsers.AntProjectMethodParser;
 import edu.virginia.aid.parsers.DirectoryMethodParser;
@@ -37,13 +35,12 @@ public class Driver {
         // Pass one to get words for TFIDF
         List<List<String>> allProjectWords = new ArrayList<List<String>>();
         for (MethodFeatures methodFeatures : methodFeaturesList) {
-        	for (CommentInfo comment : methodFeatures.getComments()) {
-        		allProjectWords.add(Arrays.asList(comment.getCommentText().split(" ")));
-        	}
+        	allProjectWords.add(methodFeatures.getAllWords());
         }
 
         // Pass two to calculate differences.
         for (MethodFeatures methodFeatures : methodFeaturesList) {
+        	// TODO: Create phases to guarantee TFIDF is calculated before differences are found.
         	methodFeatures.calculateTFIDF(allProjectWords);
             differences.add(methodFeatures.getDifferences());
         }

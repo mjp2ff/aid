@@ -24,8 +24,8 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
      *
      * @return Total difference score for the method
      */
-    public int getDifferenceScore() {
-        int differenceScore = 0;
+    public double getDifferenceScore() {
+        double differenceScore = 0;
         for (Difference difference : this) {
             differenceScore += difference.getDifferenceScore();
         }
@@ -41,12 +41,20 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
      */
     @Override
     public int compareTo(MethodDifferences m) {
-        return m.getDifferenceScore() - this.getDifferenceScore();
+    	if (m.getDifferenceScore() < this.getDifferenceScore()) {
+    		return -1;
+    	} else if (m.getDifferenceScore() > this.getDifferenceScore()) {
+    		return 1;
+    	} else {
+    		return 0;
+    	}
     }
 
     @Override
     public String toString() {
-        String result = "Total difference score for " + method.getParentClass().getClassName() + "." + method.getMethodSignature() + " (" + method.getFilepath() + ", line " + method.getElementLineNumber() + "): " + getDifferenceScore() + "\n";
+        String result = "Total difference score for " + method.getParentClass().getClassName() +
+        		"." + method.getMethodSignature() + " (" + method.getFilepath() + ", line " +
+        		method.getElementLineNumber() + "): " + getDifferenceScore() + "\n";
         Collections.sort(this);
         for (Difference difference : this) {
             result += "\t" + difference.toString() + "\n";

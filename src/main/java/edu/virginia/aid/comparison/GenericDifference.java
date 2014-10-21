@@ -4,7 +4,7 @@ public class GenericDifference extends Difference {
 
     private String differenceMessage;
 
-    public GenericDifference(String differenceMessage, int differenceScore) {
+    public GenericDifference(String differenceMessage, double differenceScore) {
         super(differenceScore);
 
         this.differenceMessage = differenceMessage;

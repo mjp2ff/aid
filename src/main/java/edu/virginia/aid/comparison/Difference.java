@@ -8,13 +8,13 @@ package edu.virginia.aid.comparison;
  */
 public abstract class Difference implements Comparable<Difference> {
 
-    private int differenceScore;
+    private double differenceScore;
 
-    public Difference(int differenceScore) {
+    public Difference(double differenceScore) {
         this.differenceScore = differenceScore;
     }
 
-    public int getDifferenceScore() {
+    public double getDifferenceScore() {
         return differenceScore;
     }
 
@@ -25,6 +25,12 @@ public abstract class Difference implements Comparable<Difference> {
      * @return Integer comparison value
      */
     public int compareTo(Difference other) {
-        return other.getDifferenceScore() - differenceScore;
+    	if (other.getDifferenceScore() < differenceScore) {
+    		return -1;
+    	} else if (other.getDifferenceScore() > differenceScore) {
+    		return 1;
+    	} else {
+    		return 0;
+    	}
     }
 }

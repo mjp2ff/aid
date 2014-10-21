@@ -30,7 +30,8 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Double> TFIDF;
     private List<String> allWords;
 
-    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath, Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
+    public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
+    		Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
         this.methodName = methodName;
@@ -400,7 +401,9 @@ public class MethodFeatures extends SourceElement {
             }
 
             if (!foundInComment) {
-                differences.add(new GenericDifference("The method name (" + methodName + ") is not discussed in the comments", DifferenceWeights.METHOD_NAME));
+            	String differenceMessage = "The method name (" + methodName + ") is not discussed in the comments";
+            	double differenceScore = DifferenceWeights.METHOD_NAME * TFIDF.get(processedMethodName);
+                differences.add(new GenericDifference(differenceMessage, differenceScore));
             }
         }
 
@@ -425,9 +428,9 @@ public class MethodFeatures extends SourceElement {
             }
             
             if (!foundInComment) {
-                int differenceScore = (DifferenceWeights.FIELD_READ * field.getReads()) +
+                double differenceScore = ((DifferenceWeights.FIELD_READ * field.getReads()) +
                         (DifferenceWeights.FIELD_WRITE * field.getWrites()) +
-                        (field.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0);
+                        (field.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0)) * TFIDF.get(identifier);
                 if (differenceScore > 0) {
                     differences.add(new MissingIdentifierDifference(field, differenceScore));
                 }
@@ -455,9 +458,9 @@ public class MethodFeatures extends SourceElement {
             }
             
             if (!foundInComment) {
-                int differenceScore = (DifferenceWeights.PARAMETER_READ * parameter.getReads()) +
+                double differenceScore = ((DifferenceWeights.PARAMETER_READ * parameter.getReads()) +
                         (DifferenceWeights.PARAMETER_WRITE * parameter.getWrites()) +
-                        (parameter.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0);
+                        (parameter.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0)) * TFIDF.get(identifier);
                 if (differenceScore > 0) {
                     differences.add(new MissingIdentifierDifference(parameter, differenceScore));
                 }
@@ -477,7 +480,9 @@ public class MethodFeatures extends SourceElement {
             }
 
             if (!foundInComment) {
-                differences.add(new GenericDifference("Method " + methodInvocation.getName() + " is invoked but not discussed in comments", DifferenceWeights.ONLY_METHOD_INVOCATION));
+            	String differenceMessage = "Method " + methodInvocation.getName() + " is invoked but not discussed in comments";
+            	double differenceScore = DifferenceWeights.ONLY_METHOD_INVOCATION * TFIDF.get(methodInvocation.getProcessedName());
+                differences.add(new GenericDifference(differenceMessage, differenceScore));
             }
         }
 
@@ -517,7 +522,6 @@ public class MethodFeatures extends SourceElement {
             	
             	double tfidf = tf*idf;
             	TFIDF.put(s, tfidf);
-            	System.out.println("TFIDF for word " + s + " is: " + tfidf);
         	}
         }
 	}
