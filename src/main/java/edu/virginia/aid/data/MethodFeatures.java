@@ -532,10 +532,10 @@ public class MethodFeatures extends SourceElement {
             if (!containedInComments(value)) {
                 switch (key) {
                     case MethodFeatures.PRIMARY_VERB:
-                        differences.add(new GenericDifference("The primary method action (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * TFIDF.get(value)));
+                        differences.add(new GenericDifference("The primary method action (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * getTFIDF(value)));
                         break;
                     case MethodFeatures.PRIMARY_OBJECT:
-                        differences.add(new GenericDifference("The primary object acted upon (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * TFIDF.get(value)));
+                        differences.add(new GenericDifference("The primary object acted upon (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * getTFIDF(value)));
                         break;
                     default:
                         break;
