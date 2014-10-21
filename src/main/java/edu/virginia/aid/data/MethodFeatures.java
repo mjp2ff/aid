@@ -181,6 +181,10 @@ public class MethodFeatures extends SourceElement {
             case FIELD:
                 fields.add(properties);
                 break;
+            case METHOD:
+            	break;
+            default:
+            	break;
         }
     }
 
