@@ -443,7 +443,7 @@ public class MethodFeatures extends SourceElement {
 
             if (!foundInComment) {
             	String differenceMessage = "The method name (" + methodName + ") is not discussed in the comments";
-            	double differenceScore = DifferenceWeights.METHOD_NAME * TFIDF.get(processedMethodName);
+            	double differenceScore = DifferenceWeights.METHOD_NAME * getTFIDF(processedMethodName);
                 differences.add(new GenericDifference(differenceMessage, differenceScore));
             }
         }
@@ -471,7 +471,7 @@ public class MethodFeatures extends SourceElement {
             if (!foundInComment) {
                 double differenceScore = ((DifferenceWeights.FIELD_READ * field.getReads()) +
                         (DifferenceWeights.FIELD_WRITE * field.getWrites()) +
-                        (field.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0)) * TFIDF.get(identifier);
+                        (field.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0)) * getTFIDF(identifier);
                 if (differenceScore > 0) {
                     differences.add(new MissingIdentifierDifference(field, differenceScore));
                 }
@@ -501,7 +501,7 @@ public class MethodFeatures extends SourceElement {
             if (!foundInComment) {
                 double differenceScore = ((DifferenceWeights.PARAMETER_READ * parameter.getReads()) +
                         (DifferenceWeights.PARAMETER_WRITE * parameter.getWrites()) +
-                        (parameter.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0)) * TFIDF.get(identifier);
+                        (parameter.isInReturnStatement() ? DifferenceWeights.IN_RETURN_STATEMENT : 0)) * getTFIDF(identifier);
                 if (differenceScore > 0) {
                     differences.add(new MissingIdentifierDifference(parameter, differenceScore));
                 }
@@ -522,7 +522,7 @@ public class MethodFeatures extends SourceElement {
 
             if (!foundInComment) {
             	String differenceMessage = "Method " + methodInvocation.getName() + " is invoked but not discussed in comments";
-            	double differenceScore = DifferenceWeights.ONLY_METHOD_INVOCATION * TFIDF.get(methodInvocation.getProcessedName());
+            	double differenceScore = DifferenceWeights.ONLY_METHOD_INVOCATION * getTFIDF(methodInvocation.getProcessedName());
                 differences.add(new GenericDifference(differenceMessage, differenceScore));
             }
         }
@@ -546,6 +546,11 @@ public class MethodFeatures extends SourceElement {
         return differences;
     }
 
+    /**
+     * Calculates all TFIDF values for this method.
+     * 
+     * @param allProjectWords A list containing a list of words in each method in the project.
+     */
     public void calculateTFIDF(List<List<String>> allProjectWords) {
     	List<String> currentMethodWords = getAllWords();
     	
@@ -582,6 +587,17 @@ public class MethodFeatures extends SourceElement {
         	}
         }
 	}
+
+    /**
+     * Helper method to get the TFIDF value for a string, null-safe.
+     * 
+     * @param s The string to look up.
+     * @return TFIDF value for the given string.
+     */
+    public double getTFIDF(String s) {
+    	Double retVal = TFIDF.get(s);
+    	return retVal != null ? retVal : 1.0;
+    }
         
     /**
      * Checks whether a string is contained within the text of the method's comments
