@@ -641,7 +641,7 @@ public class MethodFeatures extends SourceElement {
             		for (Map<String, Integer> curMap : allProjectWordFrequencies) {
             			numDocsContainingWord += curMap.get(s) != null ? 1 : 0;
             		}
-            		idf = Math.log(totalDocs / (1 + numDocsContainingWord));
+            		idf = Math.log(totalDocs / numDocsContainingWord);
             		IDF.put(s, idf);
             	} else {
             		idf = IDF.get(s);
