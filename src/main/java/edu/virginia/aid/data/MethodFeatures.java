@@ -1,12 +1,20 @@
 package edu.virginia.aid.data;
 
-import edu.virginia.aid.comparison.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.Type;
+
+import edu.virginia.aid.comparison.DifferenceWeights;
+import edu.virginia.aid.comparison.GenericDifference;
+import edu.virginia.aid.comparison.MethodDifferences;
+import edu.virginia.aid.comparison.MissingIdentifierDifference;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -29,7 +37,7 @@ public class MethodFeatures extends SourceElement {
     private Javadoc javadoc;
     private ExpressionInfo returnValue;
     private Map<String, Double> TFIDF;
-    private List<String> allWords;
+    private Map<String, Integer> wordFrequencies;
 
     // Constants
     public static final String PRIMARY_VERB = "primary verb";
@@ -52,7 +60,7 @@ public class MethodFeatures extends SourceElement {
         this.javadoc = null;
         this.returnValue = null;
         this.TFIDF = new HashMap<>();
-        this.allWords = new ArrayList<>();
+        this.wordFrequencies = null;
 
         this.processedMethodName = methodName;
     }
@@ -171,32 +179,77 @@ public class MethodFeatures extends SourceElement {
     public List<IdentifierProperties> getFields() {
     	return fields;
     }
+    
+    /**
+     * Getter for word frequencies, calculating them if necessary.
+     * 
+     * @return Word frequencies for this method.
+     */
+    public Map<String, Integer> getWordFrequencies() {
+    	if (wordFrequencies == null) {
+    		calculateWordFrequencies();
+    	}
+    	return wordFrequencies;
+    }
 
-    public List<String> getAllWords() {
-    	allWords = new ArrayList<>();
-    	allWords.add(processedMethodName);
+    /**
+     * Calculate the word frequencies for this method, and return a list of all the words in the method.
+     */
+    public void calculateWordFrequencies() {
+    	wordFrequencies = new HashMap<>();
+    	
+    	incrementFrequenciesMap(processedMethodName);
+		
     	for (IdentifierProperties identifier : parameters) {
-    		allWords.addAll(identifier.getData());
+    		for (String s : identifier.getData()) {
+    			incrementFrequenciesMap(s);
+    		}
     	}
     	for (IdentifierProperties identifier : localVariables) {
-    		allWords.addAll(identifier.getData());
+    		for (String s : identifier.getData()) {
+    			incrementFrequenciesMap(s);
+    		}
     	}
     	for (IdentifierProperties identifier : fields) {
-    		allWords.addAll(identifier.getData());
+    		for (String s : identifier.getData()) {
+    			incrementFrequenciesMap(s);
+    		}
     	}
     	for (MethodInvocationProperties methodInvocation : methodInvocations) {
-    		allWords.addAll(methodInvocation.getData());
+    		for (String s : methodInvocation.getData()) {
+    			incrementFrequenciesMap(s);
+    		}
     	}
     	for (CommentInfo comment : getComments()) {
-    		allWords.addAll(comment.getData());
+    		for (String s : comment.getData()) {
+    			incrementFrequenciesMap(s);
+    		}
     	}
 
         if (javadoc != null) {
-            allWords.addAll(Arrays.asList(javadoc.toString().split(" ")));
+            String[] javadocWords = javadoc.toString().split(" ");
+            for (String s : javadocWords) {
+    			incrementFrequenciesMap(s);
+            }
         }
-    	allWords.addAll(returnValue.getData());
-    	
-    	return allWords;
+        
+		for (String s : returnValue.getData()) {
+			incrementFrequenciesMap(s);
+		}
+    }
+    
+    /**
+     * Helper method to increment the frequency for a given string.
+     * 
+     * @param s The string whose frequency should be incremented.
+     */
+    private void incrementFrequenciesMap(String s) {
+    	Integer i = this.wordFrequencies.get(s);
+    	if (i == null) {
+    		this.wordFrequencies.put(s, 1);
+    	} else {
+    		this.wordFrequencies.put(s, i);
+    	}
     }
     
     public List<IdentifierProperties> getIdentifiers() {
@@ -551,18 +604,21 @@ public class MethodFeatures extends SourceElement {
      * 
      * @param allProjectWords A list containing a list of words in each method in the project.
      */
-    public void calculateTFIDF(List<List<String>> allProjectWords) {
-    	List<String> currentMethodWords = getAllWords();
+    public void calculateTFIDF(List<Map<String, Integer>> allProjectWordFrequencies) {
+    	// Shouldn't happen here, but just in case.
+    	if (wordFrequencies == null) {
+    		calculateWordFrequencies();
+    	}
     	
     	Map<String, Double> TF = new HashMap<>();
     	Map<String, Double> IDF = new HashMap<>();
 
-        for (String s : currentMethodWords) {
+        for (String s : wordFrequencies.keySet()) {
         	if (!TFIDF.containsKey(s)) {
         		double tf = 0;
             	if (!TF.containsKey(s)) {
                 	// Calculate logarithmically scaled TF frequency
-            		tf = 1 + Math.log(Collections.frequency(currentMethodWords, s));
+            		tf = 1 + Math.log(wordFrequencies.get(s));
             		TF.put(s, tf);
             	} else {
             		tf = TF.get(s);
@@ -571,10 +627,10 @@ public class MethodFeatures extends SourceElement {
             	double idf = 0;
             	if (!IDF.containsKey(s)) {
             		// Calculate logarithmically scaled IDF frequency
-            		double totalDocs = allProjectWords.size();
+            		double totalDocs = allProjectWordFrequencies.size();
             		double numDocsContainingWord = 0;
-            		for (List<String> curList : allProjectWords) {
-            			numDocsContainingWord += curList.contains(s) ? 1 : 0;
+            		for (Map<String, Integer> curMap : allProjectWordFrequencies) {
+            			numDocsContainingWord += curMap.get(s) != null ? 1 : 0;
             		}
             		idf = Math.log(totalDocs / numDocsContainingWord);
             		IDF.put(s, idf);

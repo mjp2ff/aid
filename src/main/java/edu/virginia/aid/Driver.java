@@ -3,6 +3,7 @@ package edu.virginia.aid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -33,15 +34,16 @@ public class Driver {
         List<MethodDifferences> differences = new ArrayList<MethodDifferences>();
 
         // Pass one to get words for TFIDF
-        List<List<String>> allProjectWords = new ArrayList<List<String>>();
+        List<Map<String, Integer>> allProjectWordFrequencies = new ArrayList<>();
+
         for (MethodFeatures methodFeatures : methodFeaturesList) {
-        	allProjectWords.add(methodFeatures.getAllWords());
+        	allProjectWordFrequencies.add(methodFeatures.getWordFrequencies());
         }
 
         // Pass two to calculate differences.
         for (MethodFeatures methodFeatures : methodFeaturesList) {
         	// TODO: Create phases to guarantee TFIDF is calculated before differences are found.
-        	methodFeatures.calculateTFIDF(allProjectWords);
+        	methodFeatures.calculateTFIDF(allProjectWordFrequencies);
             differences.add(methodFeatures.getDifferences());
         }
 
