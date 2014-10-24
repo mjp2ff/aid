@@ -38,6 +38,7 @@ public class MethodFeatures extends SourceElement {
     private ExpressionInfo returnValue;
     private Map<String, Double> TFIDF;
     private Map<String, Integer> wordFrequencies;
+    private Set<String> allWordsNoComments;
 
     // Constants
     public static final String PRIMARY_VERB = "primary verb";
@@ -61,6 +62,7 @@ public class MethodFeatures extends SourceElement {
         this.returnValue = null;
         this.TFIDF = new HashMap<>();
         this.wordFrequencies = null;
+        this.allWordsNoComments = null;
 
         this.processedMethodName = methodName;
     }
@@ -197,27 +199,33 @@ public class MethodFeatures extends SourceElement {
      */
     public void calculateWordFrequencies() {
     	wordFrequencies = new HashMap<>();
+    	allWordsNoComments= new HashSet<>();
     	
     	incrementFrequenciesMap(processedMethodName);
+		allWordsNoComments.add(processedMethodName);
 		
     	for (IdentifierProperties identifier : parameters) {
     		for (String s : identifier.getData()) {
     			incrementFrequenciesMap(s);
+    			allWordsNoComments.add(s);
     		}
     	}
     	for (IdentifierProperties identifier : localVariables) {
     		for (String s : identifier.getData()) {
     			incrementFrequenciesMap(s);
+    			allWordsNoComments.add(s);
     		}
     	}
     	for (IdentifierProperties identifier : fields) {
     		for (String s : identifier.getData()) {
     			incrementFrequenciesMap(s);
+    			allWordsNoComments.add(s);
     		}
     	}
     	for (MethodInvocationProperties methodInvocation : methodInvocations) {
     		for (String s : methodInvocation.getData()) {
     			incrementFrequenciesMap(s);
+    			allWordsNoComments.add(s);
     		}
     	}
     	for (CommentInfo comment : getComments()) {
@@ -235,6 +243,7 @@ public class MethodFeatures extends SourceElement {
         
 		for (String s : returnValue.getData()) {
 			incrementFrequenciesMap(s);
+			allWordsNoComments.add(s);
 		}
     }
     
@@ -613,7 +622,7 @@ public class MethodFeatures extends SourceElement {
     	Map<String, Double> TF = new HashMap<>();
     	Map<String, Double> IDF = new HashMap<>();
 
-        for (String s : wordFrequencies.keySet()) {
+        for (String s : allWordsNoComments) {
         	if (!TFIDF.containsKey(s)) {
         		double tf = 0;
             	if (!TF.containsKey(s)) {
@@ -632,7 +641,7 @@ public class MethodFeatures extends SourceElement {
             		for (Map<String, Integer> curMap : allProjectWordFrequencies) {
             			numDocsContainingWord += curMap.get(s) != null ? 1 : 0;
             		}
-            		idf = Math.log(totalDocs / numDocsContainingWord);
+            		idf = Math.log(totalDocs / (1 + numDocsContainingWord));
             		IDF.put(s, idf);
             	} else {
             		idf = IDF.get(s);
