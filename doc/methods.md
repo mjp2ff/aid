@@ -33,6 +33,26 @@ public void setTab(String tab, int pos);
 * Main action verb based on name of a main function call
 * Talks about use of parameters to perform update
 
+### java.lang.String: `compareTo()`
+
+```
+public int compareTo(String anotherString);
+```
+
+* Follows pattern of summary sentence.
+* Stemming can reconcile 'compareTo' and 'compares'
+* Significant/lengthy comment can stress TF/IDF.
+
+### java.util.HashMap: `put()`
+
+```
+public V put(K key, V value)
+```
+
+* Follows pattern of summary sentence.
+* Specifically documents some outside method calls appropriately.
+* Relies on WordNet/NLP for equivalence of 'addEntry'/'puts', 'retrieved'/'access', etc.
+
 ## Negative Test Cases
 
 ### java.net.Socket: `connect()`
@@ -52,3 +72,4 @@ public void doubleClicked(MouseEvent e);
 
 * Makes no mention of what is done in the method, just why it is called
 * Makes no mention of relevant information or updated state
+
