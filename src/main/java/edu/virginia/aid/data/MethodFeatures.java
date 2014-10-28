@@ -325,20 +325,7 @@ public class MethodFeatures extends SourceElement {
 
         // Process the method
         {
-            boolean foundInComment = false;
-            // Check comments for method name
-            for (CommentInfo comment : getComments()) {
-                if (comment.getCommentText().contains(processedMethodName)) {
-                    foundInComment = true;
-                    break;
-                }
-            }
-            
-            // Check javadoc for method name
-            Javadoc javadocElem = getJavadoc();
-            if (javadocElem != null && javadocElem.toString().contains(processedMethodName)) {
-            	foundInComment = true;
-            }
+            boolean foundInComment = containedInComments(processedMethodName);
 
             if (!foundInComment) {
             	String differenceMessage = "The method name (" + methodName + ") is not discussed in the comments";
@@ -351,21 +338,7 @@ public class MethodFeatures extends SourceElement {
         for (IdentifierProperties field : scope.getFields()) {
 
             String identifier = field.getProcessedName();
-
-            boolean foundInComment = false;
-            // Check comments for field
-            for (CommentInfo comment : getComments()) {
-                if (comment.getCommentText().contains(identifier)) {
-                    foundInComment = true;
-                    break;
-                }
-            }
-
-            // Check javadoc for method name
-            Javadoc javadocElem = getJavadoc();
-            if (javadocElem != null && javadocElem.toString().contains(identifier)) {
-            	foundInComment = true;
-            }
+            boolean foundInComment = containedInComments(identifier);
             
             if (!foundInComment) {
                 double differenceScore = ((DifferenceWeights.FIELD_READ * field.getReads()) +
@@ -381,21 +354,7 @@ public class MethodFeatures extends SourceElement {
         for (IdentifierProperties parameter : scope.getParameters()) {
 
             String identifier = parameter.getProcessedName();
-
-            boolean foundInComment = false;
-            // Check comments for parameter
-            for (CommentInfo comment : getComments()) {
-                if (comment.getCommentText().contains(identifier)) {
-                    foundInComment = true;
-                    break;
-                }
-            }
-
-            // Check javadoc for parameter
-            Javadoc javadocElem = getJavadoc();
-            if (javadocElem != null && javadocElem.toString().contains(identifier)) {
-            	foundInComment = true;
-            }
+            boolean foundInComment = containedInComments(identifier);
             
             if (!foundInComment) {
                 double differenceScore = ((DifferenceWeights.PARAMETER_READ * parameter.getReads()) +
@@ -410,14 +369,7 @@ public class MethodFeatures extends SourceElement {
         // Process method invocations
         if (methodInvocations.size() == 1) {
             MethodInvocationProperties methodInvocation = methodInvocations.get(0);
-
-            boolean foundInComment = false;
-            for (CommentInfo comment : getComments()) {
-                if (comment.getCommentText().contains(methodInvocation.getProcessedName())) {
-                    foundInComment = true;
-                    break;
-                }
-            }
+            boolean foundInComment = containedInComments(methodInvocation.getProcessedName());
 
             if (!foundInComment) {
             	String differenceMessage = "Method " + methodInvocation.getName() + " is invoked but not discussed in comments";
@@ -514,6 +466,11 @@ public class MethodFeatures extends SourceElement {
                 foundInComments = true;
                 break;
             }
+        }
+        
+        Javadoc javadocElem = getJavadoc();
+        if (!foundInComments && javadocElem != null && javadocElem.toString().contains(term)) {
+        	foundInComments = true;
         }
 
         return foundInComments;
