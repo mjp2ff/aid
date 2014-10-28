@@ -64,9 +64,9 @@ public class IdentifierName extends SourceElement implements StringListable {
     public IdentifierProperties getResolvedIdentifier(MethodFeatures features) {
         if (type == IdentifierType.VARIABLE) {
             if (scope == IdentifierScope.CLASS) {
-                return features.getField(name);
+                return features.getScope().getField(name);
             } else {
-                return features.getClosestVariable(name);
+                return features.getScope().getClosestVariable(name);
             }
         }
 

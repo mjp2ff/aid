@@ -32,7 +32,7 @@ public class IdentifierDetector implements FeatureDetector {
         for (Object o : method.parameters()) {
             if (o instanceof VariableDeclaration) {
                 VariableDeclaration parameter = (VariableDeclaration) o;
-                features.addIdentifier(new IdentifierProperties(parameter.getName().getIdentifier(), "", IdentifierProperties.IdentifierContext.FORMAL_PARAMETER, parameter.getStartPosition(), parameter.getStartPosition() + parameter.getLength(), features.getSourceContext()));
+                features.getScope().addVariable(new IdentifierProperties(parameter.getName().getIdentifier(), "", IdentifierProperties.IdentifierContext.FORMAL_PARAMETER, parameter.getStartPosition(), parameter.getStartPosition() + parameter.getLength(), features.getSourceContext()));
             }
         }
 
@@ -53,19 +53,19 @@ public class IdentifierDetector implements FeatureDetector {
         for (VariableDeclaration declaration : declarations) {
             IdentifierProperties identifier = new IdentifierProperties(declaration.getName().getIdentifier(), declaration.getStartPosition(), declaration.getStartPosition() + declaration.getLength(), features.getSourceContext());
             identifier.setContext(IdentifierProperties.IdentifierContext.LOCAL_VARIABLE);
-            features.addIdentifier(identifier);
+            features.getScope().addVariable(identifier);
         }
 
         // Finds corresponding fields for all field usages, adding the discovered fields to MethodFeatures
         for (String fieldName : usageVisitor.getFieldNames()) {
             IdentifierProperties field = features.getParentClass().getFieldByName(fieldName);
             if (field != null) {
-                features.addIdentifier(new IdentifierProperties(field));
+                features.getScope().addVariable(new IdentifierProperties(field));
             }
         }
 
         for (IdentifierName identifierName : usageVisitor.getIdentifierUses()) {
-           features.addIdentifierUse(identifierName);
+           features.getScope().addIdentifierUse(identifierName);
         }
 
         for (MethodInvocationProperties methodInvocation : usageVisitor.getMethodInvocations()) {

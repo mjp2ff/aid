@@ -28,11 +28,10 @@ public class MethodFeatures extends SourceElement {
     private String methodName;
     private Type returnType;
     private String processedMethodName;
+    private BlockProperties blockProperties;
     private Map<String, Boolean> booleanFeatures;
     private Map<String, String> stringFeatures;
-    private List<IdentifierProperties> parameters;
-    private List<IdentifierProperties> localVariables;
-    private List<IdentifierProperties> fields;
+    private ScopeProperties scope;
     private List<MethodInvocationProperties> methodInvocations;
     private Javadoc javadoc;
     private ExpressionInfo returnValue;
@@ -52,11 +51,10 @@ public class MethodFeatures extends SourceElement {
         this.parentClass = parentClass;
         this.filepath = filepath;
         this.returnType = returnType;
+        this.blockProperties = null;
         this.booleanFeatures = new HashMap<>();
         this.stringFeatures = new HashMap<>();
-        this.parameters = new ArrayList<>();
-        this.localVariables = new ArrayList<>();
-        this.fields = new ArrayList<>();
+        this.scope = new ScopeProperties();
         this.methodInvocations = new ArrayList<>();
         this.javadoc = null;
         this.returnValue = null;
@@ -74,6 +72,14 @@ public class MethodFeatures extends SourceElement {
      */
     public String getMethodName() {
         return this.methodName;
+    }
+
+    public BlockProperties getBlockProperties() {
+        return blockProperties;
+    }
+
+    public void setBlockProperties(BlockProperties blockProperties) {
+        this.blockProperties = blockProperties;
     }
 
     public String getProcessedMethodName() {
@@ -98,6 +104,10 @@ public class MethodFeatures extends SourceElement {
 
     public void setReturnValue(ExpressionInfo returnValue) {
         this.returnValue = returnValue;
+    }
+
+    public Type getReturnType() {
+        return returnType;
     }
 
     /**
@@ -170,18 +180,6 @@ public class MethodFeatures extends SourceElement {
         return stringFeatures.get(name);
     }
 
-    public List<IdentifierProperties> getParameters() {
-    	return parameters;
-    }
-
-    public List<IdentifierProperties> getLocalVariables() {
-    	return localVariables;
-    }
-
-    public List<IdentifierProperties> getFields() {
-    	return fields;
-    }
-    
     /**
      * Getter for word frequencies, calculating them if necessary.
      * 
@@ -204,19 +202,19 @@ public class MethodFeatures extends SourceElement {
     	incrementFrequenciesMap(processedMethodName);
 		allWordsNoComments.add(processedMethodName);
 		
-    	for (IdentifierProperties identifier : parameters) {
+    	for (IdentifierProperties identifier : scope.getParameters()) {
     		for (String s : identifier.getData()) {
     			incrementFrequenciesMap(s);
     			allWordsNoComments.add(s);
     		}
     	}
-    	for (IdentifierProperties identifier : localVariables) {
+    	for (IdentifierProperties identifier : scope.getLocalVariables()) {
     		for (String s : identifier.getData()) {
     			incrementFrequenciesMap(s);
     			allWordsNoComments.add(s);
     		}
     	}
-    	for (IdentifierProperties identifier : fields) {
+    	for (IdentifierProperties identifier : scope.getFields()) {
     		for (String s : identifier.getData()) {
     			incrementFrequenciesMap(s);
     			allWordsNoComments.add(s);
@@ -261,81 +259,19 @@ public class MethodFeatures extends SourceElement {
     	}
     }
     
-    public List<IdentifierProperties> getIdentifiers() {
-        List<IdentifierProperties> identifiers = new ArrayList<>();
-        identifiers.addAll(parameters);
-        identifiers.addAll(fields);
-        identifiers.addAll(localVariables);
-        return identifiers;
-    }
-
-    /**
-     * Adds the identifier to the method's identifier list
-     *
-     * @param properties Identifier information
-     */
-    public void addIdentifier(IdentifierProperties properties) {
-        switch (properties.getContext()) {
-            case FORMAL_PARAMETER:
-                parameters.add(properties);
-                break;
-            case LOCAL_VARIABLE:
-                localVariables.add(properties);
-                break;
-            case FIELD:
-                fields.add(properties);
-                break;
-            case METHOD:
-            	break;
-            default:
-            	break;
-        }
-    }
-
     /**
      * Creates string for method signature
      *
      * @return The string representation of the method signature
      */
     public String getMethodSignature() {
+        List<IdentifierProperties> parameters = scope.getParameters();
         String[] parameterNames = new String[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {
             parameterNames[i] = parameters.get(i).getName();
         }
 
         return methodName + "(" + StringUtils.join(parameterNames, ", ") + ")";
-    }
-
-    /**
-     * Finds and returns all identifier processed names in this method
-     *
-     * @return Set of all identifier processed names in the method
-     */
-    public Set<String> getIdentifierProcessedNames() {
-        Set<String> names = new HashSet<String>();
-
-        // Get Parameters
-        for (IdentifierProperties identifier : parameters) {
-        	if (identifier.hasBeenProcessed()) {
-                names.add(identifier.getProcessedName());
-        	}
-        }
-
-        // Get Local Variables
-        for (IdentifierProperties identifier : localVariables) {
-        	if (identifier.hasBeenProcessed()) {
-                names.add(identifier.getProcessedName());
-        	}
-        }
-
-        // Get Fields
-        for (IdentifierProperties identifier : fields) {
-        	if (identifier.hasBeenProcessed()) {
-                names.add(identifier.getProcessedName());
-        	}
-        }
-
-        return names;
     }
 
     /**
@@ -366,107 +302,8 @@ public class MethodFeatures extends SourceElement {
         this.javadoc = javadoc;
     }
 
-    /**
-     * Finds and returns the closest scoped variable with the given name
-     *
-     * @param name Name of the variable to return
-     * @return Closest scoped variable
-     */
-    public IdentifierProperties getClosestVariable(String name) {
-
-        // Search local variables
-        IdentifierProperties localVariable = getLocalVariable(name);
-        if (localVariable != null) {
-            return localVariable;
-        }
-
-        // Search parameters
-        IdentifierProperties parameter = getParameter(name);
-        if (parameter != null) {
-            return parameter;
-        }
-
-        // Search fields
-        IdentifierProperties field = getField(name);
-        if (field != null) {
-            return field;
-        }
-
-        // Return null if none found
-        return null;
-    }
-
-    /**
-     * Finds and returns the local variable with the given name, or null if none exists
-     *
-     * @param name Name of the variable to find
-     * @return Local variable with name or null if none exists
-     */
-    public IdentifierProperties getLocalVariable(String name) {
-        return searchIdentifierList(name, localVariables);
-    }
-
-    /**
-     * Finds and returns the parameter with the given name, or null if none exists
-     *
-     * @param name Name of the parameter to find
-     * @return Parameter with name or null if none exists
-     */
-    public IdentifierProperties getParameter(String name) {
-        return searchIdentifierList(name, parameters);
-    }
-
-    /**
-     * Finds and returns the field with the given name, or null if none exists
-     *
-     * @param name Name of the field to find
-     * @return Field with the name or null if none exists
-     */
-    public IdentifierProperties getField(String name) {
-        return searchIdentifierList(name, fields);
-    }
-
-    /**
-     * Private helper method which finds and returns an identifier from a list if
-     * its name matches the search name, or null if it is not found
-     *
-     * @param name The name of the variable to find
-     * @param list The list to search for the variable name
-     * @return The identifier with the given name or null if not found
-     */
-    private static IdentifierProperties searchIdentifierList(String name, List<IdentifierProperties> list) {
-        for (IdentifierProperties identifier : list) {
-            if (identifier.getName().equals(name)) {
-                return identifier;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Adds an identifier use to the identifiers in the method
-     *
-     * @param identifierUse The identifier use to add
-     */
-    public void addIdentifierUse(IdentifierName identifierUse) {
-        if (identifierUse.isVariable()) {
-
-            IdentifierProperties identifierProperties;
-            if (!identifierUse.hasClassScope()) {
-                identifierProperties = getClosestVariable(identifierUse.getName());
-            } else {
-                identifierProperties = getField(identifierUse.getName());
-            }
-
-            if (identifierProperties != null) {
-                if (identifierUse.getUse() == IdentifierUse.READ) {
-                    identifierProperties.addReads(1);
-                } else if (identifierUse.getUse() == IdentifierUse.WRITE) {
-                    identifierProperties.addWrites(1);
-                }
-            }
-        }
+    public ScopeProperties getScope() {
+        return scope;
     }
 
     /**
@@ -511,7 +348,7 @@ public class MethodFeatures extends SourceElement {
         }
 
         // Process fields
-        for (IdentifierProperties field : fields) {
+        for (IdentifierProperties field : scope.getFields()) {
 
             String identifier = field.getProcessedName();
 
@@ -541,7 +378,7 @@ public class MethodFeatures extends SourceElement {
         }
 
         // Process parameters
-        for (IdentifierProperties parameter : parameters) {
+        for (IdentifierProperties parameter : scope.getParameters()) {
 
             String identifier = parameter.getProcessedName();
 
@@ -611,7 +448,7 @@ public class MethodFeatures extends SourceElement {
     /**
      * Calculates all TFIDF values for this method.
      * 
-     * @param allProjectWords A list containing a list of words in each method in the project.
+     * @param allProjectWordFrequencies A list containing a list of words in each method in the project.
      */
     public void calculateTFIDF(List<Map<String, Integer>> allProjectWordFrequencies) {
     	// Shouldn't happen here, but just in case.
@@ -689,8 +526,8 @@ public class MethodFeatures extends SourceElement {
     @Override
     public String toString() {
         return "Method " + getMethodSignature() + ":\n" +
-                "\tParameters: " + parameters + "\n" +
-                "\tLocal Variables: " + localVariables + "\n" +
-                "\tFields: " + fields + "\n";
+                "\tParameters: " + scope.getParameters() + "\n" +
+                "\tLocal Variables: " + scope.getLocalVariables() + "\n" +
+                "\tFields: " + scope.getFields() + "\n";
     }
 }

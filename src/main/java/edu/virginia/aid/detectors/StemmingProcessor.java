@@ -47,13 +47,13 @@ public class StemmingProcessor implements FeatureDetector {
         features.setProcessedMethodName(stem(features.getProcessedMethodName()));
 
 		// Finally, handle identifiers (parameters, local variables, fields, methods).
-		for (IdentifierProperties parameter : features.getParameters()) {
+		for (IdentifierProperties parameter : features.getScope().getParameters()) {
 			parameter.setProcessedName(this.stem(parameter.getProcessedName()));
 		}
-		for (IdentifierProperties localVariable : features.getLocalVariables()) {
+		for (IdentifierProperties localVariable : features.getScope().getLocalVariables()) {
 			localVariable.setProcessedName(this.stem(localVariable.getProcessedName()));
 		}
-		for (IdentifierProperties field : features.getFields()) {
+		for (IdentifierProperties field : features.getScope().getFields()) {
 			field.setProcessedName(this.stem(field.getProcessedName()));
 		}
         for (MethodInvocationProperties methodInvocation : features.getMethodInvocations()) {

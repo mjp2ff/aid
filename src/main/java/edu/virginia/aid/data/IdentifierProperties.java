@@ -183,6 +183,16 @@ public class IdentifierProperties extends SourceElement implements StringListabl
         return false;
     }
 
+    /**
+     * Computes the hash code for the function using the name and context
+     *
+     * @return The hash code
+     */
+    @Override
+    public int hashCode() {
+        return name.hashCode() ^ context.ordinal();
+    }
+
     @Override
 	public String toString() {
 		return name;
