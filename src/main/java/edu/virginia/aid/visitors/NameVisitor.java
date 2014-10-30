@@ -1,11 +1,20 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.*;
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
+
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.IdentifierScope;
+import edu.virginia.aid.data.IdentifierType;
+import edu.virginia.aid.data.IdentifierUse;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodInvocationProperties;
 
 public class NameVisitor extends ASTVisitor {
 

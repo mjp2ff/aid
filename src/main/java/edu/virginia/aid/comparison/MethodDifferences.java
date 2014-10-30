@@ -1,9 +1,9 @@
 package edu.virginia.aid.comparison;
 
-import edu.virginia.aid.data.MethodFeatures;
-
 import java.util.ArrayList;
 import java.util.Collections;
+
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Wrapper for tracking differences between a method and it's comments

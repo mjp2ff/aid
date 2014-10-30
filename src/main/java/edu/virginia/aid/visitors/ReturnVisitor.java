@@ -1,12 +1,13 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.IdentifierName;
-import edu.virginia.aid.data.MethodFeatures;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Finds and processes all return statements within an ast

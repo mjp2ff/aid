@@ -1,8 +1,8 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.MethodFeatures;
-
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Interface for a single feature detector designed to run on a method

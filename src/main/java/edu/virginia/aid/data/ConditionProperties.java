@@ -1,9 +1,9 @@
 package edu.virginia.aid.data;
 
-import org.eclipse.jdt.core.dom.Expression;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.jdt.core.dom.Expression;
 
 public class ConditionProperties {
 

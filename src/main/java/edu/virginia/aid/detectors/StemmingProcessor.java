@@ -2,14 +2,13 @@ package edu.virginia.aid.detectors;
 
 import java.util.List;
 
-import edu.virginia.aid.data.MethodInvocationProperties;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.tartarus.snowball.SnowballStemmer;
 
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
-
-import org.tartarus.snowball.*;
+import edu.virginia.aid.data.MethodInvocationProperties;
 
 /**
  * Feature processor for handling word stemming within comments.

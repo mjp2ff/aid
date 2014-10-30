@@ -1,12 +1,12 @@
 package edu.virginia.aid.parsers;
 
-import edu.virginia.aid.data.MethodFeatures;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import edu.virginia.aid.data.MethodFeatures;
 
 public class DirectoryMethodParser extends MethodParser {
 

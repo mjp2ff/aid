@@ -1,11 +1,12 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.IdentifierProperties;
-import edu.virginia.aid.data.MethodFeatures;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import edu.virginia.aid.data.IdentifierProperties;
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Detector that finds a single verb to describe the method

@@ -1,8 +1,8 @@
 package edu.virginia.aid.parsers;
 
-import edu.virginia.aid.data.MethodFeatures;
-
 import java.util.List;
+
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Parses methods for a single file input

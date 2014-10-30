@@ -1,6 +1,5 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.SourceContext;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -9,6 +8,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.IdentifierProperties;
+import edu.virginia.aid.data.SourceContext;
 
 /**
  * Finds class definitions in an AST

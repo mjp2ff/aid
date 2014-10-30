@@ -1,13 +1,13 @@
 package edu.virginia.aid;
 
-import edu.virginia.aid.data.ClassInformation;
-import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.detectors.FeatureDetector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.detectors.FeatureDetector;
 
 /**
  * The MethodProcessor analyzes an individual MethodDeclaration and runs a set of

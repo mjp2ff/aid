@@ -1,16 +1,17 @@
 package edu.virginia.aid.detectors;
 
+import java.util.List;
+
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
+
 import edu.virginia.aid.data.IdentifierName;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.data.MethodInvocationProperties;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
 import edu.virginia.aid.visitors.VariableUsageVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
-
-import java.util.List;
 
 /**
  * Feature detector for finding and tagging variable declarations, including parameters and local variables

@@ -1,9 +1,12 @@
 package edu.virginia.aid.visitors;
 
-import org.eclipse.jdt.core.dom.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 /**
  * Visitor that finds and stores each VariableDeclaration in an ASTNode subtree

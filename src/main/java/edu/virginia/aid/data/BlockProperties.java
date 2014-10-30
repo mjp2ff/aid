@@ -1,6 +1,7 @@
 package edu.virginia.aid.data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockProperties extends SourceElement {
 

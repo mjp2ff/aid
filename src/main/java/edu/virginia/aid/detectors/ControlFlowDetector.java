@@ -1,9 +1,14 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.*;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import edu.virginia.aid.data.BlockProperties;
+import edu.virginia.aid.data.ExpressionInfo;
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.IdentifierProperties;
+import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.ControlFlowVisitor;
 import edu.virginia.aid.visitors.ReturnVisitor;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * Adds information about the control flow to the class

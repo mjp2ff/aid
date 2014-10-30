@@ -1,12 +1,16 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.IdentifierName;
-import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.data.MethodInvocationProperties;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 
-import java.util.*;
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodInvocationProperties;
 
 /**
  * Scans an AST for all variable usages

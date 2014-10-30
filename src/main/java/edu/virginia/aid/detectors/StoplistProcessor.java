@@ -3,12 +3,12 @@ package edu.virginia.aid.detectors;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.virginia.aid.data.MethodInvocationProperties;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodInvocationProperties;
 
 /**
  * Feature processor for removing words based on a stopist.

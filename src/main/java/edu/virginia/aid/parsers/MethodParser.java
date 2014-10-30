@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.virginia.aid.detectors.*;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Comment;
@@ -17,6 +16,12 @@ import edu.virginia.aid.MethodProcessor;
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.detectors.CommentDetector;
+import edu.virginia.aid.detectors.ControlFlowDetector;
+import edu.virginia.aid.detectors.IdentifierDetector;
+import edu.virginia.aid.detectors.PrimaryActionDetector;
+import edu.virginia.aid.detectors.StemmingProcessor;
+import edu.virginia.aid.detectors.StoplistProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
 
 public abstract class MethodParser {

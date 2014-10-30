@@ -1,10 +1,23 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.*;
-import org.eclipse.jdt.core.dom.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.DoStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.WhileStatement;
+
+import edu.virginia.aid.data.BlockProperties;
+import edu.virginia.aid.data.ConditionProperties;
+import edu.virginia.aid.data.IfStatementProperties;
+import edu.virginia.aid.data.LoopProperties;
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Finds top-level control flow structures and the information contained within them
