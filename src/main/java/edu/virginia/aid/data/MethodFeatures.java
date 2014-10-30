@@ -72,7 +72,9 @@ public class MethodFeatures extends SourceElement {
         try {
             this.wordNetDictionary = Dictionary.getFileBackedInstance("wordnet/dict");
         } catch (JWNLException e) {
-        	System.out.println("THIS IS A MISTAKE: " + e);
+        	System.out.println("If you see this error, download the WordNet database files from: "
+        			+ "http://wordnetcode.princeton.edu/wn3.1.dict.tar.gz"
+        			+ "\n Place the extracted 'dict' folder inside /aid/wordnet/");
         	this.wordNetDictionary = Dictionary.getInstance();
         }
 
