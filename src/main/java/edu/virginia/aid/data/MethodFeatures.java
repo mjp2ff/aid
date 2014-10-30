@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.extjwnl.JWNLException;
+import net.sf.extjwnl.data.IndexWord;
+import net.sf.extjwnl.data.IndexWordSet;
+import net.sf.extjwnl.data.Synset;
+import net.sf.extjwnl.data.Word;
+import net.sf.extjwnl.dictionary.Dictionary;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.Type;
@@ -38,6 +45,7 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Double> TFIDF;
     private Map<String, Integer> wordFrequencies;
     private Set<String> allWordsNoComments;
+    private Dictionary wordNetDictionary;
 
     // Constants
     public static final String PRIMARY_VERB = "primary verb";
@@ -61,6 +69,12 @@ public class MethodFeatures extends SourceElement {
         this.TFIDF = new HashMap<>();
         this.wordFrequencies = null;
         this.allWordsNoComments = null;
+        try {
+            this.wordNetDictionary = Dictionary.getFileBackedInstance("wordnet/dict");
+        } catch (JWNLException e) {
+        	System.out.println("THIS IS A MISTAKE: " + e);
+        	this.wordNetDictionary = Dictionary.getInstance();
+        }
 
         this.processedMethodName = methodName;
     }
@@ -460,17 +474,38 @@ public class MethodFeatures extends SourceElement {
      * @return Whether or not the term was found in the comments
      */
     public boolean containedInComments(String term) {
+
+		Set<String> synonyms = new HashSet<>();
+		synonyms.add(term);
+    	try {
+    		IndexWordSet indexWordSet = this.wordNetDictionary.lookupAllIndexWords(term);    		
+    		for (IndexWord indexWord : indexWordSet.getIndexWordCollection()) {
+    			for (Synset synset : indexWord.getSenses()) {
+    				List<Word> words = synset.getWords();
+    				for (Word word : words) {
+    					synonyms.add(word.getLemma());
+    				}
+    			}
+    		}    		
+    	} catch (JWNLException e) {
+    		System.out.println("Error finding synonyms for \"" + term + "\"");
+    	}
+    	
         boolean foundInComments = false;
-        for (CommentInfo comment : getComments()) {
-            if (comment.getCommentText().contains(term)) {
-                foundInComments = true;
-                break;
+        List<String> synonymsList = new ArrayList<>(synonyms);
+        for (int i = 0; i < synonymsList.size() && !foundInComments; ++i) {
+        	String synonym = synonymsList.get(i);
+    		for (CommentInfo comment : getComments()) {
+                if (comment.getCommentText().contains(synonym)) {
+                    foundInComments = true;
+                    break;
+                }	
+        	}
+
+            Javadoc javadocElem = getJavadoc();
+            if (!foundInComments && javadocElem != null && javadocElem.toString().contains(synonym)) {
+            	foundInComments = true;
             }
-        }
-        
-        Javadoc javadocElem = getJavadoc();
-        if (!foundInComments && javadocElem != null && javadocElem.toString().contains(term)) {
-        	foundInComments = true;
         }
 
         return foundInComments;
