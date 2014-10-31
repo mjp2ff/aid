@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import net.sf.extjwnl.JWNLException;
+import net.sf.extjwnl.dictionary.Dictionary;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.parsers.AntProjectMethodParser;
@@ -23,6 +25,8 @@ import edu.virginia.aid.parsers.MethodParser;
  *
  */
 public class Driver {
+	
+    public static final String WORDNET_FILEPATH = "wordnet/dict";
 
     /**
      * Performs comparison check on each method and sorts them from most to least different
@@ -40,11 +44,19 @@ public class Driver {
         	allProjectWordFrequencies.add(methodFeatures.getWordFrequencies());
         }
 
+        Dictionary wordNetDictionary = null;
+		try {
+			wordNetDictionary = Dictionary.getFileBackedInstance(WORDNET_FILEPATH);
+		} catch (JWNLException e) {
+			// Cry
+			System.err.println("Error initializing WordNet dictionary:\n");
+		}
+        
         // Pass two to calculate differences.
         for (MethodFeatures methodFeatures : methodFeaturesList) {
         	// TODO: Create phases to guarantee TFIDF is calculated before differences are found.
         	methodFeatures.calculateTFIDF(allProjectWordFrequencies);
-            differences.add(methodFeatures.getDifferences());
+            differences.add(methodFeatures.getDifferences(wordNetDictionary));
         }
 
         Collections.sort(differences);

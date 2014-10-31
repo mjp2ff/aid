@@ -49,7 +49,6 @@ public class MethodFeatures extends SourceElement {
     // Constants
     public static final String PRIMARY_VERB = "primary verb";
     public static final String PRIMARY_OBJECT = "primary object";
-    public static final String WORDNET_FILEPATH = "wordnet/dict";
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
                           Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
@@ -326,14 +325,15 @@ public class MethodFeatures extends SourceElement {
     /**
      * Find and return a list of differences between the method contents and its comments
      *
+     * @param wordNetDictionary A WordNet dictionary used to detect synsets.
      * @return The list of differences between the comments and the method
      */
-    public MethodDifferences getDifferences() {
+    public MethodDifferences getDifferences(Dictionary wordNetDictionary) {
         MethodDifferences differences = new MethodDifferences(this);
 
         // Process the method
         {
-            boolean foundInComment = containedInComments(processedMethodName);
+            boolean foundInComment = containedInComments(wordNetDictionary, processedMethodName);
 
             if (!foundInComment) {
             	String differenceMessage = "The method name (" + methodName + ") is not discussed in the comments";
@@ -346,7 +346,7 @@ public class MethodFeatures extends SourceElement {
         for (IdentifierProperties field : scope.getFields()) {
 
             String identifier = field.getProcessedName();
-            boolean foundInComment = containedInComments(identifier);
+            boolean foundInComment = containedInComments(wordNetDictionary, identifier);
             
             if (!foundInComment) {
                 double differenceScore = ((DifferenceWeights.FIELD_READ * field.getReads()) +
@@ -362,7 +362,7 @@ public class MethodFeatures extends SourceElement {
         for (IdentifierProperties parameter : scope.getParameters()) {
 
             String identifier = parameter.getProcessedName();
-            boolean foundInComment = containedInComments(identifier);
+            boolean foundInComment = containedInComments(wordNetDictionary, identifier);
             
             if (!foundInComment) {
                 double differenceScore = ((DifferenceWeights.PARAMETER_READ * parameter.getReads()) +
@@ -377,7 +377,7 @@ public class MethodFeatures extends SourceElement {
         // Process method invocations
         if (methodInvocations.size() == 1) {
             MethodInvocationProperties methodInvocation = methodInvocations.get(0);
-            boolean foundInComment = containedInComments(methodInvocation.getProcessedName());
+            boolean foundInComment = containedInComments(wordNetDictionary, methodInvocation.getProcessedName());
 
             if (!foundInComment) {
             	String differenceMessage = "Method " + methodInvocation.getName() + " is invoked but not discussed in comments";
@@ -388,7 +388,7 @@ public class MethodFeatures extends SourceElement {
 
         for (String key : stringFeatures.keySet()) {
             String value = stringFeatures.get(key);
-            if (!containedInComments(value)) {
+            if (!containedInComments(wordNetDictionary, value)) {
                 switch (key) {
                     case MethodFeatures.PRIMARY_VERB:
                         differences.add(new GenericDifference("The primary method action (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * getTFIDF(value)));
@@ -464,15 +464,16 @@ public class MethodFeatures extends SourceElement {
     /**
      * Checks whether a string is contained within the text of the method's comments
      *
+     * @param wordNetDictionary A WordNet dictionary used to detect synsets.
      * @param term The term to search for
      * @return Whether or not the term was found in the comments
      */
-    public boolean containedInComments(String term) {
+    public boolean containedInComments(Dictionary wordNetDictionary, String term) {
 
 		Set<String> synonyms = new HashSet<>();
 		synonyms.add(term);
-    	try {
-            Dictionary wordNetDictionary = Dictionary.getFileBackedInstance(WORDNET_FILEPATH);
+
+		try {
     		IndexWordSet indexWordSet = wordNetDictionary.lookupAllIndexWords(term);    		
     		for (IndexWord indexWord : indexWordSet.getIndexWordCollection()) {
     			for (Synset synset : indexWord.getSenses()) {
@@ -482,7 +483,7 @@ public class MethodFeatures extends SourceElement {
     				}
     			}
     		}
-    	} catch (JWNLException e) {
+    	} catch (Exception e) {
         	System.err.println("WordNet error " + e);
     	}
     	
