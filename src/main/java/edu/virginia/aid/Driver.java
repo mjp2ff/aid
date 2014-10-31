@@ -51,15 +51,21 @@ public class Driver {
 			// Cry
 			System.err.println("Error initializing WordNet dictionary:\n");
 		}
-        
+
+        System.out.print("Computed differences for 0 methods");
+
         // Pass two to calculate differences.
         for (MethodFeatures methodFeatures : methodFeaturesList) {
-        	// TODO: Create phases to guarantee TFIDF is calculated before differences are found.
-        	methodFeatures.calculateTFIDF(allProjectWordFrequencies);
+            // TODO: Create phases to guarantee TFIDF is calculated before differences are found.
+            methodFeatures.calculateTFIDF(allProjectWordFrequencies);
             differences.add(methodFeatures.getDifferences(wordNetDictionary));
+
+            System.out.print("\rComputed differences for " + differences.size() + " methods");
         }
 
+        System.out.print("\n Ranking methods by difference score... ");
         Collections.sort(differences);
+        System.out.println("DONE");
 
         return differences;
     }
