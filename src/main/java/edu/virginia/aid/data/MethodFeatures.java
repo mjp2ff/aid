@@ -483,7 +483,7 @@ public class MethodFeatures extends SourceElement {
     			}
     		}
     	} catch (JWNLException e) {
-        	System.out.println("WordNet error " + e);
+        	System.err.println("WordNet error " + e);
     	}
     	
         boolean foundInComments = false;
