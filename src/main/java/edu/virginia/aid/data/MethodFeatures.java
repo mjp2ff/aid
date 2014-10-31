@@ -45,11 +45,11 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Double> TFIDF;
     private Map<String, Integer> wordFrequencies;
     private Set<String> allWordsNoComments;
-    private Dictionary wordNetDictionary;
 
     // Constants
     public static final String PRIMARY_VERB = "primary verb";
     public static final String PRIMARY_OBJECT = "primary object";
+    public static final String WORDNET_FILEPATH = "wordnet/dict";
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
                           Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
@@ -69,14 +69,6 @@ public class MethodFeatures extends SourceElement {
         this.TFIDF = new HashMap<>();
         this.wordFrequencies = null;
         this.allWordsNoComments = null;
-        try {
-            this.wordNetDictionary = Dictionary.getFileBackedInstance("wordnet/dict");
-        } catch (JWNLException e) {
-        	System.out.println("If you see this error, download the WordNet database files from: "
-        			+ "http://wordnetcode.princeton.edu/wn3.1.dict.tar.gz"
-        			+ "\n Place the extracted 'dict' folder inside /aid/wordnet/");
-        	this.wordNetDictionary = Dictionary.getInstance();
-        }
 
         this.processedMethodName = methodName;
     }
@@ -480,7 +472,8 @@ public class MethodFeatures extends SourceElement {
 		Set<String> synonyms = new HashSet<>();
 		synonyms.add(term);
     	try {
-    		IndexWordSet indexWordSet = this.wordNetDictionary.lookupAllIndexWords(term);    		
+            Dictionary wordNetDictionary = Dictionary.getFileBackedInstance(WORDNET_FILEPATH);
+    		IndexWordSet indexWordSet = wordNetDictionary.lookupAllIndexWords(term);    		
     		for (IndexWord indexWord : indexWordSet.getIndexWordCollection()) {
     			for (Synset synset : indexWord.getSenses()) {
     				List<Word> words = synset.getWords();
@@ -488,9 +481,9 @@ public class MethodFeatures extends SourceElement {
     					synonyms.add(word.getLemma());
     				}
     			}
-    		}    		
+    		}
     	} catch (JWNLException e) {
-    		System.out.println("Error finding synonyms for \"" + term + "\"");
+        	System.out.println("WordNet error " + e);
     	}
     	
         boolean foundInComments = false;
