@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.extjwnl.JWNLException;
 import net.sf.extjwnl.data.IndexWord;
 import net.sf.extjwnl.data.IndexWordSet;
 import net.sf.extjwnl.data.Synset;
@@ -15,8 +14,7 @@ import net.sf.extjwnl.data.Word;
 import net.sf.extjwnl.dictionary.Dictionary;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.*;
 
 import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
@@ -115,6 +113,57 @@ public class MethodFeatures extends SourceElement {
 
     public Type getReturnType() {
         return returnType;
+    }
+
+    /**
+     * Gets string representation of return type of method
+     *
+     * @return The string representation of the return type
+     */
+    public String getReturnTypeName() {
+        if (returnType == null) {
+            return null;
+        }
+
+        return getReturnTypeName(returnType);
+    }
+
+    /**
+     * Private recursive helper for fetching the string representation of a method
+     *
+     * @param returnType The current return type to stringify
+     * @return The string representation of the type
+     */
+    private String getReturnTypeName(Type returnType) {
+        if (returnType == null) {
+            return null;
+        }
+
+        switch (returnType.getNodeType()) {
+            case ASTNode.PRIMITIVE_TYPE:
+                PrimitiveType primitiveType = (PrimitiveType) returnType;
+                return primitiveType.toString();
+            case ASTNode.SIMPLE_TYPE:
+                SimpleType simpleType = (SimpleType) returnType;
+                return simpleType.getName().toString();
+            case ASTNode.ARRAY_TYPE:
+                ArrayType arrayType = (ArrayType) returnType;
+                return getReturnTypeName(arrayType.getElementType());
+            case ASTNode.PARAMETERIZED_TYPE:
+                ParameterizedType parameterizedType = (ParameterizedType) returnType;
+                return getReturnTypeName(parameterizedType.getType());
+            case ASTNode.QUALIFIED_TYPE:
+                QualifiedType qualifiedType = (QualifiedType) returnType;
+                return qualifiedType.getName().getIdentifier();
+            case ASTNode.UNION_TYPE:
+                UnionType unionType = (UnionType) returnType;
+                return getReturnTypeName((Type) unionType.types().get(0));
+            case ASTNode.WILDCARD_TYPE:
+                WildcardType wildcardType = (WildcardType) returnType;
+                return wildcardType.toString();
+            default:
+                return returnType.toString();
+        }
     }
 
     /**
