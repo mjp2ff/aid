@@ -1,0 +1,8 @@
+# file,method name,param1,param2,...
+benchmark/java.io.File.java,canRead
+benchmark/java.util.ArrayList.java,indexOf,o
+benchmark/edu.rice.cs.drjava.model.AbstractDJDocument.java,setTab,tab,pos
+benchmark/java.lang.String.java,compareTo,anotherString
+benchmark/java.util.HashMap.java,put,key,value
+benchmark/java.net.Socket.java,connect,endpoint,timeout
+benchmark/edu.rice.cs.drjava.ui.ExternalProcessPanel.java,doubleClicked,e

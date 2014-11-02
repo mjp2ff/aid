@@ -1,20 +1,16 @@
 package edu.virginia.aid;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import edu.virginia.aid.data.MethodSignature;
+import edu.virginia.aid.parsers.*;
 import net.sf.extjwnl.JWNLException;
 import net.sf.extjwnl.dictionary.Dictionary;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.parsers.AntProjectMethodParser;
-import edu.virginia.aid.parsers.DirectoryMethodParser;
-import edu.virginia.aid.parsers.FileMethodParser;
-import edu.virginia.aid.parsers.MethodParser;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -160,6 +156,36 @@ public class Driver {
 
                     displayDifferences(differences, 10, new Scanner(System.in));
                 }
+            } else if (args[0].equals("-methods")) {
+                Map<String, List<MethodSignature>> methodsToParse = new HashMap<>();
+                try {
+                    Scanner csvReader = new Scanner(new File(args[1]));
+                    while (csvReader.hasNextLine()) {
+                        String line = csvReader.nextLine();
+                        if (!line.startsWith("#")) {
+                            String[] parts = line.split(Pattern.quote(","));
+                            if (parts.length >= 2) {
+                                if (!methodsToParse.containsKey(parts[0])) {
+                                    methodsToParse.put(parts[0], new ArrayList<>());
+                                }
+
+                                methodsToParse.get(parts[0]).add(new MethodSignature(parts[1], Arrays.copyOfRange(parts, 2, parts.length)));
+                            }
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+
+                MethodParser parser = new IndividualMethodParser(methodsToParse);
+
+                // Parse these methods to get the appropriate data
+                List<MethodFeatures> methods = parser.parseMethods();
+
+                // Get differences for each method and rank them by most different to least different
+                List<MethodDifferences> differences = compareAndRank(methods);
+
+                displayDifferences(differences, 10, new Scanner(System.in));
             }
         } else {
             Scanner keyboard = new Scanner(System.in);

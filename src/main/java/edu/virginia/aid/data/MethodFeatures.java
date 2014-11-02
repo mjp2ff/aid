@@ -320,14 +320,14 @@ public class MethodFeatures extends SourceElement {
      *
      * @return The string representation of the method signature
      */
-    public String getMethodSignature() {
+    public MethodSignature getMethodSignature() {
         List<IdentifierProperties> parameters = scope.getParameters();
         String[] parameterNames = new String[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {
             parameterNames[i] = parameters.get(i).getName();
         }
 
-        return methodName + "(" + StringUtils.join(parameterNames, ", ") + ")";
+        return new MethodSignature(getMethodName(), parameterNames);
     }
 
     /**
