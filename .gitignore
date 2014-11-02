@@ -30,3 +30,6 @@ target/
 
 # WordNet Database (it's HUGE!)
 wordnet/
+
+# Compiled files
+benchmark-runnable.csv

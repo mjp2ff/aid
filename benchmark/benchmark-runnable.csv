@@ -1,8 +1,0 @@
-# file,method name,param1,param2,...
-/Users/princjef/dev/aid/benchmark/java.io.File.java,canRead
-/Users/princjef/dev/aid/benchmark/java.util.ArrayList.java,indexOf,o
-/Users/princjef/dev/aid/benchmark/edu.rice.cs.drjava.model.AbstractDJDocument.java,setTab,tab,pos
-/Users/princjef/dev/aid/benchmark/java.lang.String.java,compareTo,anotherString
-/Users/princjef/dev/aid/benchmark/java.util.HashMap.java,put,key,value
-/Users/princjef/dev/aid/benchmark/java.net.Socket.java,connect,endpoint,timeout
-/Users/princjef/dev/aid/benchmark/edu.rice.cs.drjava.ui.ExternalProcessPanel.java,doubleClicked,e
