@@ -7,15 +7,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.extjwnl.data.IndexWord;
-import net.sf.extjwnl.data.IndexWordSet;
-import net.sf.extjwnl.data.Synset;
-import net.sf.extjwnl.data.Word;
-import net.sf.extjwnl.dictionary.Dictionary;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.QualifiedType;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.UnionType;
+import org.eclipse.jdt.core.dom.WildcardType;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jdt.core.dom.*;
-
+import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.ISynset;
+import edu.mit.jwi.item.IWord;
+import edu.mit.jwi.item.IWordID;
+import edu.mit.jwi.item.POS;
 import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
 import edu.virginia.aid.comparison.MethodDifferences;
@@ -377,7 +385,7 @@ public class MethodFeatures extends SourceElement {
      * @param wordNetDictionary A WordNet dictionary used to detect synsets.
      * @return The list of differences between the comments and the method
      */
-    public MethodDifferences getDifferences(Dictionary wordNetDictionary) {
+    public MethodDifferences getDifferences(IDictionary wordNetDictionary) {
         MethodDifferences differences = new MethodDifferences(this);
 
         // Process the method
@@ -517,24 +525,40 @@ public class MethodFeatures extends SourceElement {
      * @param term The term to search for
      * @return Whether or not the term was found in the comments
      */
-    public boolean containedInComments(Dictionary wordNetDictionary, String term) {
+    public boolean containedInComments(IDictionary wordNetDictionary, String term) {
 
+    	if (term.isEmpty()) {
+    		return false;
+    	}
+    	
 		Set<String> synonyms = new HashSet<>();
 		synonyms.add(term);
 
-		try {
-    		IndexWordSet indexWordSet = wordNetDictionary.lookupAllIndexWords(term);    		
-    		for (IndexWord indexWord : indexWordSet.getIndexWordCollection()) {
-    			for (Synset synset : indexWord.getSenses()) {
-    				List<Word> words = synset.getWords();
-    				for (Word word : words) {
-    					synonyms.add(word.getLemma());
-    				}
-    			}
-    		}
-    	} catch (Exception e) {
-        	System.err.println("WordNet error " + e);
-    	}
+		for (POS pos : new POS[]{POS.NOUN, POS.ADJECTIVE, POS.ADVERB, POS.VERB}) {
+			IIndexWord idxWord = wordNetDictionary.getIndexWord(term, pos);
+			if (idxWord == null) continue;
+			for (IWordID wordID : idxWord.getWordIDs()) {
+				IWord word = wordNetDictionary.getWord(wordID);
+				if (word == null) continue;
+				for (IWord synonym : word.getSynset().getWords()) {
+					synonyms.add(synonym.getLemma());
+				}
+			}
+		}
+		
+//		try {			
+//    		IndexWordSet indexWordSet = wordNetDictionary.lookupAllIndexWords(term);    		
+//    		for (IndexWord indexWord : indexWordSet.getIndexWordCollection()) {
+//    			for (Synset synset : indexWord.getSenses()) {
+//    				List<Word> words = synset.getWords();
+//    				for (Word word : words) {
+//    					synonyms.add(word.getLemma());
+//    				}
+//    			}
+//    		}
+//    	} catch (Exception e) {
+//        	System.err.println("WordNet error " + e);
+//    	}
     	
         boolean foundInComments = false;
         List<String> synonymsList = new ArrayList<>(synonyms);

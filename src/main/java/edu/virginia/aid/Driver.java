@@ -2,15 +2,26 @@ package edu.virginia.aid;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import edu.virginia.aid.data.MethodSignature;
-import edu.virginia.aid.parsers.*;
-import net.sf.extjwnl.JWNLException;
-import net.sf.extjwnl.dictionary.Dictionary;
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodSignature;
+import edu.virginia.aid.parsers.AntProjectMethodParser;
+import edu.virginia.aid.parsers.DirectoryMethodParser;
+import edu.virginia.aid.parsers.FileMethodParser;
+import edu.virginia.aid.parsers.IndividualMethodParser;
+import edu.virginia.aid.parsers.MethodParser;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -40,12 +51,12 @@ public class Driver {
         	allProjectWordFrequencies.add(methodFeatures.getWordFrequencies());
         }
 
-        Dictionary wordNetDictionary = null;
-		try {
-			wordNetDictionary = Dictionary.getFileBackedInstance(WORDNET_FILEPATH);
-		} catch (JWNLException e) {
-			// Cry
-			System.err.println("Error initializing WordNet dictionary:\n");
+        File wordNetFile = new File(WORDNET_FILEPATH);
+        IDictionary wordNetDictionary = new Dictionary(wordNetFile);
+        try {
+			wordNetDictionary.open();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
         System.out.print("Computed differences for 0 methods");
@@ -173,6 +184,7 @@ public class Driver {
                             }
                         }
                     }
+                    csvReader.close();
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
