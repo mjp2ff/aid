@@ -20,7 +20,6 @@ import org.eclipse.jdt.core.dom.WildcardType;
 
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.ISynset;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
