@@ -37,6 +37,7 @@ public void setTab(String tab, int pos);
 * Talks about use of parameters to perform update
 
 ### java.lang.String: `compareTo()`
+#### Java standard library
 
 ```
 public int compareTo(String anotherString);
@@ -104,6 +105,7 @@ public static Date readData(final DataInput in) throws IOException;
 * No explanation of how each version is handled individually.
 
 ### org.hsqldb.cmdline.SqlTool.java: `objectMain()`
+#### hsqldb 1.8.0
 
 ```
 public static void objectMain(String[] arg) throws SqlToolException;
