@@ -27,7 +27,6 @@ public class ControlFlowDetector implements FeatureDetector {
                 method.getLength() + method.getStartPosition(), features.getSourceContext());
         controlFlowVisitor.getConditionals().stream().forEach(conditional -> blockProperties.addConditional(conditional));
         controlFlowVisitor.getLoops().stream().forEach(loop -> blockProperties.addLoop(loop));
-        features.setBlockProperties(blockProperties);
 
         // Return value
         ReturnVisitor returnVisitor = new ReturnVisitor(features);
@@ -46,6 +45,5 @@ public class ControlFlowDetector implements FeatureDetector {
         }
 
         // Add return value to MethodFeatures
-        features.setReturnValue(returnValue);
     }
 }

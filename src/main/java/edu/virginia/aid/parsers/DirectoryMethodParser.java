@@ -1,10 +1,7 @@
 package edu.virginia.aid.parsers;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import edu.virginia.aid.data.MethodFeatures;
 

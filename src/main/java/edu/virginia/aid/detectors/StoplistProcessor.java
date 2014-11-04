@@ -65,9 +65,6 @@ public class StoplistProcessor implements FeatureDetector {
 		for (IdentifierProperties field : features.getScope().getFields()) {
 			field.setProcessedName(this.checkStoplist(field.getProcessedName()));
 		}
-        for (MethodInvocationProperties methodInvocation : features.getMethodInvocations()) {
-            methodInvocation.setProcessedName(this.checkStoplist(methodInvocation.getProcessedName()));
-        }
 	}
 
 	/**

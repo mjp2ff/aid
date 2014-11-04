@@ -1,6 +1,7 @@
 package edu.virginia.aid.detectors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -69,8 +70,37 @@ public class IdentifierDetector implements FeatureDetector {
            features.getScope().addIdentifierUse(identifierName);
         }
 
-        for (MethodInvocationProperties methodInvocation : usageVisitor.getMethodInvocations()) {
-            features.addMethodInvocation(methodInvocation);
+        System.out.println ("field reads: " + features
+                .getScope()
+                .getFields()
+                .stream()
+                .collect(Collectors.summingInt(field -> field.getReads())));
+
+        // Set field reads
+        int fieldReads = 0;
+        for (IdentifierProperties field : features.getScope().getFields()) {
+            System.out.println("individual reads " + field.getReads());
+            fieldReads += field.getReads();
         }
+        System.out.println("has field reads " + fieldReads);
+        features.addNumericFeature(MethodFeatures.NUM_FIELD_READS, fieldReads);
+
+        // Set parameter reads
+        int parameterReads = features
+                .getScope()
+                .getFields()
+                .stream()
+                .collect(Collectors.summingInt(param -> param.getReads()));
+        System.out.println("has param reads " + parameterReads);
+        features.addNumericFeature(MethodFeatures.NUM_PARAM_READS, parameterReads);
+
+        // Set field writes
+        features.addNumericFeature(MethodFeatures.NUM_FIELD_WRITES, features
+                .getScope()
+                .getFields()
+                .stream()
+                .collect(Collectors.summingInt(field -> field.getWrites())));
+
+        System.out.println(features.getNumericFeatures());
     }
 }

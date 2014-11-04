@@ -35,18 +35,18 @@ public class PrimaryActionDetector implements FeatureDetector {
 
         if (readIdentifiers.size() == 1 && writeIdentifiers.size() == 0) {
             if (features.getReturnType() != null && features.getReturnType().toString().equals("boolean")) {
-                features.addStringFeature(MethodFeatures.PRIMARY_VERB, "test");
-                features.addStringFeature(MethodFeatures.PRIMARY_OBJECT, readIdentifiers.get(0).getProcessedName());
+                features.setPrimaryAction("test");
+                features.setPrimaryObject(readIdentifiers.get(0).getProcessedName());
             } else {
-                features.addStringFeature(MethodFeatures.PRIMARY_VERB, "get");
-                features.addStringFeature(MethodFeatures.PRIMARY_OBJECT, readIdentifiers.get(0).getProcessedName());
+                features.setPrimaryAction("get");
+                features.setPrimaryObject(readIdentifiers.get(0).getProcessedName());
             }
         } else if (writeIdentifiers.size() == 1) {
             if (features.getReturnType() != null && features.getReturnType().toString().equals("boolean")) {
                 // Enable/disable
             } else {
-                features.addStringFeature(MethodFeatures.PRIMARY_VERB, "set");
-                features.addStringFeature(MethodFeatures.PRIMARY_OBJECT, writeIdentifiers.get(0).getProcessedName());
+                features.setPrimaryAction("set");
+                features.setPrimaryObject(writeIdentifiers.get(0).getProcessedName());
             }
         }
     }

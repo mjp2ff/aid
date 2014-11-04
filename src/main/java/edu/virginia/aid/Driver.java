@@ -1,15 +1,7 @@
 package edu.virginia.aid;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import edu.mit.jwi.Dictionary;
@@ -22,6 +14,10 @@ import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
 import edu.virginia.aid.parsers.IndividualMethodParser;
 import edu.virginia.aid.parsers.MethodParser;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -117,6 +113,79 @@ public class Driver {
         }
     }
 
+    public static void buildTrainingDataFile(Map<String, List<MethodFeatures>> labeledMethods, String property, String filepath) {
+        Set<String> values = labeledMethods.keySet();
+
+        List<String> booleanFeatureProperties = new ArrayList<>();
+        List<String> numericFeatureProperties = new ArrayList<>();
+
+        if (values.size() > 0) {
+            String value = values.iterator().next();
+            if (labeledMethods.get(value).size() > 0) {
+                MethodFeatures method = labeledMethods.get(value).get(0);
+                booleanFeatureProperties.addAll(method.getBooleanFeatures().keySet());
+                numericFeatureProperties.addAll(method.getNumericFeatures().keySet());
+            }
+        }
+
+        FastVector attributes = new FastVector(booleanFeatureProperties.size() + numericFeatureProperties.size() + 1);
+
+        for (String label : booleanFeatureProperties) {
+            FastVector attributeValues = new FastVector(2);
+            attributeValues.addElement("true");
+            attributeValues.addElement("false");
+            attributes.addElement(new Attribute(label, attributeValues));
+        }
+
+        for (String label : numericFeatureProperties) {
+            attributes.addElement(new Attribute(label));
+        }
+
+        FastVector classValues = new FastVector(values.size());
+        for (String value : values) {
+            classValues.addElement(value);
+        }
+        attributes.addElement(new Attribute(property, classValues));
+
+        Instances trainingData = new Instances(property, attributes, 100);
+
+        for (String value : values) {
+            for (MethodFeatures method : labeledMethods.get(value)) {
+                Instance dataPoint = new Instance(booleanFeatureProperties.size() + numericFeatureProperties.size() + 1);
+                int i = 0;
+
+                System.out.println(method.getBooleanFeatures());
+                System.out.println(method.getNumericFeatures());
+                for (String booleanProperty : booleanFeatureProperties) {
+                    dataPoint.setValue((Attribute) attributes.elementAt(i++), method.getBooleanFeature(booleanProperty) ? "true" : "false");
+                }
+                for (String numericProperty : numericFeatureProperties) {
+                    System.out.println(method.getNumericFeature(numericProperty));
+                    dataPoint.setValue((Attribute) attributes.elementAt(i++), method.getNumericFeature(numericProperty));
+                }
+                dataPoint.setValue((Attribute) attributes.elementAt(i), value);
+                trainingData.add(dataPoint);
+            }
+        }
+
+        String arffData = trainingData.toString();
+
+        Writer writer = null;
+
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filepath), "utf-8"));
+            writer.write(arffData);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                writer.close();
+            } catch (Exception e) {
+                // Let original exception through (it's more important)
+            }
+        }
+    }
+
     /**
      * Runs tool on input files as specified in the command line parameters. There are two modes, either project or file,
      * set using the -projects or -files flag as shown below.
@@ -128,7 +197,21 @@ public class Driver {
      */
     public static void main(String[] args) {
         if (args.length > 0) {
-            if (args[0].equals("-files")) {
+            if (args[0].equals("-train")) {
+                if (args.length >= 3) {
+
+                    MethodParser parser = new DirectoryMethodParser(args[1]);
+
+                    // Parse this directory to get the appropriate data
+                    Map<String, List<MethodFeatures>> labeledMethods = parser.createTrainingSet("primaryAction");
+
+                    // Create training data set
+                    buildTrainingDataFile(labeledMethods, "primaryAction", args[2]);
+
+                } else {
+                    throw new RuntimeException("No directory provided for training set and/or location for training data file");
+                }
+            } else if (args[0].equals("-files")) {
                 for(int i = 1; i < args.length; i++) {
 
                     MethodParser parser = new FileMethodParser(args[i]);

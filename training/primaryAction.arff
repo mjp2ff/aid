@@ -1,0 +1,31 @@
+@relation primaryAction
+
+@attribute 'num field writes' numeric
+@attribute 'num param reads' numeric
+@attribute 'num field reads' numeric
+@attribute primaryAction {set,get,create,methodName}
+
+@data
+0,0,0,set
+0,0,0,get
+0,0,0,get
+0,0,0,get
+0,0,0,get
+0,0,0,create
+0,0,0,create
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
+0,0,0,methodName
