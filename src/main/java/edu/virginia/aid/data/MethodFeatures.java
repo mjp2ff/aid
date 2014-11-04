@@ -527,38 +527,29 @@ public class MethodFeatures extends SourceElement {
      */
     public boolean containedInComments(IDictionary wordNetDictionary, String term) {
 
-    	if (term.isEmpty()) {
-    		return false;
-    	}
+    	// Don't do anything if it's empty string, space, etc. as this breaks JWI
+    	if (term.isEmpty()) return false;
     	
+    	// Create set of synonyms with just the term, build it up with WordNet through JWI.
 		Set<String> synonyms = new HashSet<>();
 		synonyms.add(term);
 
+		// Check each part of speech for thoroughness.
 		for (POS pos : new POS[]{POS.NOUN, POS.ADJECTIVE, POS.ADVERB, POS.VERB}) {
+			// Get index word, verify it exists.
 			IIndexWord idxWord = wordNetDictionary.getIndexWord(term, pos);
 			if (idxWord == null) continue;
+			// Get all word IDs for this index word.
 			for (IWordID wordID : idxWord.getWordIDs()) {
+				// Get word for this wordID and verify it exists.
 				IWord word = wordNetDictionary.getWord(wordID);
 				if (word == null) continue;
+				// Add this word's synset word lemmas to the list of synonyms.
 				for (IWord synonym : word.getSynset().getWords()) {
 					synonyms.add(synonym.getLemma());
 				}
 			}
 		}
-		
-//		try {			
-//    		IndexWordSet indexWordSet = wordNetDictionary.lookupAllIndexWords(term);    		
-//    		for (IndexWord indexWord : indexWordSet.getIndexWordCollection()) {
-//    			for (Synset synset : indexWord.getSenses()) {
-//    				List<Word> words = synset.getWords();
-//    				for (Word word : words) {
-//    					synonyms.add(word.getLemma());
-//    				}
-//    			}
-//    		}
-//    	} catch (Exception e) {
-//        	System.err.println("WordNet error " + e);
-//    	}
     	
         boolean foundInComments = false;
         List<String> synonymsList = new ArrayList<>(synonyms);
