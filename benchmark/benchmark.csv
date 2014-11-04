@@ -6,3 +6,5 @@ benchmark/java.lang.String.java,compareTo,anotherString
 benchmark/java.util.HashMap.java,put,key,value
 benchmark/java.net.Socket.java,connect,endpoint,timeout
 benchmark/edu.rice.cs.drjava.ui.ExternalProcessPanel.java,doubleClicked,e
+benchmark/org.jedit.migration.OneTimeMigrationService.java,execute
+benchmark/devplugin.Data.java,readData,in

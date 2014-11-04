@@ -16,7 +16,7 @@ public boolean canRead();
 ### java.util.ArrayList: `indexOf()`
 
 ```
-public int indexOf();
+public int indexOf(Object o);
 ```
 
 * Follows pattern of summary sentence
@@ -73,3 +73,23 @@ public void doubleClicked(MouseEvent e);
 * Makes no mention of what is done in the method, just why it is called
 * Makes no mention of relevant information or updated state
 
+### org.jedit.migration.OneTimeMigrationService: `execute()`
+
+```
+public static void execute();
+```
+
+* Briefly and insufficiently explains what the method does, specifies method call incorrectly.
+* Does not discuss data or method flow, purpose, or details of actions performed.
+* Relies heavily on general class information to explain method purpose.
+
+### devplugin.Date.java: `readData()`
+
+```
+public static Date readData(final DataInput in) throws IOException;
+```
+
+* Describes method behavior only in a vague, general way that restates the method name.
+* Spelling errors in Javadoc header.
+* No mention of completely different behavior based on version of DataInput.
+* No explanation of how each version is handled individually.
