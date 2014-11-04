@@ -3,7 +3,7 @@
 ## Positive Test Cases
 
 ### java.io.File: `canRead()`
-#### Java standard library
+*Java standard library*
 
 ```
 public boolean canRead();
@@ -15,7 +15,7 @@ public boolean canRead();
 * TF/IDF reduces importance of the phrase "abstract pathname" since it appears in many methods
 
 ### java.util.ArrayList: `indexOf()`
-#### Java standard library
+*Java standard library*
 
 ```
 public int indexOf(Object o);
@@ -27,7 +27,7 @@ public int indexOf(Object o);
 * TF/IDF and/or WordNet identify "element" as a valid representation of the field "elementData"
 
 ### edu.rice.cs.drjava.model.AbstractDJDocument: `setTab()`
-#### drjava
+*drjava*
 
 ```
 public void setTab(String tab, int pos);
@@ -37,7 +37,7 @@ public void setTab(String tab, int pos);
 * Talks about use of parameters to perform update
 
 ### java.lang.String: `compareTo()`
-#### Java standard library
+*Java standard library*
 
 ```
 public int compareTo(String anotherString);
@@ -48,7 +48,7 @@ public int compareTo(String anotherString);
 * Significant/lengthy comment can stress TF/IDF.
 
 ### java.util.HashMap: `put()`
-#### Java standard library
+*Java standard library*
 
 ```
 public V put(K key, V value)
@@ -61,7 +61,7 @@ public V put(K key, V value)
 ## Negative Test Cases
 
 ### java.net.Socket: `connect()`
-#### Java standard library
+*Java standard library*
 
 ```
 public void connect(SocketAddress endpoint, int timeout) throws IOException;
@@ -71,7 +71,7 @@ public void connect(SocketAddress endpoint, int timeout) throws IOException;
 * Doesn't talk about state update for `connected` and `bound` fields
 
 ### edu.rice.cs.drjava.ui.ExternalProcessPanel: `doubleClicked()`
-#### drjava
+*drjava*
 
 ```
 public void doubleClicked(MouseEvent e);
@@ -81,7 +81,7 @@ public void doubleClicked(MouseEvent e);
 * Makes no mention of relevant information or updated state
 
 ### org.jedit.migration.OneTimeMigrationService: `execute()`
-#### jedit 4.2
+*jedit 4.2*
 
 ```
 public static void execute();
@@ -92,7 +92,7 @@ public static void execute();
 * Relies heavily on general class information to explain method purpose.
 
 ### devplugin.Date.java: `readData()`
-#### tvbrowser 2.5.3
+*tvbrowser 2.5.3*
 
 ```
 public static Date readData(final DataInput in) throws IOException;
@@ -105,7 +105,7 @@ public static Date readData(final DataInput in) throws IOException;
 * No explanation of how each version is handled individually.
 
 ### org.hsqldb.cmdline.SqlTool.java: `objectMain()`
-#### hsqldb 1.8.0
+*hsqldb 1.8.0*
 
 ```
 public static void objectMain(String[] arg) throws SqlToolException;
