@@ -151,7 +151,6 @@ public class MethodFeatures extends SourceElement {
      * @return Whether or not the string feature was added
      */
     public boolean addNumericFeature(String name, int value) {
-        System.out.println("called with " + value);
         if (!numericFeatures.containsKey(name)) {
             numericFeatures.put(name, value);
             return true;

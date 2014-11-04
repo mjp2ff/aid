@@ -154,13 +154,10 @@ public class Driver {
                 Instance dataPoint = new Instance(booleanFeatureProperties.size() + numericFeatureProperties.size() + 1);
                 int i = 0;
 
-                System.out.println(method.getBooleanFeatures());
-                System.out.println(method.getNumericFeatures());
                 for (String booleanProperty : booleanFeatureProperties) {
                     dataPoint.setValue((Attribute) attributes.elementAt(i++), method.getBooleanFeature(booleanProperty) ? "true" : "false");
                 }
                 for (String numericProperty : numericFeatureProperties) {
-                    System.out.println(method.getNumericFeature(numericProperty));
                     dataPoint.setValue((Attribute) attributes.elementAt(i++), method.getNumericFeature(numericProperty));
                 }
                 dataPoint.setValue((Attribute) attributes.elementAt(i), value);

@@ -70,37 +70,25 @@ public class IdentifierDetector implements FeatureDetector {
            features.getScope().addIdentifierUse(identifierName);
         }
 
-        System.out.println ("field reads: " + features
-                .getScope()
-                .getFields()
-                .stream()
-                .collect(Collectors.summingInt(field -> field.getReads())));
-
         // Set field reads
         int fieldReads = 0;
         for (IdentifierProperties field : features.getScope().getFields()) {
-            System.out.println("individual reads " + field.getReads());
             fieldReads += field.getReads();
         }
-        System.out.println("has field reads " + fieldReads);
         features.addNumericFeature(MethodFeatures.NUM_FIELD_READS, fieldReads);
 
         // Set parameter reads
-        int parameterReads = features
-                .getScope()
-                .getFields()
-                .stream()
-                .collect(Collectors.summingInt(param -> param.getReads()));
-        System.out.println("has param reads " + parameterReads);
+        int parameterReads = 0;
+        for (IdentifierProperties param : features.getScope().getParameters()) {
+            parameterReads += param.getReads();
+        }
         features.addNumericFeature(MethodFeatures.NUM_PARAM_READS, parameterReads);
 
         // Set field writes
-        features.addNumericFeature(MethodFeatures.NUM_FIELD_WRITES, features
-                .getScope()
-                .getFields()
-                .stream()
-                .collect(Collectors.summingInt(field -> field.getWrites())));
-
-        System.out.println(features.getNumericFeatures());
+        int fieldWrites = 0;
+        for (IdentifierProperties field : features.getScope().getFields()) {
+            fieldWrites += field.getWrites();
+        }
+        features.addNumericFeature(MethodFeatures.NUM_FIELD_WRITES, fieldWrites);
     }
 }
