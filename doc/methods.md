@@ -3,6 +3,7 @@
 ## Positive Test Cases
 
 ### java.io.File: `canRead()`
+#### Java standard library
 
 ```
 public boolean canRead();
@@ -14,6 +15,7 @@ public boolean canRead();
 * TF/IDF reduces importance of the phrase "abstract pathname" since it appears in many methods
 
 ### java.util.ArrayList: `indexOf()`
+#### Java standard library
 
 ```
 public int indexOf(Object o);
@@ -25,6 +27,7 @@ public int indexOf(Object o);
 * TF/IDF and/or WordNet identify "element" as a valid representation of the field "elementData"
 
 ### edu.rice.cs.drjava.model.AbstractDJDocument: `setTab()`
+#### drjava
 
 ```
 public void setTab(String tab, int pos);
@@ -44,6 +47,7 @@ public int compareTo(String anotherString);
 * Significant/lengthy comment can stress TF/IDF.
 
 ### java.util.HashMap: `put()`
+#### Java standard library
 
 ```
 public V put(K key, V value)
@@ -56,6 +60,7 @@ public V put(K key, V value)
 ## Negative Test Cases
 
 ### java.net.Socket: `connect()`
+#### Java standard library
 
 ```
 public void connect(SocketAddress endpoint, int timeout) throws IOException;
@@ -65,6 +70,7 @@ public void connect(SocketAddress endpoint, int timeout) throws IOException;
 * Doesn't talk about state update for `connected` and `bound` fields
 
 ### edu.rice.cs.drjava.ui.ExternalProcessPanel: `doubleClicked()`
+#### drjava
 
 ```
 public void doubleClicked(MouseEvent e);
@@ -74,6 +80,7 @@ public void doubleClicked(MouseEvent e);
 * Makes no mention of relevant information or updated state
 
 ### org.jedit.migration.OneTimeMigrationService: `execute()`
+#### jedit 4.2
 
 ```
 public static void execute();
@@ -84,12 +91,24 @@ public static void execute();
 * Relies heavily on general class information to explain method purpose.
 
 ### devplugin.Date.java: `readData()`
+#### tvbrowser 2.5.3
 
 ```
 public static Date readData(final DataInput in) throws IOException;
 ```
 
+
 * Describes method behavior only in a vague, general way that restates the method name.
 * Spelling errors in Javadoc header.
 * No mention of completely different behavior based on version of DataInput.
 * No explanation of how each version is handled individually.
+
+### org.hsqldb.cmdline.SqlTool.java: `objectMain()`
+
+```
+public static void objectMain(String[] arg) throws SqlToolException;
+```
+
+* Only has high-level overview of method purpose and behavior, with a big picture description in-lined.
+* Lack of documentation about specific method decisions in a massive method, indicative that the comments should be greatly expanded or the method should be sub-divided into smaller method.
+* Relies on outside documentation (that isn't present or referenced in the comments) to explain method actions.
