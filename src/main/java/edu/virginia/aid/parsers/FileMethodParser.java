@@ -27,7 +27,7 @@ public class FileMethodParser extends MethodParser {
      *
      * @return Processed methods from file
      */
-    public List<MethodFeatures> parseMethods() {
-        return getMethodsFromFile(this.filePath);
+    protected List<MethodFeatures> parseMethods(boolean trainingMode) {
+        return getMethodsFromFile(this.filePath, trainingMode);
     }
 }

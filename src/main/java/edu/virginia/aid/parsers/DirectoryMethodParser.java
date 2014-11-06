@@ -46,14 +46,14 @@ public class DirectoryMethodParser extends MethodParser {
      *
      * @return The processed methods in the directory
      */
-    public List<MethodFeatures> parseMethods() {
+    protected List<MethodFeatures> parseMethods(boolean trainingMode) {
         Set<File> sourceFiles = getDirectorySourceFiles(new File(directory));
 
         List<MethodFeatures> methods = new ArrayList<>();
 
         System.out.print("Processed 0 methods");
         for (File sourceFile : sourceFiles) {
-            methods.addAll(getMethodsFromFile(sourceFile.getPath()));
+            methods.addAll(getMethodsFromFile(sourceFile.getPath(), trainingMode));
             System.out.print("\rProcessed " + methods.size() + " methods");
         }
 

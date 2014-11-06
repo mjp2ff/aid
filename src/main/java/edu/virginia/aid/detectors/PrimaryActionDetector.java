@@ -1,17 +1,27 @@
 package edu.virginia.aid.detectors;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-
-import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import weka.classifiers.Classifier;
+import weka.core.Attribute;
 
 /**
  * Detector that finds a single verb to describe the method
  */
 public class PrimaryActionDetector implements FeatureDetector {
+
+    private Classifier classifier;
+    private Attribute classAttribute;
+
+    /**
+     * Creates a detector with the given classifier
+     *
+     * @param classifier The classifier for primary action verbs
+     */
+    public PrimaryActionDetector(Classifier classifier, Attribute classAttribute) {
+        this.classifier = classifier;
+        this.classAttribute = classAttribute;
+    }
 
     /**
      * Examines identifier use and control flow in the method to determine the
@@ -22,32 +32,16 @@ public class PrimaryActionDetector implements FeatureDetector {
      */
     @Override
     public void process(MethodDeclaration method, MethodFeatures features) {
-
-        // Get all identifiers that have been read from
-        List<IdentifierProperties> readIdentifiers = features.getScope().getIdentifiers().stream()
-                .filter(p -> p.getReads() > 0 && p.getContext() != IdentifierProperties.IdentifierContext.LOCAL_VARIABLE)
-                .collect(Collectors.toList());
-
-        // Get all identifiers that have been written to
-        List<IdentifierProperties> writeIdentifiers = features.getScope().getIdentifiers().stream()
-                .filter(p -> p.getWrites() > 0 && p.getContext() != IdentifierProperties.IdentifierContext.LOCAL_VARIABLE)
-                .collect(Collectors.toList());
-
-        if (readIdentifiers.size() == 1 && writeIdentifiers.size() == 0) {
-            if (features.getReturnType() != null && features.getReturnType().toString().equals("boolean")) {
-                features.setPrimaryAction("test");
-                features.setPrimaryObject(readIdentifiers.get(0).getProcessedName());
-            } else {
-                features.setPrimaryAction("get");
-                features.setPrimaryObject(readIdentifiers.get(0).getProcessedName());
-            }
-        } else if (writeIdentifiers.size() == 1) {
-            if (features.getReturnType() != null && features.getReturnType().toString().equals("boolean")) {
-                // Enable/disable
-            } else {
-                features.setPrimaryAction("set");
-                features.setPrimaryObject(writeIdentifiers.get(0).getProcessedName());
-            }
+        try {
+            int labelIndex = (int) classifier.classifyInstance(features.buildWekaInstance(classAttribute));
+            String label = classAttribute.value(labelIndex);
+            features.setPrimaryAction(label.equals("methodName") ? features.getProcessedMethodName() : label);
+            System.out.println("primary action for " + features.getMethodName() + " is: " + features.getPrimaryAction());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
+        // TODO: Define this based on classification
+        features.setPrimaryObject("");
     }
 }

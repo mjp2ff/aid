@@ -30,6 +30,7 @@ import weka.core.Instances;
 public class Driver {
 	
     public static final String WORDNET_FILEPATH = "wordnet/dict";
+    public static final String CLASSIFICATION_TRAINING_SET_FILEPATH = "training/primaryAction.arff";
 
     /**
      * Performs comparison check on each method and sorts them from most to least different

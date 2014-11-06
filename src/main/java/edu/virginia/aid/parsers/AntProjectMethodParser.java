@@ -106,14 +106,14 @@ public class AntProjectMethodParser extends DirectoryMethodParser {
      * @return The list of processed methods
      */
     @Override
-    public List<MethodFeatures> parseMethods() {
+    protected List<MethodFeatures> parseMethods(boolean trainingMode) {
         Set<File> sourceFiles = getSourceFiles();
 
         List<MethodFeatures> methods = new ArrayList<>();
 
         System.out.print("Processed 0 methods");
         for (File sourceFile : sourceFiles) {
-            methods.addAll(getMethodsFromFile(sourceFile.getPath()));
+            methods.addAll(getMethodsFromFile(sourceFile.getPath(), trainingMode));
             System.out.print("\rProcessed " + methods.size() + " methods");
         }
 

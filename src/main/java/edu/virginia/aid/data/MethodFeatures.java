@@ -1,26 +1,7 @@
 package edu.virginia.aid.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ArrayType;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.ParameterizedType;
-import org.eclipse.jdt.core.dom.PrimitiveType;
-import org.eclipse.jdt.core.dom.QualifiedType;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.UnionType;
-import org.eclipse.jdt.core.dom.WildcardType;
-
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.ISynset;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
@@ -28,6 +9,15 @@ import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.comparison.MissingIdentifierDifference;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.Type;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import java.util.*;
+import java.util.jar.Attributes;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -526,6 +516,45 @@ public class MethodFeatures extends SourceElement {
         }
 
         return foundInComments;
+    }
+
+    /**
+     * Creates an instance to be passed into a Weka classifier for classification purposes
+     *
+     * @return Weka Instance
+     */
+    public Instance buildWekaInstance(Attribute classAttribute) {
+        FastVector attributes = new FastVector(booleanFeatures.size() + numericFeatures.size() + 1);
+
+        for (String property : booleanFeatures.keySet()) {
+            FastVector values = new FastVector(2);
+            values.addElement("true");
+            values.addElement("false");
+            attributes.addElement(new Attribute(property, values));
+        }
+
+        for (String property : numericFeatures.keySet()) {
+            attributes.addElement(new Attribute(property));
+        }
+
+        attributes.addElement(classAttribute);
+
+        Instances instances = new Instances("unlabeled", attributes, 0);
+        instances.setClass(classAttribute);
+
+        Instance instance = new Instance(booleanFeatures.size() + numericFeatures.size() + 1);
+        instance.setDataset(instances);
+        instance.setClassMissing();
+
+        int i = 0;
+        for (String booleanProperty : booleanFeatures.keySet()) {
+            instance.setValue((Attribute) attributes.elementAt(i++), getBooleanFeature(booleanProperty) ? "true" : "false");
+        }
+        for (String numericProperty : numericFeatures.keySet()) {
+            instance.setValue((Attribute) attributes.elementAt(i++), getNumericFeature(numericProperty));
+        }
+
+        return instance;
     }
 
     @Override
