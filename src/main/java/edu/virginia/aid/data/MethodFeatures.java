@@ -1,23 +1,5 @@
 package edu.virginia.aid.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ArrayType;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.ParameterizedType;
-import org.eclipse.jdt.core.dom.PrimitiveType;
-import org.eclipse.jdt.core.dom.QualifiedType;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.UnionType;
-import org.eclipse.jdt.core.dom.WildcardType;
-
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
@@ -27,6 +9,15 @@ import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.comparison.MissingIdentifierDifference;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.Type;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import java.util.*;
+import java.util.jar.Attributes;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -40,20 +31,26 @@ public class MethodFeatures extends SourceElement {
     private String methodName;
     private Type returnType;
     private String processedMethodName;
-    private BlockProperties blockProperties;
     private Map<String, Boolean> booleanFeatures;
     private Map<String, String> stringFeatures;
+    private Map<String, Integer> numericFeatures;
     private ScopeProperties scope;
-    private List<MethodInvocationProperties> methodInvocations;
     private Javadoc javadoc;
-    private ExpressionInfo returnValue;
     private Map<String, Double> TFIDF;
     private Map<String, Integer> wordFrequencies;
     private Set<String> allWordsNoComments;
 
-    // Constants
-    public static final String PRIMARY_VERB = "primary verb";
-    public static final String PRIMARY_OBJECT = "primary object";
+    private String primaryAction;
+    private String primaryObject;
+
+    // Boolean parameters
+    public static final String RETURNS_BOOLEAN = "returns boolean";
+
+    // Numeric parameters
+    public static final String NUM_PARAM_READS = "num param reads";
+    public static final String NUM_FIELD_READS = "num field reads";
+    public static final String NUM_FIELD_WRITES = "num field writes";
+    public static final String NUM_METHOD_INVOCATIONS = "num method invocations";
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
                           Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
@@ -63,13 +60,11 @@ public class MethodFeatures extends SourceElement {
         this.parentClass = parentClass;
         this.filepath = filepath;
         this.returnType = returnType;
-        this.blockProperties = null;
         this.booleanFeatures = new HashMap<>();
         this.stringFeatures = new HashMap<>();
+        this.numericFeatures = new HashMap<>();
         this.scope = new ScopeProperties();
-        this.methodInvocations = new ArrayList<>();
         this.javadoc = null;
-        this.returnValue = null;
         this.TFIDF = new HashMap<>();
         this.wordFrequencies = null;
         this.allWordsNoComments = null;
@@ -84,14 +79,6 @@ public class MethodFeatures extends SourceElement {
      */
     public String getMethodName() {
         return this.methodName;
-    }
-
-    public BlockProperties getBlockProperties() {
-        return blockProperties;
-    }
-
-    public void setBlockProperties(BlockProperties blockProperties) {
-        this.blockProperties = blockProperties;
     }
 
     public String getProcessedMethodName() {
@@ -110,67 +97,8 @@ public class MethodFeatures extends SourceElement {
         return parentClass;
     }
 
-    public ExpressionInfo getReturnValue() {
-        return returnValue;
-    }
-
-    public void setReturnValue(ExpressionInfo returnValue) {
-        this.returnValue = returnValue;
-    }
-
     public Type getReturnType() {
         return returnType;
-    }
-
-    /**
-     * Gets string representation of return type of method
-     *
-     * @return The string representation of the return type
-     */
-    public String getReturnTypeName() {
-        if (returnType == null) {
-            return null;
-        }
-
-        return getReturnTypeName(returnType);
-    }
-
-    /**
-     * Private recursive helper for fetching the string representation of a method
-     *
-     * @param returnType The current return type to stringify
-     * @return The string representation of the type
-     */
-    private String getReturnTypeName(Type returnType) {
-        if (returnType == null) {
-            return null;
-        }
-
-        switch (returnType.getNodeType()) {
-            case ASTNode.PRIMITIVE_TYPE:
-                PrimitiveType primitiveType = (PrimitiveType) returnType;
-                return primitiveType.toString();
-            case ASTNode.SIMPLE_TYPE:
-                SimpleType simpleType = (SimpleType) returnType;
-                return simpleType.getName().toString();
-            case ASTNode.ARRAY_TYPE:
-                ArrayType arrayType = (ArrayType) returnType;
-                return getReturnTypeName(arrayType.getElementType());
-            case ASTNode.PARAMETERIZED_TYPE:
-                ParameterizedType parameterizedType = (ParameterizedType) returnType;
-                return getReturnTypeName(parameterizedType.getType());
-            case ASTNode.QUALIFIED_TYPE:
-                QualifiedType qualifiedType = (QualifiedType) returnType;
-                return qualifiedType.getName().getIdentifier();
-            case ASTNode.UNION_TYPE:
-                UnionType unionType = (UnionType) returnType;
-                return getReturnTypeName((Type) unionType.types().get(0));
-            case ASTNode.WILDCARD_TYPE:
-                WildcardType wildcardType = (WildcardType) returnType;
-                return wildcardType.toString();
-            default:
-                return returnType.toString();
-        }
     }
 
     /**
@@ -206,6 +134,22 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
+     * Adds a new numeric feature with the information passed
+     *
+     * @param name Name of the string feature to add
+     * @param value Value of the string feature to add
+     * @return Whether or not the string feature was added
+     */
+    public boolean addNumericFeature(String name, int value) {
+        if (!numericFeatures.containsKey(name)) {
+            numericFeatures.put(name, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Returns a map of boolean features to values for a method
      *
      * @return Map of boolean features to values
@@ -221,6 +165,15 @@ public class MethodFeatures extends SourceElement {
      */
     public Map<String, String> getStringFeatures() {
         return stringFeatures;
+    }
+
+    /**
+     * Returns a map of numeric features to value for a method
+     *
+     * @return Map of numeric features to values
+     */
+    public Map<String, Integer> getNumericFeatures() {
+        return numericFeatures;
     }
 
     /**
@@ -241,6 +194,32 @@ public class MethodFeatures extends SourceElement {
      */
     public String getStringFeature(String name) {
         return stringFeatures.get(name);
+    }
+
+    /**
+     * Gets and returns the value of the numeric feature with the given name
+     *
+     * @param name The name of the numeric feature to search for
+     * @return The value of the feature (or null if it is not present)
+     */
+    public int getNumericFeature(String name) {
+        return numericFeatures.get(name);
+    }
+
+    public String getPrimaryAction() {
+        return primaryAction;
+    }
+
+    public void setPrimaryAction(String primaryAction) {
+        this.primaryAction = primaryAction;
+    }
+
+    public String getPrimaryObject() {
+        return primaryObject;
+    }
+
+    public void setPrimaryObject(String primaryObject) {
+        this.primaryObject = primaryObject;
     }
 
     /**
@@ -283,12 +262,6 @@ public class MethodFeatures extends SourceElement {
     			allWordsNoComments.add(s);
     		}
     	}
-    	for (MethodInvocationProperties methodInvocation : methodInvocations) {
-    		for (String s : methodInvocation.getData()) {
-    			incrementFrequenciesMap(s);
-    			allWordsNoComments.add(s);
-    		}
-    	}
     	for (CommentInfo comment : getComments()) {
     		for (String s : comment.getData()) {
     			incrementFrequenciesMap(s);
@@ -301,11 +274,6 @@ public class MethodFeatures extends SourceElement {
     			incrementFrequenciesMap(s);
             }
         }
-        
-		for (String s : returnValue.getData()) {
-			incrementFrequenciesMap(s);
-			allWordsNoComments.add(s);
-		}
     }
     
     /**
@@ -370,15 +338,6 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
-     * Adds a method invocation to the list of method invocations within the method
-     *
-     * @param methodInvocation The invocation to add
-     */
-    public void addMethodInvocation(MethodInvocationProperties methodInvocation) {
-        methodInvocations.add(methodInvocation);
-    }
-
-    /**
      * Find and return a list of differences between the method contents and its comments
      *
      * @param wordNetDictionary A WordNet dictionary used to detect synsets.
@@ -430,32 +389,12 @@ public class MethodFeatures extends SourceElement {
             }
         }
 
-        // Process method invocations
-        if (methodInvocations.size() == 1) {
-            MethodInvocationProperties methodInvocation = methodInvocations.get(0);
-            boolean foundInComment = containedInComments(wordNetDictionary, methodInvocation.getProcessedName());
-
-            if (!foundInComment) {
-            	String differenceMessage = "Method " + methodInvocation.getName() + " is invoked but not discussed in comments";
-            	double differenceScore = DifferenceWeights.ONLY_METHOD_INVOCATION * getTFIDF(methodInvocation.getProcessedName());
-                differences.add(new GenericDifference(differenceMessage, differenceScore));
-            }
+        if (!containedInComments(wordNetDictionary, primaryAction)) {
+            differences.add(new GenericDifference("The primary method action (" + primaryAction + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * getTFIDF(primaryAction)));
         }
 
-        for (String key : stringFeatures.keySet()) {
-            String value = stringFeatures.get(key);
-            if (!containedInComments(wordNetDictionary, value)) {
-                switch (key) {
-                    case MethodFeatures.PRIMARY_VERB:
-                        differences.add(new GenericDifference("The primary method action (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * getTFIDF(value)));
-                        break;
-                    case MethodFeatures.PRIMARY_OBJECT:
-                        differences.add(new GenericDifference("The primary object acted upon (" + value + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * getTFIDF(value)));
-                        break;
-                    default:
-                        break;
-                }
-            }
+        if (!containedInComments(wordNetDictionary, primaryObject)) {
+            differences.add(new GenericDifference("The primary object acted upon (" + primaryObject + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * getTFIDF(primaryObject)));
         }
 
         return differences;
@@ -570,8 +509,43 @@ public class MethodFeatures extends SourceElement {
         return foundInComments;
     }
 
-    public List<MethodInvocationProperties> getMethodInvocations() {
-        return methodInvocations;
+    /**
+     * Creates an instance to be passed into a Weka classifier for classification purposes
+     *
+     * @return Weka Instance
+     */
+    public Instance buildWekaInstance(Attribute classAttribute) {
+        FastVector attributes = new FastVector(booleanFeatures.size() + numericFeatures.size() + 1);
+
+        for (String property : booleanFeatures.keySet()) {
+            FastVector values = new FastVector(2);
+            values.addElement("true");
+            values.addElement("false");
+            attributes.addElement(new Attribute(property, values));
+        }
+
+        for (String property : numericFeatures.keySet()) {
+            attributes.addElement(new Attribute(property));
+        }
+
+        attributes.addElement(classAttribute);
+
+        Instances instances = new Instances("unlabeled", attributes, 0);
+        instances.setClass(classAttribute);
+
+        Instance instance = new Instance(booleanFeatures.size() + numericFeatures.size() + 1);
+        instance.setDataset(instances);
+        instance.setClassMissing();
+
+        int i = 0;
+        for (String booleanProperty : booleanFeatures.keySet()) {
+            instance.setValue((Attribute) attributes.elementAt(i++), getBooleanFeature(booleanProperty) ? "true" : "false");
+        }
+        for (String numericProperty : numericFeatures.keySet()) {
+            instance.setValue((Attribute) attributes.elementAt(i++), getNumericFeature(numericProperty));
+        }
+
+        return instance;
     }
 
     @Override

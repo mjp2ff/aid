@@ -1,6 +1,7 @@
 package edu.virginia.aid.detectors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -69,8 +70,25 @@ public class IdentifierDetector implements FeatureDetector {
            features.getScope().addIdentifierUse(identifierName);
         }
 
-        for (MethodInvocationProperties methodInvocation : usageVisitor.getMethodInvocations()) {
-            features.addMethodInvocation(methodInvocation);
+        // Set field reads
+        int fieldReads = 0;
+        for (IdentifierProperties field : features.getScope().getFields()) {
+            fieldReads += field.getReads();
         }
+        features.addNumericFeature(MethodFeatures.NUM_FIELD_READS, fieldReads);
+
+        // Set parameter reads
+        int parameterReads = 0;
+        for (IdentifierProperties param : features.getScope().getParameters()) {
+            parameterReads += param.getReads();
+        }
+        features.addNumericFeature(MethodFeatures.NUM_PARAM_READS, parameterReads);
+
+        // Set field writes
+        int fieldWrites = 0;
+        for (IdentifierProperties field : features.getScope().getFields()) {
+            fieldWrites += field.getWrites();
+        }
+        features.addNumericFeature(MethodFeatures.NUM_FIELD_WRITES, fieldWrites);
     }
 }

@@ -55,9 +55,6 @@ public class StemmingProcessor implements FeatureDetector {
 		for (IdentifierProperties field : features.getScope().getFields()) {
 			field.setProcessedName(this.stem(field.getProcessedName()));
 		}
-        for (MethodInvocationProperties methodInvocation : features.getMethodInvocations()) {
-            methodInvocation.setProcessedName(this.stem(methodInvocation.getProcessedName()));
-        }
 	}
 
 	/**

@@ -21,10 +21,10 @@ public class IndividualMethodParser extends MethodParser {
         this.methods = methods;
     }
 
-    public List<MethodFeatures> parseMethods() {
+    protected List<MethodFeatures> parseMethods(boolean trainingMode) {
         List<MethodFeatures> methodFeatures = new ArrayList<>();
         for (String filepath : methods.keySet()) {
-            methodFeatures.addAll(getMethodsFromFile(filepath).stream()
+            methodFeatures.addAll(getMethodsFromFile(filepath, trainingMode).stream()
                     .filter(method -> methods.get(filepath).contains(method.getMethodSignature()))
                     .collect(Collectors.toList()));
         }

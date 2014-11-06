@@ -1,15 +1,7 @@
 package edu.virginia.aid;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import edu.mit.jwi.Dictionary;
@@ -22,6 +14,7 @@ import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
 import edu.virginia.aid.parsers.IndividualMethodParser;
 import edu.virginia.aid.parsers.MethodParser;
+import edu.virginia.aid.util.WekaHelper;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -34,6 +27,7 @@ import edu.virginia.aid.parsers.MethodParser;
 public class Driver {
 	
     public static final String WORDNET_FILEPATH = "wordnet/dict";
+    public static final String CLASSIFICATION_TRAINING_SET_FILEPATH = "training/primaryAction.arff";
 
     /**
      * Performs comparison check on each method and sorts them from most to least different
@@ -128,7 +122,21 @@ public class Driver {
      */
     public static void main(String[] args) {
         if (args.length > 0) {
-            if (args[0].equals("-files")) {
+            if (args[0].equals("-train")) {
+                if (args.length >= 3) {
+
+                    MethodParser parser = new DirectoryMethodParser(args[1]);
+
+                    // Parse this directory to get the appropriate data
+                    Map<String, List<MethodFeatures>> labeledMethods = parser.createTrainingSet("primaryAction");
+
+                    // Create training data set
+                    WekaHelper.buildTrainingDataFile(labeledMethods, "primaryAction", args[2]);
+
+                } else {
+                    throw new RuntimeException("No directory provided for training set and/or location for training data file");
+                }
+            } else if (args[0].equals("-files")) {
                 for(int i = 1; i < args.length; i++) {
 
                     MethodParser parser = new FileMethodParser(args[i]);

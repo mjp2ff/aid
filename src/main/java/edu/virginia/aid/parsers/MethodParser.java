@@ -1,16 +1,18 @@
 package edu.virginia.aid.parsers;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
+import edu.virginia.aid.Driver;
+import org.eclipse.jdt.core.dom.*;
 
 import edu.virginia.aid.MethodProcessor;
 import edu.virginia.aid.data.ClassInformation;
@@ -23,10 +25,70 @@ import edu.virginia.aid.detectors.PrimaryActionDetector;
 import edu.virginia.aid.detectors.StemmingProcessor;
 import edu.virginia.aid.detectors.StoplistProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
+import weka.classifiers.Classifier;
+import weka.classifiers.bayes.NaiveBayes;
+import weka.core.Attribute;
+import weka.core.Instances;
 
 public abstract class MethodParser {
 
-    public abstract List<MethodFeatures> parseMethods();
+    private Classifier primaryActionClassifier;
+    private Attribute primaryActionClassAttribute;
+
+    /**
+     * Returns the primaryAction classifier for the current instance, instantiating it if necessary
+     *
+     * @return classifier
+     */
+    public Classifier getPrimaryActionClassifier() {
+        if (primaryActionClassifier == null) {
+            initializeClassifier();
+        }
+
+        return primaryActionClassifier;
+    }
+
+    public Attribute getPrimaryAcitonClassAttribute() {
+        if (primaryActionClassAttribute == null) {
+            initializeClassifier();
+        }
+
+        return primaryActionClassAttribute;
+    }
+
+    /**
+     * Initializes classifier and class attribute values. This should only be called once per method parser
+     */
+    private void initializeClassifier() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(Driver.CLASSIFICATION_TRAINING_SET_FILEPATH));
+            Instances trainingData = new Instances(reader);
+            trainingData.setClassIndex(trainingData.numAttributes() - 1);
+
+            primaryActionClassAttribute = trainingData.classAttribute();
+
+            primaryActionClassifier = new NaiveBayes();
+            primaryActionClassifier.buildClassifier(trainingData);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not find training set for primary action. "
+                    + "Please build training set with -train mode before running the classifier. "
+                    + "The training set should be stored in " + Driver.CLASSIFICATION_TRAINING_SET_FILEPATH);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<MethodFeatures> parseMethods() {
+        return parseMethods(false);
+    }
+
+    /**
+     * Parses information from the methods given to the parser.
+     *
+     * @param trainingMode Whether the methods to parse represent
+     * @return
+     */
+    protected abstract List<MethodFeatures> parseMethods(boolean trainingMode);
 
     /**
 	 * Parses a file into an AST, then gets the methods from the AST.
@@ -34,7 +96,7 @@ public abstract class MethodParser {
      * @param filepath The path to the file containing source code
 	 * @return A list of methods with feature information in this file.
 	 */
-	protected List<MethodFeatures> getMethodsFromFile(String filepath) {
+	protected List<MethodFeatures> getMethodsFromFile(String filepath, boolean trainingMode) {
 
         String fileData = readFile(filepath);
 
@@ -51,7 +113,7 @@ public abstract class MethodParser {
         // Get class information
         ClassInformation classInformation = getClassInformation(ast, filepath, fileData);
 
-		return handleMethods(classInformation);
+		return handleMethods(classInformation, trainingMode);
     }
 
     /**
@@ -112,7 +174,7 @@ public abstract class MethodParser {
 	 *
 	 * @param classInformation The class whose methods are to be analyzed
 	 */
-	private List<MethodFeatures> handleMethods(ClassInformation classInformation) {
+	private List<MethodFeatures> handleMethods(ClassInformation classInformation, boolean trainingMode) {
 
         List<MethodFeatures> methodFeaturesList = new ArrayList<>();
 
@@ -135,8 +197,11 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new StemmingProcessor());
                 // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
                 methodProcessor.addFeatureDetector(new StoplistProcessor());
-                // Add detector to parse out the information for primary action of the method
-                methodProcessor.addFeatureDetector(new PrimaryActionDetector());
+
+                if (!trainingMode) {
+                    // Add detector to parse out the information for primary action of the method
+                    methodProcessor.addFeatureDetector(new PrimaryActionDetector(getPrimaryActionClassifier(), getPrimaryAcitonClassAttribute()));
+                }
 
                 // Run all detectors
                 MethodFeatures methodFeatures = methodProcessor.runDetectors();
@@ -146,5 +211,35 @@ public abstract class MethodParser {
         }
 
         return methodFeaturesList;
+    }
+
+    /**
+     * Builds a training set for a given property from labeled methods in the parsed set
+     *
+     * @param labeledProperty The property to search for labeled instances of
+     * @return Map of methods to their labels
+     */
+    public Map<String, List<MethodFeatures>> createTrainingSet(String labeledProperty) {
+        List<MethodFeatures> methods = parseMethods(true);
+        Map<String, List<MethodFeatures>> labeledMethods = new HashMap<>();
+        for (MethodFeatures method : methods) {
+            if (method.getJavadoc() != null) {
+                List<TagElement> tags = ((List<TagElement>) method.getJavadoc().tags()).stream()
+                        .filter(tag -> (tag.getTagName() == null ? "" : tag.getTagName()).equals("@" + labeledProperty))
+                        .collect(Collectors.toList());
+                if (tags.size() > 0 && tags.get(0).fragments().size() > 0) {
+                    String label = tags.get(0).fragments().get(0).toString().trim();
+                    if (labeledMethods.containsKey(label)) {
+                        labeledMethods.get(label).add(method);
+                    } else {
+                        List<MethodFeatures> labelMethods = new ArrayList<>();
+                        labelMethods.add(method);
+                        labeledMethods.put(label, labelMethods);
+                    }
+                }
+            }
+        }
+
+        return labeledMethods;
     }
 }
