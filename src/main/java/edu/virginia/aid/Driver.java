@@ -14,10 +14,7 @@ import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
 import edu.virginia.aid.parsers.IndividualMethodParser;
 import edu.virginia.aid.parsers.MethodParser;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
+import edu.virginia.aid.util.WekaHelper;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -114,76 +111,6 @@ public class Driver {
         }
     }
 
-    public static void buildTrainingDataFile(Map<String, List<MethodFeatures>> labeledMethods, String property, String filepath) {
-        Set<String> values = labeledMethods.keySet();
-
-        List<String> booleanFeatureProperties = new ArrayList<>();
-        List<String> numericFeatureProperties = new ArrayList<>();
-
-        if (values.size() > 0) {
-            String value = values.iterator().next();
-            if (labeledMethods.get(value).size() > 0) {
-                MethodFeatures method = labeledMethods.get(value).get(0);
-                booleanFeatureProperties.addAll(method.getBooleanFeatures().keySet());
-                numericFeatureProperties.addAll(method.getNumericFeatures().keySet());
-            }
-        }
-
-        FastVector attributes = new FastVector(booleanFeatureProperties.size() + numericFeatureProperties.size() + 1);
-
-        for (String label : booleanFeatureProperties) {
-            FastVector attributeValues = new FastVector(2);
-            attributeValues.addElement("true");
-            attributeValues.addElement("false");
-            attributes.addElement(new Attribute(label, attributeValues));
-        }
-
-        for (String label : numericFeatureProperties) {
-            attributes.addElement(new Attribute(label));
-        }
-
-        FastVector classValues = new FastVector(values.size());
-        for (String value : values) {
-            classValues.addElement(value);
-        }
-        attributes.addElement(new Attribute(property, classValues));
-
-        Instances trainingData = new Instances(property, attributes, 100);
-
-        for (String value : values) {
-            for (MethodFeatures method : labeledMethods.get(value)) {
-                Instance dataPoint = new Instance(booleanFeatureProperties.size() + numericFeatureProperties.size() + 1);
-                int i = 0;
-
-                for (String booleanProperty : booleanFeatureProperties) {
-                    dataPoint.setValue((Attribute) attributes.elementAt(i++), method.getBooleanFeature(booleanProperty) ? "true" : "false");
-                }
-                for (String numericProperty : numericFeatureProperties) {
-                    dataPoint.setValue((Attribute) attributes.elementAt(i++), method.getNumericFeature(numericProperty));
-                }
-                dataPoint.setValue((Attribute) attributes.elementAt(i), value);
-                trainingData.add(dataPoint);
-            }
-        }
-
-        String arffData = trainingData.toString();
-
-        Writer writer = null;
-
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filepath), "utf-8"));
-            writer.write(arffData);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                writer.close();
-            } catch (Exception e) {
-                // Let original exception through (it's more important)
-            }
-        }
-    }
-
     /**
      * Runs tool on input files as specified in the command line parameters. There are two modes, either project or file,
      * set using the -projects or -files flag as shown below.
@@ -204,7 +131,7 @@ public class Driver {
                     Map<String, List<MethodFeatures>> labeledMethods = parser.createTrainingSet("primaryAction");
 
                     // Create training data set
-                    buildTrainingDataFile(labeledMethods, "primaryAction", args[2]);
+                    WekaHelper.buildTrainingDataFile(labeledMethods, "primaryAction", args[2]);
 
                 } else {
                     throw new RuntimeException("No directory provided for training set and/or location for training data file");
