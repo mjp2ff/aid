@@ -12,18 +12,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import edu.virginia.aid.Driver;
+import edu.virginia.aid.detectors.*;
 import org.eclipse.jdt.core.dom.*;
 
 import edu.virginia.aid.MethodProcessor;
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.detectors.CommentDetector;
-import edu.virginia.aid.detectors.ControlFlowDetector;
-import edu.virginia.aid.detectors.IdentifierDetector;
-import edu.virginia.aid.detectors.PrimaryActionDetector;
-import edu.virginia.aid.detectors.StemmingProcessor;
-import edu.virginia.aid.detectors.StoplistProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
@@ -189,6 +184,8 @@ public abstract class MethodParser {
 
                 // Add detector to process comments
                 methodProcessor.addFeatureDetector(new CommentDetector());
+                // Add detector to parse information from the method signature
+                methodProcessor.addFeatureDetector(new MethodSignatureProcessor());
                 // Add detector to process methods
                 methodProcessor.addFeatureDetector(new IdentifierDetector());
                 // Add detector to process control flow

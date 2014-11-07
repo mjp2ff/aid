@@ -44,13 +44,13 @@ public class MethodFeatures extends SourceElement {
     private String primaryObject;
 
     // Boolean parameters
-    public static final String RETURNS_BOOLEAN = "returns boolean";
+    public static final String RETURNS_BOOLEAN = "returns_boolean";
+    public static final String IS_CONSTRUCTOR = "is_constructor";
 
     // Numeric parameters
-    public static final String NUM_PARAM_READS = "num param reads";
-    public static final String NUM_FIELD_READS = "num field reads";
-    public static final String NUM_FIELD_WRITES = "num field writes";
-    public static final String NUM_METHOD_INVOCATIONS = "num method invocations";
+    public static final String NUM_PARAM_READS = "num_param_reads";
+    public static final String NUM_FIELD_READS = "num_field_reads";
+    public static final String NUM_FIELD_WRITES = "num_field_writes";
 
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
                           Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
