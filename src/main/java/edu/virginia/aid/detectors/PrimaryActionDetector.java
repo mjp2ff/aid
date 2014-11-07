@@ -36,7 +36,6 @@ public class PrimaryActionDetector implements FeatureDetector {
             int labelIndex = (int) classifier.classifyInstance(features.buildWekaInstance(classAttribute));
             String label = classAttribute.value(labelIndex);
             features.setPrimaryAction(label.equals("methodName") ? features.getProcessedMethodName() : label);
-            System.out.println("primary action for " + features.getMethodName() + " is: " + features.getPrimaryAction());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
