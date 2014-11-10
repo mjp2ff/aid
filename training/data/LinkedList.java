@@ -523,6 +523,7 @@ public class LinkedList<E>
      * @param index index at which the specified element is to be inserted
      * @param element element to be inserted
      * @throws IndexOutOfBoundsException {@inheritDoc}
+	 * @primaryAction methodName
      */
     public void add(int index, E element) {
         checkPositionIndex(index);
@@ -541,6 +542,7 @@ public class LinkedList<E>
      * @param index the index of the element to be removed
      * @return the element previously at the specified position
      * @throws IndexOutOfBoundsException {@inheritDoc}
+	 * @primaryAction methodName
      */
     public E remove(int index) {
         checkElementIndex(index);
@@ -549,6 +551,7 @@ public class LinkedList<E>
 
     /**
      * Tells if the argument is the index of an existing element.
+	 * @primaryAction test
      */
     private boolean isElementIndex(int index) {
         return index >= 0 && index < size;
@@ -557,6 +560,7 @@ public class LinkedList<E>
     /**
      * Tells if the argument is the index of a valid position for an
      * iterator or an add operation.
+	 * @primaryAction test
      */
     private boolean isPositionIndex(int index) {
         return index >= 0 && index <= size;
@@ -566,6 +570,7 @@ public class LinkedList<E>
      * Constructs an IndexOutOfBoundsException detail message.
      * Of the many possible refactorings of the error handling code,
      * this "outlining" performs best with both server and client VMs.
+	 * @primaryAction create
      */
     private String outOfBoundsMsg(int index) {
         return "Index: "+index+", Size: "+size;
@@ -583,6 +588,7 @@ public class LinkedList<E>
 
     /**
      * Returns the (non-null) Node at the specified element index.
+	 * @primaryAction get
      */
     Node<E> node(int index) {
         // assert isElementIndex(index);
@@ -612,6 +618,7 @@ public class LinkedList<E>
      * @param o element to search for
      * @return the index of the first occurrence of the specified element in
      *         this list, or -1 if this list does not contain the element
+	 * @primaryAction get
      */
     public int indexOf(Object o) {
         int index = 0;
@@ -641,6 +648,7 @@ public class LinkedList<E>
      * @param o element to search for
      * @return the index of the last occurrence of the specified element in
      *         this list, or -1 if this list does not contain the element
+	 * @primaryAction get
      */
     public int lastIndexOf(Object o) {
         int index = size;
@@ -667,6 +675,7 @@ public class LinkedList<E>
      *
      * @return the head of this list, or {@code null} if this list is empty
      * @since 1.5
+	 * @primaryAction get
      */
     public E peek() {
         final Node<E> f = first;
@@ -679,6 +688,7 @@ public class LinkedList<E>
      * @return the head of this list
      * @throws NoSuchElementException if this list is empty
      * @since 1.5
+	 * @primaryAction get
      */
     public E element() {
         return getFirst();
@@ -689,6 +699,7 @@ public class LinkedList<E>
      *
      * @return the head of this list, or {@code null} if this list is empty
      * @since 1.5
+	 * @primaryAction get
      */
     public E poll() {
         final Node<E> f = first;
@@ -701,6 +712,7 @@ public class LinkedList<E>
      * @return the head of this list
      * @throws NoSuchElementException if this list is empty
      * @since 1.5
+	 * @primaryAction methodName
      */
     public E remove() {
         return removeFirst();
@@ -712,6 +724,7 @@ public class LinkedList<E>
      * @param e the element to add
      * @return {@code true} (as specified by {@link Queue#offer})
      * @since 1.5
+	 * @primaryAction methodName
      */
     public boolean offer(E e) {
         return add(e);
@@ -724,6 +737,7 @@ public class LinkedList<E>
      * @param e the element to insert
      * @return {@code true} (as specified by {@link Deque#offerFirst})
      * @since 1.6
+	 * @primaryAction methodName
      */
     public boolean offerFirst(E e) {
         addFirst(e);
@@ -736,6 +750,7 @@ public class LinkedList<E>
      * @param e the element to insert
      * @return {@code true} (as specified by {@link Deque#offerLast})
      * @since 1.6
+	 * @primaryAction methodName
      */
     public boolean offerLast(E e) {
         addLast(e);
@@ -749,6 +764,7 @@ public class LinkedList<E>
      * @return the first element of this list, or {@code null}
      *         if this list is empty
      * @since 1.6
+	 * @primaryAction get
      */
     public E peekFirst() {
         final Node<E> f = first;
@@ -762,6 +778,7 @@ public class LinkedList<E>
      * @return the last element of this list, or {@code null}
      *         if this list is empty
      * @since 1.6
+	 * @primaryAction get
      */
     public E peekLast() {
         final Node<E> l = last;
@@ -775,6 +792,7 @@ public class LinkedList<E>
      * @return the first element of this list, or {@code null} if
      *     this list is empty
      * @since 1.6
+	 * @primaryAction get
      */
     public E pollFirst() {
         final Node<E> f = first;
@@ -788,6 +806,7 @@ public class LinkedList<E>
      * @return the last element of this list, or {@code null} if
      *     this list is empty
      * @since 1.6
+	 * @primaryAction get
      */
     public E pollLast() {
         final Node<E> l = last;
@@ -802,6 +821,7 @@ public class LinkedList<E>
      *
      * @param e the element to push
      * @since 1.6
+	 * @primaryAction methodName
      */
     public void push(E e) {
         addFirst(e);
@@ -817,6 +837,7 @@ public class LinkedList<E>
      *         of the stack represented by this list)
      * @throws NoSuchElementException if this list is empty
      * @since 1.6
+	 * @primaryAction methodName
      */
     public E pop() {
         return removeFirst();
@@ -830,6 +851,7 @@ public class LinkedList<E>
      * @param o element to be removed from this list, if present
      * @return {@code true} if the list contained the specified element
      * @since 1.6
+	 * @primaryAction methodName
      */
     public boolean removeFirstOccurrence(Object o) {
         return remove(o);
@@ -843,6 +865,7 @@ public class LinkedList<E>
      * @param o element to be removed from this list, if present
      * @return {@code true} if the list contained the specified element
      * @since 1.6
+	 * @primaryAction methodName
      */
     public boolean removeLastOccurrence(Object o) {
         if (o == null) {
@@ -883,6 +906,7 @@ public class LinkedList<E>
      *         sequence), starting at the specified position in the list
      * @throws IndexOutOfBoundsException {@inheritDoc}
      * @see List#listIterator(int)
+	 * @primaryAction get
      */
     public ListIterator<E> listIterator(int index) {
         checkPositionIndex(index);
@@ -991,6 +1015,7 @@ public class LinkedList<E>
 
     /**
      * @since 1.6
+	 * @primaryAction get
      */
     public Iterator<E> descendingIterator() {
         return new DescendingIterator();
@@ -1026,6 +1051,7 @@ public class LinkedList<E>
      * themselves are not cloned.)
      *
      * @return a shallow copy of this {@code LinkedList} instance
+	 * @primaryAction create
      */
     public Object clone() {
         LinkedList<E> clone = superClone();
@@ -1055,6 +1081,7 @@ public class LinkedList<E>
      *
      * @return an array containing all of the elements in this list
      *         in proper sequence
+	 * @primaryAction convert 
      */
     public Object[] toArray() {
         Object[] result = new Object[size];
@@ -1101,6 +1128,7 @@ public class LinkedList<E>
      *         is not a supertype of the runtime type of every element in
      *         this list
      * @throws NullPointerException if the specified array is null
+	 * @primaryAction convert
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
@@ -1144,6 +1172,7 @@ public class LinkedList<E>
     /**
      * Reconstitutes this {@code LinkedList} instance from a stream
      * (that is, deserializes it).
+	 * @primaryAction methodName
      */
     @SuppressWarnings("unchecked")
     private void readObject(java.io.ObjectInputStream s)

@@ -96,6 +96,7 @@ public class WekaHelper {
             System.out.println("\nCross-Validation Results");
             System.out.println("======================");
             System.out.println(crossValidationEvaluation.toSummaryString());
+            System.out.println(crossValidationEvaluation.toClassDetailsString());
 
             Evaluation evaluation = new Evaluation(trainingSet);
             Classifier classifier = new NaiveBayes();
@@ -104,6 +105,7 @@ public class WekaHelper {
             System.out.println("Training Set Results");
             System.out.println("======================");
             System.out.println(evaluation.toSummaryString());
+            System.out.println(evaluation.toClassDetailsString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
