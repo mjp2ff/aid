@@ -1190,7 +1190,7 @@ assertEquals("[three, thee, tee]", asListFix.invoke((Object)argv).toString());
      * Therefore, the present syntax should not be parsed by applications.)
      *
      * @return a string representation of the method handle
-	 * @primaryAction get
+	 * @primaryAction convert
      */
     @Override
     public String toString() {
