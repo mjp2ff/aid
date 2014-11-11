@@ -23,6 +23,7 @@ public class NameVisitor extends ASTVisitor {
 
     MethodFeatures methodFeatures;
     boolean writing;
+    boolean invoking = false;
 
     /**
      * Creates a visitor with the method and context described below
@@ -59,7 +60,7 @@ public class NameVisitor extends ASTVisitor {
         identifiers.add(new IdentifierName(node.getIdentifier(),
                                             IdentifierType.VARIABLE,
                                             IdentifierScope.LOCAL,
-                                            (writing ? IdentifierUse.WRITE : IdentifierUse.READ),
+                                            (writing ? IdentifierUse.WRITE : (invoking ? IdentifierUse.INVOCATION : IdentifierUse.READ)),
                                             node.getStartPosition(),
                                             node.getStartPosition() + node.getLength(),
                                             methodFeatures.getSourceContext()));
@@ -80,7 +81,9 @@ public class NameVisitor extends ASTVisitor {
                 node.getLength() + node.getStartPosition(), methodFeatures.getSourceContext());
 
         if (node.getExpression() != null) {
+            invoking = true;
             node.getExpression().accept(this);
+            invoking = false;
         }
 
         for(Object argument : node.arguments()) {

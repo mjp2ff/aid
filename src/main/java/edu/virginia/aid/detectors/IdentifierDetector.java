@@ -66,6 +66,17 @@ public class IdentifierDetector implements FeatureDetector {
             }
         }
 
+        // If a variable is used but has no variable in scope, the fields are searched and added if appropriate
+        for (String identifierName : usageVisitor.getIdentifierNames()) {
+            IdentifierProperties identifier = features.getScope().getClosestVariable(identifierName);
+            if (identifier == null) {
+                IdentifierProperties field = features.getParentClass().getFieldByName(identifierName);
+                if (field != null) {
+                    features.getScope().addVariable(new IdentifierProperties(field));
+                }
+            }
+        }
+
         for (IdentifierName identifierName : usageVisitor.getIdentifierUses()) {
            features.getScope().addIdentifierUse(identifierName);
         }
@@ -90,5 +101,14 @@ public class IdentifierDetector implements FeatureDetector {
             fieldWrites += field.getWrites();
         }
         features.addNumericFeature(MethodFeatures.NUM_FIELD_WRITES, fieldWrites);
+
+        // Set whether there is one field written/invoked
+        int numFieldsInvokedOrWritten = 0;
+        for (IdentifierProperties field : features.getScope().getFields()) {
+            if (field.getInvocations() > 0 || field.getWrites() > 0) {
+                numFieldsInvokedOrWritten++;
+            }
+        }
+        features.addBooleanFeature(MethodFeatures.ONE_FIELD_INVOKED_OR_WRITTEN, numFieldsInvokedOrWritten == 1);
     }
 }

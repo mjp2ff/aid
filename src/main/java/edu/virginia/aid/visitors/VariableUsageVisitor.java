@@ -68,6 +68,22 @@ public class VariableUsageVisitor extends NameVisitor {
     }
 
     /**
+     * Gets all of the names of idneitifers used in the AST
+     *
+     * @return Identifier names
+     */
+    public Set<String> getIdentifierNames() {
+        Set<String> identifierNames = new HashSet<>();
+        for (IdentifierName identifier : getIdentifierUses()) {
+            if (identifier.isVariable()) {
+                identifierNames.add(identifier.getName());
+            }
+        }
+
+        return identifierNames;
+    }
+
+    /**
      * Find all reads and writes of variables within an assignment
      *
      * @param node

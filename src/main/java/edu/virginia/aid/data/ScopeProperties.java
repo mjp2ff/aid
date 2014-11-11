@@ -63,6 +63,8 @@ public class ScopeProperties {
                     identifierProperties.addReads(1);
                 } else if (identifierUse.getUse() == IdentifierUse.WRITE) {
                     identifierProperties.addWrites(1);
+                } else if (identifierUse.getUse() == IdentifierUse.INVOCATION) {
+                    identifierProperties.addInvocations(1);
                 }
             }
         }

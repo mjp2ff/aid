@@ -46,6 +46,7 @@ public class MethodFeatures extends SourceElement {
     // Boolean parameters
     public static final String RETURNS_BOOLEAN = "returns_boolean";
     public static final String IS_CONSTRUCTOR = "is_constructor";
+    public static final String ONE_FIELD_INVOKED_OR_WRITTEN = "one_field_invoked_or_written";
 
     // Numeric parameters
     public static final String NUM_PARAM_READS = "num_param_reads";

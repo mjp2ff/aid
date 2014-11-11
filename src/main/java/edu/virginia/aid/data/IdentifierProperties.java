@@ -20,6 +20,7 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 
     private int reads;
     private int writes;
+    private int invocations;
     private boolean inReturnStatement;
 
 	/**
@@ -42,6 +43,7 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 
         this.reads = 0;
         this.writes = 0;
+        this.invocations = 0;
         this.inReturnStatement = false;
 	}
 
@@ -56,6 +58,7 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 
         this.reads = 0;
         this.writes = 0;
+        this.invocations = 0;
         this.inReturnStatement = false;
 	}
 
@@ -75,6 +78,7 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 
         this.reads = 0;
         this.writes = 0;
+        this.invocations = 0;
         this.inReturnStatement = false;
     }
 
@@ -138,6 +142,10 @@ public class IdentifierProperties extends SourceElement implements StringListabl
         return writes;
     }
 
+    public int getInvocations() {
+        return invocations;
+    }
+
     /**
      * Adds the given amount to the current value of the variable reads
      *
@@ -154,6 +162,15 @@ public class IdentifierProperties extends SourceElement implements StringListabl
      */
     public void addWrites(int amount) {
         writes += amount;
+    }
+
+    /**
+     * Adds the given amount to the current value of the variable invocations
+     *
+     * @param amount The amount to add
+     */
+    public void addInvocations(int amount) {
+        invocations += amount;
     }
 
     public boolean isInReturnStatement() {

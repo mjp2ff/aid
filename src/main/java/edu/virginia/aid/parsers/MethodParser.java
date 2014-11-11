@@ -190,6 +190,8 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new IdentifierDetector());
                 // Add detector to process control flow
                 methodProcessor.addFeatureDetector(new ControlFlowDetector());
+                // Add detector to process expressions
+                methodProcessor.addFeatureDetector(new ExpressionDetector());
                 // Add detector to reduce words to stems.
                 methodProcessor.addFeatureDetector(new StemmingProcessor());
                 // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
