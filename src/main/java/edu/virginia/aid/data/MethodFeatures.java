@@ -1,5 +1,19 @@
 package edu.virginia.aid.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.Type;
+
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
@@ -9,15 +23,6 @@ import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.comparison.MissingIdentifierDifference;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.Type;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
-
-import java.util.*;
-import java.util.jar.Attributes;
 
 /**
  * Data wrapper for a feature list for a single method
