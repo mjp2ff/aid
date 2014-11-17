@@ -11,19 +11,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import edu.virginia.aid.Driver;
-import edu.virginia.aid.detectors.*;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Comment;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.TagElement;
 
-import edu.virginia.aid.MethodProcessor;
-import edu.virginia.aid.data.ClassInformation;
-import edu.virginia.aid.data.CommentInfo;
-import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.visitors.ClassVisitor;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Attribute;
 import weka.core.Instances;
+import edu.virginia.aid.Driver;
+import edu.virginia.aid.MethodProcessor;
+import edu.virginia.aid.data.ClassInformation;
+import edu.virginia.aid.data.CommentInfo;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.detectors.CommentDetector;
+import edu.virginia.aid.detectors.ControlFlowDetector;
+import edu.virginia.aid.detectors.ExpressionDetector;
+import edu.virginia.aid.detectors.IdentifierDetector;
+import edu.virginia.aid.detectors.MethodSignatureProcessor;
+import edu.virginia.aid.detectors.PrimaryActionDetector;
+import edu.virginia.aid.detectors.StemmingProcessor;
+import edu.virginia.aid.detectors.StoplistProcessor;
+import edu.virginia.aid.visitors.ClassVisitor;
 
 public abstract class MethodParser {
 

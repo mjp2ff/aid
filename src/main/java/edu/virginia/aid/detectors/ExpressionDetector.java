@@ -1,8 +1,9 @@
 package edu.virginia.aid.detectors;
 
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.ExpressionVisitor;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class ExpressionDetector implements FeatureDetector {
 
