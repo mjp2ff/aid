@@ -19,7 +19,21 @@ import weka.core.Instance;
 import weka.core.Instances;
 import edu.virginia.aid.data.MethodFeatures;
 
+
+/**
+ * Performs machine learning analysis through Weka.
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
+ */
 public class WekaHelper {
+
+	/**
+	 * Builds the training data file from the given methods.
+	 * 
+	 * @param labeledMethods The methods to use in building the file, already labeled.
+	 * @param property The property that the current file is based around.
+	 * @param filepath Full path to the appropriate location for the file.
+	 */
     public static void buildTrainingDataFile(Map<String, List<MethodFeatures>> labeledMethods, String property, String filepath) {
         Set<String> values = labeledMethods.keySet();
 
@@ -93,6 +107,12 @@ public class WekaHelper {
         }
     }
 
+    /**
+     * Performs Weka cross-validation on the training set.
+     * 
+     * @param trainingSet The set on which to perform cross-validation.
+     * @param folds The number of folds to use for cross validation.
+     */
     public static void crossValidate(Instances trainingSet, int folds) {
         try {
             Evaluation crossValidationEvaluation = new Evaluation(trainingSet);
