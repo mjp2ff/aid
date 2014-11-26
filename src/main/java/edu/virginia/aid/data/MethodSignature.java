@@ -12,6 +12,11 @@ public class MethodSignature {
         this.params = params;
     }
 
+    public MethodSignature(String name, int length) {
+        this.name = name;
+        this.params = new String[length];
+    }
+
     public String getName() {
         return name;
     }

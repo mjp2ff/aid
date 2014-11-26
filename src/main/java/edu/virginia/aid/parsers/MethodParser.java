@@ -5,13 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import edu.virginia.aid.Driver;
+import edu.virginia.aid.data.MethodSignature;
 import edu.virginia.aid.detectors.*;
 import org.eclipse.jdt.core.dom.*;
 
@@ -176,8 +174,61 @@ public abstract class MethodParser {
         if (classInformation != null) {
             List<MethodDeclaration> methods = classInformation.getMethodDeclarations();
 
-            // Print the content and comments of each method.
+            // Get the order of processing of methods
+            Map<MethodDeclaration, MethodDeclaration> methodDeclarationMap = new HashMap<>();
+            Map<MethodDeclaration, Integer> indegrees = new HashMap<>();
+
             for (MethodDeclaration m : methods) {
+                indegrees.put(m, 0);
+            }
+
+            for (MethodDeclaration m : methods) {
+
+                MethodProcessor methodProcessor = new MethodProcessor(m, classInformation, classInformation.getFilepath());
+                MethodSignature methodSignature = methodProcessor.getPrimaryCalledMethod();
+
+                if (methodSignature != null) {
+                    for (MethodDeclaration m2 : methods) {
+                        if (m2 != m) {
+                            if (m2.getName().getIdentifier().equals(methodSignature.getName())
+                                    && m2.parameters().size() == methodSignature.getParams().length
+                                    && !canReachNode(methodDeclarationMap, m2, m)) {
+                                methodDeclarationMap.put(m, m2);
+                                indegrees.put(m2, indegrees.get(m2) + 1);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Topological sort
+            List<MethodDeclaration> sortedMethods = new ArrayList<>();
+            Queue<MethodDeclaration> queue = new LinkedList<>();
+            for (MethodDeclaration m : indegrees.keySet()) {
+                if (indegrees.get(m) == 0) {
+                    queue.add(m);
+                }
+            }
+
+            while (!queue.isEmpty()) {
+                MethodDeclaration method = queue.remove();
+                sortedMethods.add(method);
+                if (methodDeclarationMap.containsKey(method)) {
+                    MethodDeclaration child = methodDeclarationMap.get(method);
+                    indegrees.put(child, indegrees.get(child) - 1);
+                    if (indegrees.get(child) == 0) {
+                        queue.add(child);
+                    }
+                }
+            }
+
+            Collections.reverse(sortedMethods);
+
+            Map<MethodDeclaration, MethodFeatures> methodFeaturesMap = new HashMap<>();
+
+            // Print the content and comments of each method.
+            for (MethodDeclaration m : sortedMethods) {
 
                 // Print the method name.
                 MethodProcessor methodProcessor = new MethodProcessor(m, classInformation, classInformation.getFilepath());
@@ -196,6 +247,8 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new StemmingProcessor());
                 // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
                 methodProcessor.addFeatureDetector(new StoplistProcessor());
+                // Add detector to populate parameters if necessary
+                methodProcessor.addFeatureDetector(new ParameterCopyDetector(getChainRoot(methodDeclarationMap, m), methodFeaturesMap));
 
                 if (!trainingMode) {
                     // Add detector to parse out the information for primary action of the method
@@ -206,10 +259,33 @@ public abstract class MethodParser {
                 MethodFeatures methodFeatures = methodProcessor.runDetectors();
 
                 methodFeaturesList.add(methodFeatures);
+                methodFeaturesMap.put(m, methodFeatures);
             }
         }
 
         return methodFeaturesList;
+    }
+
+    private static boolean canReachNode(Map<MethodDeclaration, MethodDeclaration> methodDeclarationMap, MethodDeclaration start, MethodDeclaration searchNode) {
+        MethodDeclaration current = start;
+        if (current == searchNode) return true;
+        while (methodDeclarationMap.containsKey(current)) {
+            current = methodDeclarationMap.get(current);
+            if (current == searchNode) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static MethodDeclaration getChainRoot(Map<MethodDeclaration, MethodDeclaration> methodDeclarationMap, MethodDeclaration start) {
+        MethodDeclaration current = start;
+        while (methodDeclarationMap.containsKey(current)) {
+            current = methodDeclarationMap.get(current);
+        }
+
+        return current;
     }
 
     /**

@@ -3,6 +3,7 @@ package edu.virginia.aid;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.virginia.aid.data.MethodSignature;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.ClassInformation;
@@ -69,6 +70,21 @@ public class MethodProcessor {
         }
 
         return features;
+    }
+
+    /**
+     * Gets the primary method called by this method, if any exists
+     *
+     * @return MethodSignature for the method called
+     */
+    public MethodSignature getPrimaryCalledMethod() {
+        PrimaryMethodInvocationVisitor visitor = new PrimaryMethodInvocationVisitor();
+        method.accept(visitor);
+        if (visitor.getStatementCount() == 1 && visitor.getMethodInvocations().size() > 0) {
+            return visitor.getMethodInvocations().get(0);
+        }
+
+        return null;
     }
 
 }
