@@ -1,11 +1,11 @@
 package edu.virginia.aid.visitors;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.InfixExpression;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.InfixExpression;
 
 /**
  * Extracts information about arithmetic expressions from a method

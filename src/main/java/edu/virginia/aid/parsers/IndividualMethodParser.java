@@ -1,12 +1,12 @@
 package edu.virginia.aid.parsers;
 
-import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.data.MethodSignature;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodSignature;
 
 public class IndividualMethodParser extends MethodParser {
 

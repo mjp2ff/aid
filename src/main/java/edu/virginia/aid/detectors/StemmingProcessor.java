@@ -8,7 +8,6 @@ import org.tartarus.snowball.SnowballStemmer;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.data.MethodInvocationProperties;
 
 /**
  * Feature processor for handling word stemming within comments.

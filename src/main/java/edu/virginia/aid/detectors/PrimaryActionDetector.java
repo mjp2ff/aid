@@ -1,9 +1,10 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.MethodFeatures;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Detector that finds a single verb to describe the method

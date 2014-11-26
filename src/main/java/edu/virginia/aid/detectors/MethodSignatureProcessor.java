@@ -1,7 +1,8 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.MethodFeatures;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import edu.virginia.aid.data.MethodFeatures;
 
 public class MethodSignatureProcessor implements FeatureDetector {
     @Override

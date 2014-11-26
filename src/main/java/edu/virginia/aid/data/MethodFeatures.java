@@ -1,5 +1,19 @@
 package edu.virginia.aid.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.Type;
+
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
@@ -9,15 +23,7 @@ import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.comparison.MissingIdentifierDifference;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.Type;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
-
-import java.util.*;
-import java.util.jar.Attributes;
+import edu.virginia.aid.util.IdentifierTreeNode;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -34,6 +40,7 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Boolean> booleanFeatures;
     private Map<String, String> stringFeatures;
     private Map<String, Integer> numericFeatures;
+    private Set<IdentifierTreeNode> returnValueDataflows;
     private ScopeProperties scope;
     private Javadoc javadoc;
     private Map<String, Double> TFIDF;
@@ -53,6 +60,17 @@ public class MethodFeatures extends SourceElement {
     public static final String NUM_FIELD_READS = "num_field_reads";
     public static final String NUM_FIELD_WRITES = "num_field_writes";
 
+    /**
+     * Specific constructor for MethodFeatures class
+     * 
+     * @param methodName The name of the current method
+     * @param parentClass The parent class of the current method
+     * @param filepath The filepath for the class containing the current method
+     * @param returnType The return type of the current method
+     * @param startPos The start position in the file of the current method
+     * @param endPos The end position in the file of the current method
+     * @param sourceContext Additional source context information for the current method
+     */
     public MethodFeatures(String methodName, ClassInformation parentClass, String filepath,
                           Type returnType, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
@@ -64,6 +82,7 @@ public class MethodFeatures extends SourceElement {
         this.booleanFeatures = new HashMap<>();
         this.stringFeatures = new HashMap<>();
         this.numericFeatures = new HashMap<>();
+        this.returnValueDataflows = new HashSet<>();
         this.scope = new ScopeProperties();
         this.javadoc = null;
         this.TFIDF = new HashMap<>();
@@ -82,22 +101,47 @@ public class MethodFeatures extends SourceElement {
         return this.methodName;
     }
 
+    /**
+     * Gets and returns the processed name of the method
+     *
+     * @return The processed method name
+     */
     public String getProcessedMethodName() {
         return processedMethodName;
     }
 
+    /**
+     * Sets the processed method name
+     * 
+     * @param processedMethodName The new processed method name
+     */
     public void setProcessedMethodName(String processedMethodName) {
         this.processedMethodName = processedMethodName;
     }
 
+    /**
+     * Gets and returns the filepath
+     *
+     * @return The filepath
+     */
     public String getFilepath() {
         return filepath;
     }
 
+    /**
+     * Gets and returns the parent class
+     *
+     * @return The parent class
+     */
     public ClassInformation getParentClass() {
         return parentClass;
     }
 
+    /**
+     * Gets and returns the return type
+     *
+     * @return The return type
+     */
     public Type getReturnType() {
         return returnType;
     }
@@ -207,18 +251,47 @@ public class MethodFeatures extends SourceElement {
         return numericFeatures.get(name);
     }
 
+    /**
+     * Gets and returns the dataflow tree for the return value of this method.
+     * 
+     * @return The tree representing dataflow to the return value of this method.
+     */
+    public Set<IdentifierTreeNode> getReturnValueDataflows() {
+    	return this.returnValueDataflows;
+    }
+
+    /**
+     * Gets and returns the primary action for this method
+     * 
+     * @return The primary action for this method
+     */
     public String getPrimaryAction() {
         return primaryAction;
     }
 
+    /**
+     * Sets the primary action for this method
+     * 
+     * @param primaryAction The primary action to set
+     */
     public void setPrimaryAction(String primaryAction) {
         this.primaryAction = primaryAction;
     }
 
+    /**
+     * Gets and returns the primary object for this method
+     * 
+     * @return The primary object for this method
+     */
     public String getPrimaryObject() {
         return primaryObject;
     }
 
+    /**
+     * Sets the primary object for this method
+     * 
+     * @param primaryObject The primary object to set
+     */
     public void setPrimaryObject(String primaryObject) {
         this.primaryObject = primaryObject;
     }
@@ -326,14 +399,29 @@ public class MethodFeatures extends SourceElement {
         return processedComments;
     }
 
+    /**
+     * Gets and returns the javadoc for this method
+     * 
+     * @return The javadoc for this method
+     */
     public Javadoc getJavadoc() {
         return javadoc;
     }
 
+    /**
+     * Sets the javadoc for this method
+     * 
+     * @param javadoc The new javadoc to set
+     */
     public void setJavadoc(Javadoc javadoc) {
         this.javadoc = javadoc;
     }
 
+    /**
+     * Gets and returns the scope of this method
+     * 
+     * @return The scope of this method
+     */
     public ScopeProperties getScope() {
         return scope;
     }
@@ -549,6 +637,11 @@ public class MethodFeatures extends SourceElement {
         return instance;
     }
 
+    /**
+     * Basic toString implementation for a MethodFeatures object.
+     * 
+     * @return String representation of the methodFeatures
+     */
     @Override
     public String toString() {
         return "Method " + getMethodSignature() + ":\n" +

@@ -1,7 +1,6 @@
 package edu.virginia.aid.detectors;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -10,7 +9,6 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import edu.virginia.aid.data.IdentifierName;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.data.MethodInvocationProperties;
 import edu.virginia.aid.visitors.VariableDeclarationVisitor;
 import edu.virginia.aid.visitors.VariableUsageVisitor;
 
