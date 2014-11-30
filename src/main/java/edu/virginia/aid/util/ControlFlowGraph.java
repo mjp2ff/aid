@@ -57,6 +57,26 @@ class ControlFlowGraph {
 		this.end = controlFlowVisitor.getLast();
 	}
 	
+	public MethodDeclaration getMethod() {
+		return method;
+	}
+
+	public Map<Statement, Set<Statement>> getPredecessors() {
+		return predecessors;
+	}
+
+	public Map<Statement, Set<Statement>> getSuccessors() {
+		return successors;
+	}
+
+	public Statement getStart() {
+		return start;
+	}
+
+	public Statement getEnd() {
+		return end;
+	}
+	
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder();
 		TreeSet<Statement> sorted = 
