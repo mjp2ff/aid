@@ -82,7 +82,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 	}
 
 	@Override public boolean visit(MethodDeclaration node) {
-		List statements = node.getBody().statements();
+		List<?> statements = node.getBody().statements();
 		last = node.getBody(); // use method's body as virtual last
 		if (statements.size() == 0) {
 			init = last;
@@ -94,7 +94,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 	}
 	
 	@Override public boolean visit(Block node) {
-        List statements = node.statements();
+        List<?> statements = node.statements();
         int size = statements.size();
         for (int i = 0; i < size - 1; i++) {
             Statement statement = (Statement) statements.get(i);
@@ -129,7 +129,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
     		next = findNextStatementInParentList(parent);
     	} else {
     		assert location.isChildListProperty();
-    		List l = (List)parent.getStructuralProperty(location);
+    		List<?> l = (List<?>)parent.getStructuralProperty(location);
         	int index = l.indexOf(node);
         	if (index+1<l.size()) {
         		if (l.get(index+1) instanceof Statement) {
@@ -161,7 +161,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
         	addEdge(node,node.getThenStatement());
         	addEdge(node.getThenStatement(),next);
         } else {
-        	List thenList = ((Block) node.getThenStatement()).statements();
+        	List<?> thenList = ((Block) node.getThenStatement()).statements();
             if (thenList.isEmpty()) {
                 addEdge(node, next);
             } else {
@@ -178,7 +178,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
         	addEdge(node,node.getElseStatement());
         	addEdge(node.getElseStatement(),next);
         } else {
-        	List elseList = ((Block) node.getElseStatement()).statements();
+        	List<?> elseList = ((Block) node.getElseStatement()).statements();
             if (elseList.isEmpty()) {
                 addEdge(node, next);
             } else {
@@ -195,7 +195,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
     		addEdge(node.getBody(),node);
     		return true;
     	}
-        List statements = ((Block) node.getBody()).statements();
+        List<?> statements = ((Block) node.getBody()).statements();
         if (statements.isEmpty()) {
             addEdge(node, node);
         } else {
@@ -216,7 +216,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
     		addEdge(node.getBody(),node);
     		return true;
     	}
-        List statements = ((Block) node.getBody()).statements();
+        List<?> statements = ((Block) node.getBody()).statements();
         if (statements.isEmpty()) {
             addEdge(node, node);
         } else {
@@ -232,7 +232,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
     		addEdge(node.getBody(),node);
     		return true;
     	}
-        List statements = ((Block) node.getBody()).statements();
+        List<?> statements = ((Block) node.getBody()).statements();
         if (statements.isEmpty()) {
             addEdge(node, node);
         } else {
@@ -248,7 +248,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
     		addEdge(node.getBody(),node);
     		return true;
     	}
-        List statements = ((Block) node.getBody()).statements();
+        List<?> statements = ((Block) node.getBody()).statements();
         if (statements.isEmpty()) {
             addEdge(node, node);
         } else {
@@ -450,12 +450,12 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
             computeSuccsPreds(set, successor);
         }
     }
-	private Statement first(List statements) {
+	private Statement first(List<?> statements) {
 		assert !statements.isEmpty();
 		return (Statement) statements.get(0);
 	}
 
-	private Statement last(List statements) {
+	private Statement last(List<?> statements) {
 		assert !statements.isEmpty();
 		return (Statement) statements.get(statements.size() - 1);
 	}
