@@ -23,7 +23,6 @@ import edu.virginia.aid.comparison.DifferenceWeights;
 import edu.virginia.aid.comparison.GenericDifference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.comparison.MissingIdentifierDifference;
-import edu.virginia.aid.util.IdentifierTreeNode;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -40,7 +39,6 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Boolean> booleanFeatures;
     private Map<String, String> stringFeatures;
     private Map<String, Integer> numericFeatures;
-    private Set<IdentifierTreeNode> returnValueDataflows;
     private ScopeProperties scope;
     private Javadoc javadoc;
     private Map<String, Double> TFIDF;
@@ -82,7 +80,6 @@ public class MethodFeatures extends SourceElement {
         this.booleanFeatures = new HashMap<>();
         this.stringFeatures = new HashMap<>();
         this.numericFeatures = new HashMap<>();
-        this.returnValueDataflows = new HashSet<>();
         this.scope = new ScopeProperties();
         this.javadoc = null;
         this.TFIDF = new HashMap<>();
@@ -249,15 +246,6 @@ public class MethodFeatures extends SourceElement {
      */
     public int getNumericFeature(String name) {
         return numericFeatures.get(name);
-    }
-
-    /**
-     * Gets and returns the dataflow tree for the return value of this method.
-     * 
-     * @return The tree representing dataflow to the return value of this method.
-     */
-    public Set<IdentifierTreeNode> getReturnValueDataflows() {
-    	return this.returnValueDataflows;
     }
 
     /**
