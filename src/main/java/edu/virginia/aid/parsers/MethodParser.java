@@ -260,8 +260,9 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new ParameterCopyDetector(getChainRoot(methodDeclarationMap, m), methodFeaturesMap));
 
                 if (!trainingMode) {
-                    // Add detector to parse out the information for primary action of the method
+                    // Add detector to parse out the information for primary action and primary object of the method
                     methodProcessor.addFeatureDetector(new PrimaryActionDetector(getPrimaryActionClassifier(), getPrimaryAcitonClassAttribute()));
+                    methodProcessor.addFeatureDetector(new PrimaryObjectDetector());
                 }
 
                 // Run all detectors
