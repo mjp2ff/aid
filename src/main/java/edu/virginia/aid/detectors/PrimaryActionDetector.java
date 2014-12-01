@@ -40,8 +40,5 @@ public class PrimaryActionDetector implements FeatureDetector {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        // TODO: Define this based on classification
-        features.setPrimaryObject("");
     }
 }

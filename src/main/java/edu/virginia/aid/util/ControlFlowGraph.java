@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.dom.Statement;
 
 import edu.virginia.aid.visitors.ControlFlowGraphVisitor;
 
-class ControlFlowGraph {
+public class ControlFlowGraph {
 	/** the method which we build the control flow graph for */
 	private final MethodDeclaration method;
 	/** maps a {@link Statement} to its predecessors */
@@ -47,7 +47,7 @@ class ControlFlowGraph {
 	 */
 	private final Statement end;
 
-	ControlFlowGraph(MethodDeclaration method) {
+	public ControlFlowGraph(MethodDeclaration method) {
 		this.method = method;
 		ControlFlowGraphVisitor controlFlowVisitor = new ControlFlowGraphVisitor();
 		method.accept(controlFlowVisitor);
