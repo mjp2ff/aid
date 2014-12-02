@@ -1,4 +1,4 @@
-package edu.virginia.aid;
+package edu.virginia.aid.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,7 +22,6 @@ import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
 import edu.virginia.aid.parsers.IndividualMethodParser;
 import edu.virginia.aid.parsers.MethodParser;
-import edu.virginia.aid.util.WekaHelper;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split

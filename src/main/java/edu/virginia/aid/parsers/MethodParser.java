@@ -25,8 +25,6 @@ import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Attribute;
 import weka.core.Instances;
-import edu.virginia.aid.Driver;
-import edu.virginia.aid.MethodProcessor;
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
@@ -41,6 +39,8 @@ import edu.virginia.aid.detectors.PrimaryActionDetector;
 import edu.virginia.aid.detectors.PrimaryObjectDetector;
 import edu.virginia.aid.detectors.StemmingProcessor;
 import edu.virginia.aid.detectors.StoplistProcessor;
+import edu.virginia.aid.util.Driver;
+import edu.virginia.aid.util.MethodProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
 
 public abstract class MethodParser {
