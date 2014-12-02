@@ -45,7 +45,9 @@ public class PrimaryObjectDetector implements FeatureDetector {
     	Map<IdentifierProperties, Integer> statementCounts = new HashMap<>();
 
     	Statement last = cfg.getEnd();
-    	statementsToProcess.add(last);
+        if (last != null) {
+            statementsToProcess.add(last);
+        }
     	statementsSeen.add(last);
     	
     	while (!statementsToProcess.isEmpty()) {

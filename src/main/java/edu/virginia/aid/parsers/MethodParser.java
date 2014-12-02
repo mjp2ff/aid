@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+import edu.virginia.aid.detectors.*;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Comment;
@@ -29,16 +30,6 @@ import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.data.MethodSignature;
-import edu.virginia.aid.detectors.CommentDetector;
-import edu.virginia.aid.detectors.ControlFlowDetector;
-import edu.virginia.aid.detectors.ExpressionDetector;
-import edu.virginia.aid.detectors.IdentifierDetector;
-import edu.virginia.aid.detectors.MethodSignatureProcessor;
-import edu.virginia.aid.detectors.ParameterCopyDetector;
-import edu.virginia.aid.detectors.PrimaryActionDetector;
-import edu.virginia.aid.detectors.PrimaryObjectDetector;
-import edu.virginia.aid.detectors.StemmingProcessor;
-import edu.virginia.aid.detectors.StoplistProcessor;
 import edu.virginia.aid.util.Driver;
 import edu.virginia.aid.util.MethodProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
@@ -274,6 +265,7 @@ public abstract class MethodParser {
                     // Add detector to parse out the information for primary action and primary object of the method
                     methodProcessor.addFeatureDetector(new PrimaryActionDetector(getPrimaryActionClassifier(), getPrimaryAcitonClassAttribute()));
                     methodProcessor.addFeatureDetector(new PrimaryObjectDetector());
+                    methodProcessor.addFeatureDetector(new SuccessConditionDetector());
                 }
 
                 // Run all detectors

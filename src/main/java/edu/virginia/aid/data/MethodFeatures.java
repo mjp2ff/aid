@@ -45,8 +45,9 @@ public class MethodFeatures extends SourceElement {
     private Map<String, Integer> wordFrequencies;
     private Set<String> allWordsNoComments;
 
-    private String primaryAction;
-    private String primaryObject;
+    private String primaryAction = "";
+    private String primaryObject = "";
+    private Set<IdentifierProperties> conditionsForSuccess = new HashSet<>();
 
     // Boolean parameters
     public static final String RETURNS_BOOLEAN = "returns_boolean";
@@ -284,6 +285,14 @@ public class MethodFeatures extends SourceElement {
         this.primaryObject = primaryObject;
     }
 
+    public Set<IdentifierProperties> getConditionsForSuccess() {
+        return conditionsForSuccess;
+    }
+
+    public void setConditionsForSuccess(Set<IdentifierProperties> conditionsForSuccess) {
+        this.conditionsForSuccess = conditionsForSuccess;
+    }
+
     /**
      * Getter for word frequencies, calculating them if necessary.
      * 
@@ -472,6 +481,19 @@ public class MethodFeatures extends SourceElement {
 
         if (!containedInComments(wordNetDictionary, primaryObject)) {
             differences.add(new GenericDifference("The primary object acted upon (" + primaryObject + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * getTFIDF(primaryObject)));
+        }
+
+        // Process conditions for success
+        for (IdentifierProperties condition : conditionsForSuccess) {
+            String identifier = condition.getProcessedName();
+            boolean foundInComment = containedInComments(wordNetDictionary, identifier);
+
+            if (!foundInComment) {
+                double differenceScore = ((DifferenceWeights.CONDITIONS_FOR_SUCCESS / conditionsForSuccess.size()) * getTFIDF(identifier));
+                if (differenceScore > 0) {
+                    differences.add(new GenericDifference("The variable " + identifier + " is part of the conditions for success but is not discussed in the comments", differenceScore));
+                }
+            }
         }
 
         return differences;

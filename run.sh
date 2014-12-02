@@ -10,4 +10,4 @@ do
 done
 
 printf "\x1b[1m\nRun\n\x1b[0m"
-mvn exec:java -q -Dexec.mainClass="edu.virginia.aid.Driver" -Dexec.args="$ARGS"
+mvn exec:java -q -Dexec.mainClass="edu.virginia.aid.util.Driver" -Dexec.args="$ARGS"

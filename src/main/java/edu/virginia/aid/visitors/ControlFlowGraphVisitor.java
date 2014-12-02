@@ -82,6 +82,9 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 	}
 
 	@Override public boolean visit(MethodDeclaration node) {
+        if (node.getBody() == null) {
+            return false;
+        }
 		List<?> statements = node.getBody().statements();
 		last = node.getBody(); // use method's body as virtual last
 		if (statements.size() == 0) {
@@ -150,9 +153,10 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
         Statement next;
         if (set.size() > 1) {
        		next = findNextStatementInParentList(node);
-        } else {
-        	assert set.size() == 1;
+        } else if (set.size() == 1) {
             next = set.iterator().next();
+        } else {
+            return true;
         }
         assert next!=null;
         relations.remove(node); // remove temporary edge for if-statement
@@ -302,18 +306,19 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 		// add edges to try-body, remove temporary node similar to IFs
 		if (!node.getBody().statements().isEmpty()) {
 			Set<Statement> set = getStatements(relations, node);
-            assert set.size() == 1;
-            Statement next = set.iterator().next();
-            // remember successors
-            try2Successor.put(node, next);
-            relations.remove(node);
-            addEdge(node, first(node.getBody().statements()));
-            // finally-block requires an extra indirection
-            if (node.getFinally()!=null && !node.getFinally().statements().isEmpty()) {
-            	addEdge(last(node.getBody().statements()),first(node.getFinally().statements()));
-            	addEdge(last(node.getFinally().statements()),next);
-            } else {
-            	addEdge(last(node.getBody().statements()),next);
+            if (set.size() > 0) {
+                Statement next = set.iterator().next();
+                // remember successors
+                try2Successor.put(node, next);
+                relations.remove(node);
+                addEdge(node, first(node.getBody().statements()));
+                // finally-block requires an extra indirection
+                if (node.getFinally()!=null && !node.getFinally().statements().isEmpty()) {
+                    addEdge(last(node.getBody().statements()),first(node.getFinally().statements()));
+                    addEdge(last(node.getFinally().statements()),next);
+                } else {
+                    addEdge(last(node.getBody().statements()),next);
+                }
             }
 		}
 		
@@ -324,7 +329,7 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 		// pop from stack when the first catch/finally is met
 		if (isInTryBlock()) {
 			TryStatement tryStmt = tryStack.get(tryStack.size()-1);
-			if (tryStmt.catchClauses().get(0).equals(node)) {
+			if (tryStmt.catchClauses().size() > 0 && tryStmt.catchClauses().get(0).equals(node)) {
 				tryStack.remove(tryStmt);
 			}
 		}
@@ -339,11 +344,13 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 		stmt.accept(new ASTVisitor(){
 			@Override public boolean visit(MethodInvocation node) {
 				IMethodBinding binding = node.resolveMethodBinding();
-				for(ITypeBinding itb : binding.getExceptionTypes()) {
-					if (isCheckedException(itb)) {
-						exceptions.add(itb);
-					}
-				}
+                if (binding != null) {
+                    for(ITypeBinding itb : binding.getExceptionTypes()) {
+                        if (isCheckedException(itb)) {
+                            exceptions.add(itb);
+                        }
+                    }
+                }
 				return true;
 			}
 		});

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.virginia.aid.data.IdentifierProperties;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 
@@ -115,5 +116,22 @@ public class VariableUsageVisitor extends NameVisitor {
         inAssignment = tempInAssignment;
 
         return false;
+    }
+
+    /**
+     * Gets all of the IdentifierProperties that can be resolved from the uses found by the visitor
+     *
+     * @return The resolved identifiers
+     */
+    public Set<IdentifierProperties> getResolvedIdentifiers() {
+        Set<IdentifierProperties> resolvedIdentifiers = new HashSet<>();
+        for (IdentifierName identifierUse : getIdentifierUses()) {
+            IdentifierProperties resolvedIdentifier = identifierUse.getResolvedIdentifier(this.methodFeatures);
+            if (resolvedIdentifier != null) {
+                resolvedIdentifiers.add(resolvedIdentifier);
+            }
+        }
+
+        return resolvedIdentifiers;
     }
 }
