@@ -104,7 +104,7 @@ public class VariableUsageVisitor extends NameVisitor {
         }
 
         Expression rhs = node.getRightHandSide();
-        visitor.clearNames();
+        visitor.clearFields();
         rhs.accept(visitor);
         identifierUses.addAll(visitor.getIdentifiers());
         methodInvocations.addAll(visitor.getMethods());

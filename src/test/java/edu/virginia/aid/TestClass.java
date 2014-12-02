@@ -12,6 +12,12 @@ public class TestClass {
 	public static void main(String[] args) {
 		// Here's another comment too.
 		anotherMethod("bye", "hi");
+		
+		for (int i = 0; i < 5; ++i) {
+			if (true) {
+				System.out.println("Hi!");
+			}
+		}
 	}
 
 	/**

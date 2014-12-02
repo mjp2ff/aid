@@ -44,7 +44,10 @@ public class NameVisitor extends ASTVisitor {
         return methods;
     }
 
-    public void clearNames() {
+    /**
+     * Clears all the fields of this class.
+     */
+    public void clearFields() {
         identifiers = new ArrayList<>();
         methods = new ArrayList<>();
     }
