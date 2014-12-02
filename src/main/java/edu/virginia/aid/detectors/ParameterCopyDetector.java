@@ -1,9 +1,10 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.MethodFeatures;
+import java.util.Map;
+
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-import java.util.Map;
+import edu.virginia.aid.data.MethodFeatures;
 
 public class ParameterCopyDetector implements FeatureDetector {
 
