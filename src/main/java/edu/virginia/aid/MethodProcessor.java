@@ -3,12 +3,11 @@ package edu.virginia.aid;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.virginia.aid.data.MethodSignature;
-
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import edu.virginia.aid.data.ClassInformation;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.data.MethodSignature;
 import edu.virginia.aid.detectors.FeatureDetector;
 import edu.virginia.aid.visitors.PrimaryMethodInvocationVisitor;
 
