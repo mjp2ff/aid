@@ -1,5 +1,8 @@
 package edu.virginia.aid.data;
 
+import edu.virginia.aid.comparison.Difference;
+import edu.virginia.aid.comparison.DifferenceWeights;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -231,5 +234,23 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 //    	return newWord.trim();
     	// TODO: Fix this cuz I broke it :(
     	return s;
+    }
+
+    /**
+     * Gets the weighted value of the identifier relative to the total variable reads/writes for the method
+     *
+     * @param scope The method's scope
+     * @return Difference value (does not include NLP adjustments like TF/IDF)
+     */
+    public double getReadWriteDifferenceValue(ScopeProperties scope) {
+        double maxDifference = scope.getNumFieldReads() * DifferenceWeights.FIELD_READ +
+                scope.getNumFieldWrites() * DifferenceWeights.FIELD_WRITE +
+                scope.getNumParameterReads() * DifferenceWeights.PARAMETER_READ +
+                scope.getNumParameterWrites() * DifferenceWeights.PARAMETER_WRITE;
+
+        double identifierDifference = getReads() * (context == IdentifierContext.FIELD ? DifferenceWeights.FIELD_READ : DifferenceWeights.PARAMETER_READ) +
+                getWrites() * (context == IdentifierContext.FIELD ? DifferenceWeights.FIELD_WRITE : DifferenceWeights.PARAMETER_WRITE);
+
+        return (identifierDifference / maxDifference) * DifferenceWeights.VARIABLE_USAGE;
     }
 }

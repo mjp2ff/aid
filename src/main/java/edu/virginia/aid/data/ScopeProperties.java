@@ -222,4 +222,52 @@ public class ScopeProperties {
 
         return names;
     }
+
+    /**
+     * Gets the total number of field reads in this scope
+     *
+     * @return Total number of field reads
+     */
+    public int getNumFieldReads() {
+        return getFields()
+                .stream()
+                .mapToInt(f -> f.getReads())
+                .sum();
+    }
+
+    /**
+     * Gets the total number of field writes in this scope
+     *
+     * @return Total number of field writes
+     */
+    public int getNumFieldWrites() {
+        return getFields()
+                .stream()
+                .mapToInt(f -> f.getWrites())
+                .sum();
+    }
+
+    /**
+     * Gets the total number of parameter reads in this scope
+     *
+     * @return Total number of parameter reads
+     */
+    public int getNumParameterReads() {
+        return getParameters()
+                .stream()
+                .mapToInt(p -> p.getReads())
+                .sum();
+    }
+
+    /**
+     * Gets the total number of parameter writes in this scope
+     *
+     * @return Total number of parameter writes
+     */
+    public int getNumParameterWrites() {
+        return getParameters()
+                .stream()
+                .mapToInt(p -> p.getWrites())
+                .sum();
+    }
 }

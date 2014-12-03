@@ -31,6 +31,7 @@ public class MissingIdentifierDifference extends Difference {
     @Override
     public String toString() {
         return "No reference to " + identifier.getContextString() + " '" + identifier.getName() + "' in comments (reads: "
-                + identifier.getReads() + ", writes: " + identifier.getWrites() + (identifier.isInReturnStatement() ? ", in return statment" : "") + ")";
+                + identifier.getReads() + ", writes: " + identifier.getWrites() + (identifier.isInReturnStatement() ? ", in return statment" : "") + ")" +
+                ": " + getDifferenceScore();
     }
 }

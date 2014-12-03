@@ -1,5 +1,7 @@
 package edu.virginia.aid.comparison;
 
+import java.text.DecimalFormat;
+
 public class GenericDifference extends Difference {
 
     private String differenceMessage;
@@ -17,6 +19,6 @@ public class GenericDifference extends Difference {
      */
     @Override
     public String toString() {
-        return differenceMessage;
+        return differenceMessage + ": " + getDifferenceScore();
     }
 }
