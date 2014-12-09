@@ -6,10 +6,10 @@ package edu.virginia.aid.comparison;
 public final class DifferenceWeights {
 
     // Variable usage
-    public static final double PARAMETER_READ = 1;
-    public static final double PARAMETER_WRITE = 2;
-    public static final double FIELD_READ = 2;
-    public static final double FIELD_WRITE = 4;
+    public static final double PARAMETER_READ = 2;
+    public static final double PARAMETER_WRITE = 4;
+    public static final double FIELD_READ = 1;
+    public static final double FIELD_WRITE = 2;
     public static final double IN_RETURN_STATEMENT = 5;
 
     // Concepts
