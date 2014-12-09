@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.Type;
 
 import weka.core.Attribute;
@@ -588,16 +589,27 @@ public class MethodFeatures extends SourceElement {
         List<String> synonymsList = new ArrayList<>(synonyms);
         for (int i = 0; i < synonymsList.size() && !foundInComments; ++i) {
         	String synonym = synonymsList.get(i);
-    		for (CommentInfo comment : getComments()) {
-                if (comment.getCommentText().contains(synonym)) {
-                    foundInComments = true;
-                    break;
-                }	
-        	}
+//    		for (CommentInfo comment : getComments()) {
+//                if (comment.getCommentText().contains(synonym)) {
+//                    foundInComments = true;
+//                    break;
+//                }
+//        	}
 
             Javadoc javadocElem = getJavadoc();
-            if (!foundInComments && javadocElem != null && javadocElem.toString().contains(synonym)) {
-            	foundInComments = true;
+            if (javadocElem != null) {
+                // Restrict attention to summary
+                // TODO: Limit this to just the first sentence of the summary
+                String javadocSummary = "";
+                for (TagElement tag : (List<TagElement>) javadocElem.tags()) {
+                    if (tag.getTagName() == null) {
+                        javadocSummary = tag.toString();
+                    }
+                }
+
+                if (javadocSummary.contains(synonym)) {
+                    foundInComments = true;
+                }
             }
         }
 
