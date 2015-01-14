@@ -1,6 +1,9 @@
 package edu.virginia.aid.symex;
 
 import edu.virginia.aid.util.ControlFlowGraph;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
 
 import java.util.*;
@@ -67,16 +70,27 @@ public class Path {
                 extendedPaths.addAll(path.addPreviousStatement(predecessors));
             }
 
-        } while (paths.equals(extendedPaths));
+        } while (!paths.equals(extendedPaths) && extendedPaths.size() <= 100);
 
-        return paths;
+        return extendedPaths;
     }
 
     private Set<Path> addPreviousStatement(Map<Statement, Set<Statement>> predecessors) {
+        if (predecessors.get(getFirstStatement()) == null) {
+            return new HashSet<>(Arrays.asList(this));
+        }
+
         Set<Path> extendedPaths = new HashSet<>();
         for (Statement predecessor : predecessors.get(getFirstStatement())) {
             if (!containsStatement(predecessor)) {
                 Path copy = new Path(this);
+
+                if (predecessor instanceof IfStatement) {
+                    copy.prependElement(new PathElement(((IfStatement) predecessor).getExpression()));
+                } else if (predecessor instanceof ForStatement) {
+                    copy.prependElement(new PathElement(((ForStatement) predecessor).getExpression()));
+                }
+
                 copy.prependElement(new PathElement(predecessor));
                 extendedPaths.add(copy);
             }
