@@ -40,7 +40,7 @@ public class SymbolicExecution {
     public static IdentifierValue execute(MethodFeatures method, Path path) {
         Map<IdentifierProperties, IdentifierValue> memory = new HashMap<>();
         for (IdentifierProperties variable : method.getScope().getIdentifiers()) {
-            memory.put(variable, null);
+            memory.put(variable, new InitialValue(variable));
         }
 
         List<IdentifierValue> conditions = new ArrayList<>();
