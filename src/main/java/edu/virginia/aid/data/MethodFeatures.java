@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.virginia.aid.symex.IdentifierValue;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.Type;
@@ -48,7 +49,7 @@ public class MethodFeatures extends SourceElement {
 
     private String primaryAction = "";
     private String primaryObject = "";
-    private Set<IdentifierProperties> conditionsForSuccess = new HashSet<>();
+    private IdentifierValue conditionsForSuccess = null;
 
     // Boolean parameters
     public static final String RETURNS_BOOLEAN = "returns_boolean";
@@ -286,11 +287,11 @@ public class MethodFeatures extends SourceElement {
         this.primaryObject = primaryObject;
     }
 
-    public Set<IdentifierProperties> getConditionsForSuccess() {
+    public IdentifierValue getConditionsForSuccess() {
         return conditionsForSuccess;
     }
 
-    public void setConditionsForSuccess(Set<IdentifierProperties> conditionsForSuccess) {
+    public void setConditionsForSuccess(IdentifierValue conditionsForSuccess) {
         this.conditionsForSuccess = conditionsForSuccess;
     }
 
@@ -481,16 +482,8 @@ public class MethodFeatures extends SourceElement {
         }
 
         // Process conditions for success
-        for (IdentifierProperties condition : conditionsForSuccess) {
-            String identifier = condition.getProcessedName();
-            boolean foundInComment = containedInComments(wordNetDictionary, identifier);
-
-            if (!foundInComment) {
-                double differenceScore = ((DifferenceWeights.CONDITIONS_FOR_SUCCESS / conditionsForSuccess.size()) * getTFIDF(identifier));
-                if (differenceScore > 0) {
-                    differences.add(new GenericDifference("The variable " + identifier + " is part of the conditions for success but is not discussed in the comments", differenceScore));
-                }
-            }
+        if (conditionsForSuccess != null) {
+            differences.add(new GenericDifference(conditionsForSuccess.toString(), 0));
         }
 
         return differences;
