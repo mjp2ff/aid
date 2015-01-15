@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.util.StringHelper;
 
 /**
  * Feature processor for removing words based on a stopist.
@@ -52,7 +53,7 @@ public class StoplistProcessor implements FeatureDetector {
 		}
 
         // Process Method Name
-        features.setProcessedMethodName(features.getProcessedMethodName());
+        features.setProcessedMethodName(StringHelper.splitCamelCase(features.getProcessedMethodName()));
 
 		// Finally, handle identifiers (parameters, local variables, fields, methods).
 		for (IdentifierProperties parameter : features.getScope().getParameters()) {

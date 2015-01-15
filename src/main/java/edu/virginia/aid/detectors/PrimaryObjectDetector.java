@@ -33,7 +33,7 @@ public class PrimaryObjectDetector implements FeatureDetector {
      * statement. 
      *
      * @param method The method to process
-     * @param features The parsed features object to update when processing
+     * @param features The parsed features object to update and refer to when processing
      */
     @Override
     public void process(MethodDeclaration method, MethodFeatures features) {
