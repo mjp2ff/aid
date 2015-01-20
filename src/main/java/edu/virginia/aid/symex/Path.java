@@ -1,6 +1,7 @@
 package edu.virginia.aid.symex;
 
 import edu.virginia.aid.util.ControlFlowGraph;
+import edu.virginia.aid.visitors.ConditionVisitor;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -85,10 +86,11 @@ public class Path {
             if (!containsStatement(predecessor)) {
                 Path copy = new Path(this);
 
-                if (predecessor instanceof IfStatement) {
-                    copy.prependElement(new PathElement(((IfStatement) predecessor).getExpression()));
-                } else if (predecessor instanceof ForStatement) {
-                    copy.prependElement(new PathElement(((ForStatement) predecessor).getExpression()));
+                ConditionVisitor visitor = new ConditionVisitor(getFirstStatement());
+                predecessor.accept(visitor);
+
+                if (visitor.getCondition() != null) {
+                    copy.prependElement(new PathElement(visitor.getCondition(), visitor.isNegated()));
                 }
 
                 copy.prependElement(new PathElement(predecessor));
@@ -130,5 +132,15 @@ public class Path {
         newList.add(element);
         newList.addAll(pathElements);
         pathElements = newList;
+    }
+
+    @Override
+    public String toString() {
+        String value = "Path: \n";
+        for (PathElement element : pathElements) {
+            value += "\t" + element.toString() + "\n";
+        }
+
+        return value;
     }
 }

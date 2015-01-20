@@ -12,6 +12,7 @@ public class PathElement {
 
     private Statement statement = null;
     private Expression expression = null;
+    private boolean negated = false;
     private boolean isStatement;
 
     public PathElement(Statement statement) {
@@ -22,6 +23,12 @@ public class PathElement {
     public PathElement(Expression expression) {
         this.expression = expression;
         isStatement = false;
+    }
+
+    public PathElement(Expression expression, boolean negated) {
+        this.expression = expression;
+        isStatement = false;
+        this.negated = negated;
     }
 
     public boolean isStatement() {
@@ -38,5 +45,18 @@ public class PathElement {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public boolean isNegated() {
+        return negated;
+    }
+
+    @Override
+    public String toString() {
+        if (isStatement) {
+            return "Statement: " + statement.toString();
+        } else {
+            return "Expression: " + expression.toString() + (negated ? " (negated)" : "");
+        }
     }
 }
