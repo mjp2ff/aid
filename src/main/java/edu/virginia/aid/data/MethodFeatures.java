@@ -483,7 +483,7 @@ public class MethodFeatures extends SourceElement {
 
         // Process conditions for success
         if (conditionsForSuccess != null) {
-            differences.add(new GenericDifference(conditionsForSuccess.toString(), 0));
+//            differences.add(new GenericDifference(conditionsForSuccess.toString(), 0));
         }
 
         return differences;
@@ -579,9 +579,25 @@ public class MethodFeatures extends SourceElement {
 		}
     	
         boolean foundInComments = false;
+        
+        Javadoc javadocElem = getJavadoc();
+        // Restrict attention to summary
+        String javadocSummary = "";
+        if (javadocElem != null) {
+            for (TagElement tag : (List<TagElement>) javadocElem.tags()) {
+            	// Only one element will have no tag, which will be the summary sentence.
+            	// This ignores all tagged elements because we aren't considering them here.
+                if (tag.getTagName() == null) {
+                    javadocSummary = tag.toString();
+                    break;
+                }
+            }
+        }
+        
         List<String> synonymsList = new ArrayList<>(synonyms);
         for (int i = 0; i < synonymsList.size() && !foundInComments; ++i) {
         	String synonym = synonymsList.get(i);
+        	// Ignoring internal comments for now.
 //    		for (CommentInfo comment : getComments()) {
 //                if (comment.getCommentText().contains(synonym)) {
 //                    foundInComments = true;
@@ -589,21 +605,25 @@ public class MethodFeatures extends SourceElement {
 //                }
 //        	}
 
-            Javadoc javadocElem = getJavadoc();
-            if (javadocElem != null) {
-                // Restrict attention to summary
-                // TODO: Limit this to just the first sentence of the summary
-                String javadocSummary = "";
-                for (TagElement tag : (List<TagElement>) javadocElem.tags()) {
-                    if (tag.getTagName() == null) {
-                        javadocSummary = tag.toString();
-                    }
-                }
-
+        	// Direct comparison for single words
+        	if (!synonym.contains(" ")) {
                 if (javadocSummary.contains(synonym)) {
                     foundInComments = true;
                 }
-            }
+        	}
+        	// Compare word-by-word for multi-word identifiers.
+        	else {
+        		boolean foundInAll = true;
+        		String[] multiWordSplit = synonym.split(" +");
+        		for (String word : multiWordSplit) {
+        			if (!javadocSummary.contains(word)) {
+        				foundInAll = false;
+        			}
+        		}
+        		if (foundInAll) {
+        			foundInComments = true;
+        		}
+        	}
         }
 
         return foundInComments;
