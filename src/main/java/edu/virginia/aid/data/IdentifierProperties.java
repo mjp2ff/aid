@@ -1,10 +1,10 @@
 package edu.virginia.aid.data;
 
-import edu.virginia.aid.comparison.Difference;
-import edu.virginia.aid.comparison.DifferenceWeights;
-
 import java.util.Arrays;
 import java.util.List;
+
+import edu.virginia.aid.comparison.DifferenceWeights;
+import edu.virginia.aid.util.StringHelper;
 
 /**
  * Data wrapper for information about an individual variable declared/referenced in a method
@@ -94,7 +94,7 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 	}
 
 	public void setName(String name) {
-		this.name = splitCamelCase(name);
+		this.name = StringHelper.splitCamelCase(name);
 	}
 
 	public void setProcessedName(String processedName) {
@@ -217,24 +217,6 @@ public class IdentifierProperties extends SourceElement implements StringListabl
 	public String toString() {
 		return name;
 	}
-
-    // TODO: Move this method to somewhere it belongs.
-    /**
-     * Helper method to replace camel casing with spaces between words. Regex found from NPE on StackOverflow.
-     * 
-     * @param s String in camelCase form
-     * @return String with spaces instead of camelCase
-     */
-    private String splitCamelCase(String s) {
-//    	String[] wordSplit = s.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-//    	String newWord = "";
-//    	for (String w : wordSplit) {
-//    		newWord += w + " ";
-//        }
-//    	return newWord.trim();
-    	// TODO: Fix this cuz I broke it :(
-    	return s;
-    }
 
     /**
      * Gets the weighted value of the identifier relative to the total variable reads/writes for the method
