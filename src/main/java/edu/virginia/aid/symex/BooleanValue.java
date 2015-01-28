@@ -18,6 +18,21 @@ public class BooleanValue implements IdentifierValue {
         return this;
     }
 
+    @Override
+    public IdentifierValue simplify() {
+        return this;
+    }
+
+    @Override
+    public boolean subsumes(IdentifierValue identifierValue) {
+        return this.equals(identifierValue);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof BooleanValue) && (value == ((BooleanValue) o).value);
+    }
+
     public String toString() {
         return (value ? "true" : "false");
     }

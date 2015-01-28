@@ -22,6 +22,21 @@ public class UnOpResult implements IdentifierValue {
         return this;
     }
 
+    @Override
+    public IdentifierValue simplify() {
+        return this;
+    }
+
+    @Override
+    public boolean subsumes(IdentifierValue identifierValue) {
+        return this.equals(identifierValue);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof UnOpResult) && (((UnOpResult) o).operator.equals(operator)) && (operand.subsumes(((UnOpResult) o).operand));
+    }
+
     public String toString() {
         String operatorString = "undefined";
         if (operator.equals(PrefixExpression.Operator.COMPLEMENT)) {

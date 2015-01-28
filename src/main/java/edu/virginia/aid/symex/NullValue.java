@@ -12,6 +12,21 @@ public class NullValue implements IdentifierValue {
         return this;
     }
 
+    @Override
+    public IdentifierValue simplify() {
+        return this;
+    }
+
+    @Override
+    public boolean subsumes(IdentifierValue identifierValue) {
+        return this.equals(identifierValue);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof NullValue;
+    }
+
     public String toString() {
         return "null";
     }

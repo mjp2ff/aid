@@ -18,6 +18,21 @@ public class SubroutineResult implements IdentifierValue {
         return this;
     }
 
+    @Override
+    public IdentifierValue simplify() {
+        return this;
+    }
+
+    @Override
+    public boolean subsumes(IdentifierValue identifierValue) {
+        return this.equals(identifierValue);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof SubroutineResult) && (subroutineName.equals(((SubroutineResult) o).subroutineName));
+    }
+
     public String toString() {
         return subroutineName;
     }

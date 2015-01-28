@@ -1,6 +1,5 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.symex.Path;
 import org.eclipse.jdt.core.dom.*;
 
 /**
@@ -13,7 +12,6 @@ public class ConditionVisitor extends ASTVisitor {
     private Statement nextStatement;
     private Expression condition = null;
     private boolean negated = true;
-    private boolean containsNextStatement;
 
     public ConditionVisitor(Statement nextStatement) {
         this.nextStatement = nextStatement;

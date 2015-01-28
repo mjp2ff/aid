@@ -18,6 +18,21 @@ public class Constant implements IdentifierValue {
         return this;
     }
 
+    @Override
+    public IdentifierValue simplify() {
+        return this;
+    }
+
+    @Override
+    public boolean subsumes(IdentifierValue identifierValue) {
+        return this.equals(identifierValue);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Constant) && (((Constant) o).value == value);
+    }
+
     public String toString() {
         return Double.toString(value);
     }
