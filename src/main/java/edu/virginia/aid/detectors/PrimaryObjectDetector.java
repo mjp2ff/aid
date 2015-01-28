@@ -139,16 +139,19 @@ public class PrimaryObjectDetector implements FeatureDetector {
 
 		// If it's not null/empty, then make sure we haven't seen the predecessor on this path
 		// then recursively call this method on the predecessor statement.
+		boolean finished = true;
 		if (currentPredecessors != null && !currentPredecessors.isEmpty()) {
 			for (Statement curPredecessor : currentPredecessors) {
 				if (!statementsOnPath.contains(curStatement)) {
 					updateIdentifiersOnAllPredecessorPaths(cfg, statementCounts, features,
 							statementsOnPath, curPredecessor);	
+					finished = false;	// Not done, more paths to check.
 				}
 			}
-
-		// If it's null/empty, then we're at the beginning of a path, so handle the identifiers .
-		} else {
+		}
+		
+		// If we didn't have any statements to process, we're finished.
+		if (finished) {
 			// No more predecessors, count the statements on this path and update statementCounts.
 			// Update uses of this statement in the statementCounts map.
 			VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
