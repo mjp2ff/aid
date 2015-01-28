@@ -39,15 +39,15 @@ public class PrimaryObjectDetector implements FeatureDetector {
      */
     @Override
     public void process(MethodDeclaration method, MethodFeatures features) {
-//    	processMethodOne(method, features);
-    	processMethodTwo(method, features);
+    	processByUniqueStatements(method, features);
+//    	processByUniquePaths(method, features);
     }
     
 	/**
 	 * Method 1: Find the identifier that appears in the most statements on any path
 	 * leading to a successful exit. Each statement is considered zero or one times.
 	 */
-    public void processMethodOne(MethodDeclaration method, MethodFeatures features) {
+    public void processByUniqueStatements(MethodDeclaration method, MethodFeatures features) {
     	// Creating a CFG for this method also populates it.
     	ControlFlowGraph cfg = new ControlFlowGraph(method);
     	VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
@@ -104,7 +104,7 @@ public class PrimaryObjectDetector implements FeatureDetector {
      * any successful function exit. Duplicate paths are not considered, but statements
      * can be considered on multiple paths.
      */
-    public void processMethodTwo(MethodDeclaration method, MethodFeatures features) {
+    public void processByUniquePaths(MethodDeclaration method, MethodFeatures features) {
     	// Creating a CFG for this method also populates it.
     	ControlFlowGraph cfg = new ControlFlowGraph(method);
 
