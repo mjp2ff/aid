@@ -999,7 +999,7 @@ public final class String
      *
      * @see  #compareTo(String)
      * @see  #equalsIgnoreCase(String)
-	 * @primaryAction test
+	 * @primaryAction compare
      */
     public boolean equals(Object anObject) {
         if (this == anObject) {
@@ -1036,7 +1036,7 @@ public final class String
      *          {@code false} otherwise
      *
      * @since  1.4
-	 * @primaryAction test
+	 * @primaryAction compare
      */
     public boolean contentEquals(StringBuffer sb) {
         synchronized (sb) {
@@ -1057,7 +1057,7 @@ public final class String
      *          false} otherwise
      *
      * @since  1.5
-	 * @primaryAction test
+	 * @primaryAction compare
      */
     public boolean contentEquals(CharSequence cs) {
         if (value.length != cs.length())
@@ -1117,7 +1117,7 @@ public final class String
      *          false} otherwise
      *
      * @see  #equals(Object)
-	 * @primaryAction test
+	 * @primaryAction compare
      */
     public boolean equalsIgnoreCase(String anotherString) {
         return (this == anotherString) ? true
@@ -2469,7 +2469,7 @@ public final class String
      * @see     java.lang.String#toUpperCase()
      * @see     java.lang.String#toUpperCase(Locale)
      * @since   1.1
-	 * @primaryAction methodName
+	 * @primaryAction convert
      */
     public String toLowerCase(Locale locale) {
         if (locale == null) {
@@ -2583,7 +2583,7 @@ public final class String
      * <p>
      * @return  the <code>String</code>, converted to lowercase.
      * @see     java.lang.String#toLowerCase(Locale)
-	 * @primaryAction methodName
+	 * @primaryAction convert
      */
     public String toLowerCase() {
         return toLowerCase(Locale.getDefault());
@@ -2636,7 +2636,7 @@ public final class String
      * @see     java.lang.String#toLowerCase()
      * @see     java.lang.String#toLowerCase(Locale)
      * @since   1.1
-	 * @primaryAction methodName
+	 * @primaryAction convert
      */
     public String toUpperCase(Locale locale) {
         if (locale == null) {
@@ -2748,7 +2748,7 @@ public final class String
      * <p>
      * @return  the <code>String</code>, converted to uppercase.
      * @see     java.lang.String#toUpperCase(Locale)
-	 * @primaryAction methodName
+	 * @primaryAction convert
      */
     public String toUpperCase() {
         return toUpperCase(Locale.getDefault());
@@ -2816,7 +2816,7 @@ public final class String
      * @return  a newly allocated character array whose length is the length
      *          of this string and whose contents are initialized to contain
      *          the character sequence represented by this string.
-	 * @primaryAction methodName
+	 *          @primaryAction convert
      */
     public char[] toCharArray() {
         // Cannot use Arrays.copyOf because of class initialization order issues
