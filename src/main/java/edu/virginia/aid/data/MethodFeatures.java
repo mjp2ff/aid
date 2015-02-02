@@ -473,11 +473,11 @@ public class MethodFeatures extends SourceElement {
             }
         }
 
-        if (!containedInComments(wordNetDictionary, primaryAction)) {
+        if (!primaryAction.isEmpty() && !containedInComments(wordNetDictionary, primaryAction)) {
             differences.add(new GenericDifference("The primary method action (" + primaryAction + ") is not discussed in the comments", DifferenceWeights.PRIMARY_VERB * getTFIDF(primaryAction)));
         }
 
-        if (!containedInComments(wordNetDictionary, primaryObject)) {
+        if (!primaryObject.isEmpty() && !containedInComments(wordNetDictionary, primaryObject)) {
             differences.add(new GenericDifference("The primary object acted upon (" + primaryObject + ") is not discussed in the comments", DifferenceWeights.PRIMARY_OBJECT * getTFIDF(primaryObject)));
         }
 
