@@ -32,7 +32,7 @@ public class SymbolicExecution {
                 negatedConditions.addSum(negatedCondition);
             }
 
-            return negatedConditions.convertToSumOfProducts();
+            return negatedConditions.convertToSumOfProducts().simplifyKeepType();
         } else  {
             return null;
         }

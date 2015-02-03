@@ -14,6 +14,13 @@ public class BooleanAndList implements IdentifierValue {
 
     private List<IdentifierValue> terms;
 
+    public BooleanAndList(BooleanAndList bal) {
+        this.terms = new ArrayList<>();
+        for (IdentifierValue term : bal.terms) {
+            this.terms.add(term);
+        }
+    }
+
     public BooleanAndList(IdentifierValue... terms) {
         this.terms = new ArrayList<>(Arrays.asList(terms));
     }
@@ -34,6 +41,74 @@ public class BooleanAndList implements IdentifierValue {
         }
 
         return negatedValue;
+    }
+
+    public BooleanAndList simplifyKeepType() {
+        BooleanAndList booleanAndList = new BooleanAndList(this);
+        for (int i = 0; i < booleanAndList.getTerms().size(); i++) {
+            IdentifierValue simplifiedTerm = booleanAndList.getTerms().get(i).simplify();
+            booleanAndList.getTerms().remove(i);
+            booleanAndList.getTerms().add(i, simplifiedTerm);
+        }
+
+        for (int i = 0; i < booleanAndList.getTerms().size(); i++) {
+            for (int j = i + 1; j < booleanAndList.getTerms().size(); j++) {
+                if (booleanAndList.getTerms().get(i).equals(booleanAndList.getTerms().get(j))) {
+                    booleanAndList.getTerms().remove(j);
+                    j--;
+                }
+            }
+        }
+
+        return booleanAndList;
+    }
+
+    @Override
+    public IdentifierValue simplify() {
+        return simplifyKeepType();
+    }
+
+    public boolean isSubsetOf(BooleanAndList bal) {
+        for (IdentifierValue term : this.terms) {
+            boolean inList = false;
+            for (IdentifierValue term2 : bal.terms) {
+                if (term.equals(term2)) {
+                    inList = true;
+                    break;
+                }
+            }
+            if (!inList) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BooleanAndList) {
+            BooleanAndList bal = (BooleanAndList) o;
+            if (bal.terms.size() != this.terms.size()) {
+                return false;
+            }
+
+            for (IdentifierValue value1 : this.terms) {
+                boolean foundInOtherList = false;
+                for (IdentifierValue value2 : bal.terms) {
+                    if (value1.equals(value2)) {
+                        foundInOtherList = true;
+                        break;
+                    }
+                }
+                if (!foundInOtherList) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override

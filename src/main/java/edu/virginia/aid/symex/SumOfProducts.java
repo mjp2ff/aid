@@ -34,6 +34,47 @@ public class SumOfProducts implements IdentifierValue {
         return booleanOrList.negate();
     }
 
+    public SumOfProducts simplifyKeepType() {
+        SumOfProducts simplified = new SumOfProducts();
+
+        // Simplify each term
+        for (int i = 0; i < products.size(); i++) {
+            simplified.products.add(i, products.get(i).simplifyKeepType());
+        }
+
+        SumOfProducts simplified2 = new SumOfProducts();
+
+        // Reduce the number of terms
+        for (int i = 0; i < simplified.products.size(); i++) {
+            boolean found = false;
+            for (int j = i + 1; j < simplified.products.size(); j++) {
+                if (simplified.products.get(i).isSubsetOf(simplified.products.get(j))) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                for (BooleanAndList product : simplified2.products) {
+                    if (simplified.products.get(i).isSubsetOf(product)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                simplified2.products.add(simplified.products.get(i));
+            }
+        }
+        return simplified2;
+    }
+
+    @Override
+    public IdentifierValue simplify() {
+        return simplifyKeepType();
+    }
+
     public String toString() {
         BooleanOrList booleanOrList = new BooleanOrList();
         for (IdentifierValue value : products) {

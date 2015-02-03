@@ -28,13 +28,8 @@ public class UnOpResult implements IdentifierValue {
     }
 
     @Override
-    public boolean subsumes(IdentifierValue identifierValue) {
-        return this.equals(identifierValue);
-    }
-
-    @Override
     public boolean equals(Object o) {
-        return (o instanceof UnOpResult) && (((UnOpResult) o).operator.equals(operator)) && (operand.subsumes(((UnOpResult) o).operand));
+        return (o instanceof UnOpResult) && (((UnOpResult) o).operator.equals(operator)) && (operand.equals(((UnOpResult) o).operand));
     }
 
     public String toString() {

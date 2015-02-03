@@ -34,11 +34,36 @@ public class ProductOfSums implements IdentifierValue {
         return booleanAndList.negate();
     }
 
+    public ProductOfSums simplifyKeepType() {
+        ProductOfSums simplified = new ProductOfSums();
+
+        // Simplify each term
+        for (int i = 0; i < sums.size(); i++) {
+            simplified.sums.add(i, sums.get(i).simplifyKeepType());
+        }
+
+        ProductOfSums simplified2 = new ProductOfSums();
+
+        // Reduce the number of terms
+        for (int i = 0; i < simplified.sums.size(); i++) {
+            boolean found = false;
+            for (int j = i + 1; j < simplified.sums.size(); j++) {
+                if (simplified.sums.get(i).equals(simplified.sums.get(j))) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                simplified2.sums.add(simplified.sums.get(i));
+            }
+        }
+        return simplified2;
+    }
+
     @Override
     public IdentifierValue simplify() {
-        for (int i = 0; i < sums.size(); i++) {
-            sums.add(i, sums.get(i).simplifyKeepType());
-        }
+        return simplifyKeepType();
     }
 
     public SumOfProducts convertToSumOfProducts() {

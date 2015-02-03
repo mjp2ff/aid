@@ -42,18 +42,16 @@ public class BooleanOrList implements IdentifierValue {
     public BooleanOrList simplifyKeepType() {
         BooleanOrList booleanOrList = new BooleanOrList(this);
         for (int i = 0; i < booleanOrList.getTerms().size(); i++) {
-            booleanOrList.getTerms().add(i, booleanOrList.getTerms().get(i).simplify());
+            IdentifierValue simplifiedTerm = booleanOrList.getTerms().get(i).simplify();
+            booleanOrList.getTerms().remove(i);
+            booleanOrList.getTerms().add(i, simplifiedTerm);
         }
 
         for (int i = 0; i < booleanOrList.getTerms().size(); i++) {
             for (int j = i + 1; j < booleanOrList.getTerms().size(); j++) {
-                if (booleanOrList.getTerms().get(i).subsumes(booleanOrList.getTerms().get(j))) {
+                if (booleanOrList.getTerms().get(i).equals(booleanOrList.getTerms().get(j))) {
                     booleanOrList.getTerms().remove(j);
                     j--;
-                } else if (booleanOrList.getTerms().get(j).subsumes(booleanOrList.getTerms().get(i))) {
-                    booleanOrList.getTerms().remove(i);
-                    i--;
-                    break;
                 }
             }
         }
@@ -67,8 +65,30 @@ public class BooleanOrList implements IdentifierValue {
     }
 
     @Override
-    public boolean subsumes(IdentifierValue identifierValue) {
-        return false; // TODO: implement
+    public boolean equals(Object o) {
+        if (o instanceof BooleanOrList) {
+            BooleanOrList bol = (BooleanOrList) o;
+            if (bol.terms.size() != this.terms.size()) {
+                return false;
+            }
+
+            for (IdentifierValue value1 : this.terms) {
+                boolean foundInOtherList = false;
+                for (IdentifierValue value2 : bol.terms) {
+                    if (value1.equals(value2)) {
+                        foundInOtherList = true;
+                        break;
+                    }
+                }
+                if (!foundInOtherList) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override

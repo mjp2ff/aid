@@ -2,6 +2,8 @@ package edu.virginia.aid.symex;
 
 import org.eclipse.jdt.core.dom.InfixExpression;
 
+import java.util.HashMap;
+
 public class BinOpResult implements IdentifierValue {
 
     private InfixExpression.Operator operator;
@@ -51,48 +53,14 @@ public class BinOpResult implements IdentifierValue {
     }
 
     @Override
-    public boolean subsumes(IdentifierValue identifierValue) {
-        if (identifierValue instanceof BinOpResult) {
-            BinOpResult binOpResult = (BinOpResult) identifierValue;
-            if (operator.equals(binOpResult.operator)) {
-                // symmetric operations - could match either way to subsume
-                if (operator.equals(InfixExpression.Operator.CONDITIONAL_AND) ||
-                        operator.equals(InfixExpression.Operator.CONDITIONAL_OR) ||
-                        operator.equals(InfixExpression.Operator.OR) ||
-                        operator.equals(InfixExpression.Operator.AND) ||
-                        operator.equals(InfixExpression.Operator.TIMES) ||
-                        operator.equals(InfixExpression.Operator.PLUS) ||
-                        operator.equals(InfixExpression.Operator.NOT_EQUALS) ||
-                        operator.equals(InfixExpression.Operator.EQUALS)) {
-                    return (operand1.subsumes(binOpResult.operand1) && operand2.subsumes(binOpResult.operand2)) ||
-                           (operand1.subsumes(binOpResult.operand2) && operand2.subsumes(binOpResult.operand1));
-                } else { // asymmetric operations - can only match in same direction to subsume
-                    return operand1.subsumes(binOpResult.operand1) && operand2.subsumes(binOpResult.operand2);
-                }
-            } else {
-                // reversed operations - the two operations could be opposites of one another
-                if ((operator.equals(InfixExpression.Operator.LESS) && binOpResult.operator.equals(InfixExpression.Operator.GREATER)) ||
-                        (operator.equals(InfixExpression.Operator.GREATER) && binOpResult.operator.equals(InfixExpression.Operator.LESS)) ||
-                        (operator.equals(InfixExpression.Operator.LESS_EQUALS) && (
-                                binOpResult.operator.equals(InfixExpression.Operator.GREATER_EQUALS) ||
-                                binOpResult.operator.equals(InfixExpression.Operator.GREATER))) ||
-                        (operator.equals(InfixExpression.Operator.GREATER_EQUALS) && (
-                                binOpResult.operator.equals(InfixExpression.Operator.LESS_EQUALS) ||
-                                binOpResult.operator.equals(InfixExpression.Operator.LESS)))) {
-                    return operand1.subsumes(binOpResult.operand2) && operand2.subsumes(binOpResult.operand1);
-                }
-                // superset-subset relations - the given operation's result set is a subset of the other operation (aka. it's more restrictive)
-                else if (((operator.equals(InfixExpression.Operator.LESS_EQUALS) || operator.equals(InfixExpression.Operator.GREATER_EQUALS)) &&
-                                binOpResult.operator.equals(InfixExpression.Operator.EQUALS)) ||
-                        ((operator.equals(InfixExpression.Operator.LESS) || operator.equals(InfixExpression.Operator.GREATER)) &&
-                                binOpResult.operator.equals(InfixExpression.Operator.NOT_EQUALS))) {
-                    return (operand1.subsumes(binOpResult.operand1) && operand2.subsumes(binOpResult.operand2)) ||
-                            (operand1.subsumes(binOpResult.operand2) && operand2.subsumes(binOpResult.operand1));
-                }
-            }
-        } else {
-            return false; //TODO: refine this
+    public boolean equals(Object o) {
+        if (o instanceof BinOpResult) {
+            return ((BinOpResult) o).operator.equals(this.operator) &&
+                    ((BinOpResult) o).operand1.equals(this.operand1) &&
+                    ((BinOpResult) o).operand2.equals(this.operand2);
         }
+
+        return false;
     }
 
     public String toString() {

@@ -18,11 +18,6 @@ public class NullValue implements IdentifierValue {
     }
 
     @Override
-    public boolean subsumes(IdentifierValue identifierValue) {
-        return this.equals(identifierValue);
-    }
-
-    @Override
     public boolean equals(Object o) {
         return o instanceof NullValue;
     }
