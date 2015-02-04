@@ -483,7 +483,7 @@ public class MethodFeatures extends SourceElement {
 
         // Process conditions for success
         if (conditionsForSuccess != null) {
-//            differences.add(new GenericDifference(conditionsForSuccess.toString(), 0));
+            differences.add(new GenericDifference(conditionsForSuccess.toString(), 0));
         }
 
         return differences;
