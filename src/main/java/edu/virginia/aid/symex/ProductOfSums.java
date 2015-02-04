@@ -82,6 +82,11 @@ public class ProductOfSums implements IdentifierValue {
     }
 
     @Override
+    public boolean isDisjointWith(IdentifierValue iv) {
+        return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+    }
+
+    @Override
     public String toString() {
         BooleanAndList booleanAndList = new BooleanAndList();
         for (IdentifierValue value : sums) {

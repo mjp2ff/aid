@@ -2,13 +2,45 @@ package edu.virginia.aid.symex;
 
 import org.eclipse.jdt.core.dom.InfixExpression;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class BinOpResult implements IdentifierValue {
 
     private InfixExpression.Operator operator;
     private IdentifierValue operand1;
     private IdentifierValue operand2;
+
+    private static final Map<InfixExpression.Operator, List<InfixExpression.Operator>> disjoint = new HashMap<>();
+    static {
+        disjoint.put(InfixExpression.Operator.GREATER, Arrays.asList(
+                InfixExpression.Operator.EQUALS,
+                InfixExpression.Operator.LESS,
+                InfixExpression.Operator.LESS_EQUALS));
+        disjoint.put(InfixExpression.Operator.GREATER_EQUALS, Arrays.asList(
+                InfixExpression.Operator.LESS));
+        disjoint.put(InfixExpression.Operator.EQUALS, Arrays.asList(
+                InfixExpression.Operator.GREATER,
+                InfixExpression.Operator.LESS,
+                InfixExpression.Operator.NOT_EQUALS));
+        disjoint.put(InfixExpression.Operator.NOT_EQUALS, Arrays.asList(
+                InfixExpression.Operator.EQUALS));
+        disjoint.put(InfixExpression.Operator.LESS_EQUALS, Arrays.asList(
+                InfixExpression.Operator.GREATER));
+        disjoint.put(InfixExpression.Operator.LESS, Arrays.asList(
+                InfixExpression.Operator.EQUALS,
+                InfixExpression.Operator.GREATER,
+                InfixExpression.Operator.GREATER_EQUALS));
+    }
+
+    private static final Map<InfixExpression.Operator, InfixExpression.Operator> reverse = new HashMap<>();
+    static {
+        reverse.put(InfixExpression.Operator.GREATER, InfixExpression.Operator.LESS);
+        reverse.put(InfixExpression.Operator.GREATER_EQUALS, InfixExpression.Operator.LESS_EQUALS);
+        reverse.put(InfixExpression.Operator.EQUALS, InfixExpression.Operator.NOT_EQUALS);
+        reverse.put(InfixExpression.Operator.NOT_EQUALS, InfixExpression.Operator.EQUALS);
+        reverse.put(InfixExpression.Operator.LESS, InfixExpression.Operator.GREATER);
+        reverse.put(InfixExpression.Operator.LESS_EQUALS, InfixExpression.Operator.GREATER_EQUALS);
+    }
 
     public BinOpResult(InfixExpression.Operator operator, IdentifierValue operand1, IdentifierValue operand2) {
         this.operator = operator;
@@ -50,6 +82,21 @@ public class BinOpResult implements IdentifierValue {
     @Override
     public IdentifierValue simplify() {
         return this;
+    }
+
+    @Override
+    public boolean isDisjointWith(IdentifierValue iv) {
+        if (iv instanceof BinOpResult && disjoint.containsKey(operator)) {
+            if (disjoint.containsKey(operator) && disjoint.get(operator).contains(((BinOpResult) iv).operator)) {
+                if (((BinOpResult) iv).operand1.equals(operand1) && ((BinOpResult) iv).operand2.equals(operand2)) {
+                    return true;
+                }
+            } else if (reverse.containsKey(operator) && disjoint.get(reverse.get(operator)).contains(((BinOpResult) iv).operator)) {
+                return ((BinOpResult) iv).operand2.equals(operand1) && ((BinOpResult) iv).operand1.equals(operand2);
+            }
+        }
+
+        return false;
     }
 
     @Override

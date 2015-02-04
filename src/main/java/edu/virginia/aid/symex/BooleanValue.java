@@ -13,6 +13,10 @@ public class BooleanValue implements IdentifierValue {
         this.value = value;
     }
 
+    public boolean getValue() {
+        return value;
+    }
+
     @Override
     public IdentifierValue negate() {
         return this;
@@ -21,6 +25,11 @@ public class BooleanValue implements IdentifierValue {
     @Override
     public IdentifierValue simplify() {
         return this;
+    }
+
+    @Override
+    public boolean isDisjointWith(IdentifierValue iv) {
+        return !value || (iv instanceof BooleanValue && !((BooleanValue) iv).getValue());
     }
 
     @Override

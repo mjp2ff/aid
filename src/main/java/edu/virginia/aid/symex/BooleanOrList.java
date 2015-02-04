@@ -65,6 +65,11 @@ public class BooleanOrList implements IdentifierValue {
     }
 
     @Override
+    public boolean isDisjointWith(IdentifierValue iv) {
+        return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof BooleanOrList) {
             BooleanOrList bol = (BooleanOrList) o;

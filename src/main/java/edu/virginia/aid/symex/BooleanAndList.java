@@ -3,7 +3,6 @@ package edu.virginia.aid.symex;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * List of multiple IdentifierValues ANDed together
@@ -66,6 +65,22 @@ public class BooleanAndList implements IdentifierValue {
     @Override
     public IdentifierValue simplify() {
         return simplifyKeepType();
+    }
+
+    @Override
+    public boolean isDisjointWith(IdentifierValue iv) {
+        return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+    }
+
+    public boolean isUnsatisfiable() {
+        for (int i = 0; i < terms.size(); i++) {
+            for (int j = i + 1; j < terms.size(); j++) {
+                if (terms.get(i).isDisjointWith(terms.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isSubsetOf(BooleanAndList bal) {

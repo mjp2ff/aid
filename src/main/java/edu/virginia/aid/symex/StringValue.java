@@ -22,6 +22,11 @@ public class StringValue implements IdentifierValue {
     }
 
     @Override
+    public boolean isDisjointWith(IdentifierValue iv) {
+        return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof StringValue) && (value.equals(((StringValue) o).value));
     }
