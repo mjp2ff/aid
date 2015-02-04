@@ -18,7 +18,6 @@ public class SymbolicExecution {
     public static IdentifierValue inverseSymEx(MethodFeatures method, List<Path> paths) {
         List<BooleanAndList> allConditions = new ArrayList<>();
         for (Path path : paths) {
-            System.out.println(path);
             allConditions.add(execute(method, path));
         }
 
@@ -66,10 +65,12 @@ public class SymbolicExecution {
             } else {
                 EvaluationVisitor evaluationVisitor = new EvaluationVisitor(memory, method);
                 element.getExpression().accept(evaluationVisitor);
-                if (element.isNegated()) {
-                    conditions.addTerm(evaluationVisitor.getResult().negate());
-                } else {
-                    conditions.addTerm(evaluationVisitor.getResult());
+                if (evaluationVisitor.getResult() != null) {
+                    if (element.isNegated()) {
+                        conditions.addTerm(evaluationVisitor.getResult().negate());
+                    } else {
+                        conditions.addTerm(evaluationVisitor.getResult());
+                    }
                 }
             }
         }

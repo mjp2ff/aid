@@ -1,8 +1,10 @@
 package edu.virginia.aid.detectors;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -33,10 +35,19 @@ public class PrimaryObjectDetector implements FeatureDetector {
      * statement. 
      *
      * @param method The method to process
-     * @param features The parsed features object to update when processing
+     * @param features The parsed features object to update and refer to when processing
      */
     @Override
     public void process(MethodDeclaration method, MethodFeatures features) {
+    	processByUniqueStatements(method, features);
+//    	processByUniquePaths(method, features);
+    }
+    
+	/**
+	 * Method 1: Find the identifier that appears in the most statements on any path
+	 * leading to a successful exit. Each statement is considered zero or one times.
+	 */
+    public void processByUniqueStatements(MethodDeclaration method, MethodFeatures features) {
     	// Creating a CFG for this method also populates it.
     	ControlFlowGraph cfg = new ControlFlowGraph(method);
     	VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
@@ -47,9 +58,9 @@ public class PrimaryObjectDetector implements FeatureDetector {
     	Statement last = cfg.getEnd();
         if (last != null) {
             statementsToProcess.add(last);
+        	statementsSeen.add(last);
         }
-    	statementsSeen.add(last);
-    	
+
     	while (!statementsToProcess.isEmpty()) {
     		Statement current = statementsToProcess.poll();
     		visitor.clearFields();
@@ -75,7 +86,7 @@ public class PrimaryObjectDetector implements FeatureDetector {
     		
     		// Add all predecessors to queue for processing.
     		Set<Statement> currentPredecessors = cfg.getPredecessors().get(current);
-    		if (currentPredecessors == null) continue;
+    		if (currentPredecessors == null || currentPredecessors.isEmpty()) continue;
     		for (Statement s : currentPredecessors) {
     			if (!statementsSeen.contains(s)) {
     				statementsToProcess.add(s);
@@ -83,7 +94,97 @@ public class PrimaryObjectDetector implements FeatureDetector {
     			}
     		}
     	}
+
+    	IdentifierProperties primaryObject = getPrimaryObjectFromMap(statementCounts);
+        features.setPrimaryObject(primaryObject != null ? primaryObject.getName() : "");    	
+    }
+
+    /**
+     * Method 2: Find the identifier that appears on the most number of paths leading to
+     * any successful function exit. Duplicate paths are not considered, but statements
+     * can be considered on multiple paths.
+     */
+    public void processByUniquePaths(MethodDeclaration method, MethodFeatures features) {
+    	// Creating a CFG for this method also populates it.
+    	ControlFlowGraph cfg = new ControlFlowGraph(method);
+
+    	// All the paths in this method, sorted from last statements (exits) to beginning.
+    	Map<IdentifierProperties, Integer> statementCounts = new HashMap<>();
+
+    	Statement last = cfg.getEnd();
+    	// If we have no "last" then we can't perform primary object analysis in this way.
+        if (last != null) {
+            // Traverse up paths, counting identifier uses as you go. Keep track of which ones
+            // have already been counted on this path, to avoid double counting. Kick off
+            // a recursive method call in order to accomplish this.
+    		updateIdentifiersOnAllPredecessorPaths(cfg, statementCounts, features,
+    				new HashSet<Statement>() /* statementsOnPath */, last);
+        }
+
+    	IdentifierProperties primaryObject = getPrimaryObjectFromMap(statementCounts);
+        features.setPrimaryObject(primaryObject != null ? primaryObject.getName() : "");
+    }
+
+    /**
+     * Recursive method to update the identifier counts along all paths going backwards
+     * from some statement.
+     */
+    public void updateIdentifiersOnAllPredecessorPaths(ControlFlowGraph cfg,
+    		Map<IdentifierProperties, Integer> statementCounts, MethodFeatures features,
+    		Set<Statement> statementsOnPath, Statement curStatement) {
+		if (curStatement == null) return;
+
+		statementsOnPath.add(curStatement);
+		Set<Statement> currentPredecessors = cfg.getPredecessors().get(curStatement);
+
+		// If it's not null/empty, then make sure we haven't seen the predecessor on this path
+		// then recursively call this method on the predecessor statement.
+		boolean finished = true;
+		if (currentPredecessors != null && !currentPredecessors.isEmpty()) {
+			for (Statement curPredecessor : currentPredecessors) {
+				if (!statementsOnPath.contains(curStatement)) {
+					updateIdentifiersOnAllPredecessorPaths(cfg, statementCounts, features,
+							statementsOnPath, curPredecessor);	
+					finished = false;	// Not done, more paths to check.
+				}
+			}
+		}
+		
+		// If we didn't have any statements to process, we're finished.
+		if (finished) {
+			// No more predecessors, count the statements on this path and update statementCounts.
+			// Update uses of this statement in the statementCounts map.
+			VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
+			for (Statement statementOnPath : statementsOnPath) {
+				visitor.clearFields();
+				statementOnPath.accept(visitor);
+				for (IdentifierName iN : visitor.getIdentifierUses()) {
+					IdentifierProperties iP = iN.getResolvedIdentifier(features);
+					// Ignore methods and other non-variable crap.
+					if (iP != null) {
+						// If not found before, put in 0 instead of 1. Every identifier is counted
+						// an extra time, because the entire method is contained in one overarching
+						// statement representing the method body, in addition to the specific
+						// statement containing the identifier.
+		    			statementCounts.put(iP,
+		    					statementCounts.get(iP) != null ? statementCounts.get(iP) + 1 : 0);
+					}
+				}
+			}
+		}
+    }
+
+    /**
+     * Method 3: Incorporate TFIDF in detection of primaryObject somehow.
+     */
+    public void processMethodThree(MethodDeclaration method, MethodFeatures features) {
     	
+    }
+
+    /**
+     * Helper method to find the primary object from a map of the usages of each statement.
+     */
+    public IdentifierProperties getPrimaryObjectFromMap(Map<IdentifierProperties, Integer> statementCounts) {
     	IdentifierProperties primaryObject = null;
     	int maxCountSoFar = -1;
     	for (IdentifierProperties iP : statementCounts.keySet()) {
@@ -92,7 +193,6 @@ public class PrimaryObjectDetector implements FeatureDetector {
     			primaryObject = iP;
     		}
     	}
-
-        features.setPrimaryObject(primaryObject != null ? primaryObject.getName() : "");
+    	return primaryObject;
     }
 }
