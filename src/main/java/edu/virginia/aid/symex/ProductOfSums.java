@@ -3,6 +3,7 @@ package edu.virginia.aid.symex;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Product of sums form of IdentifierValue
@@ -68,12 +69,12 @@ public class ProductOfSums implements IdentifierValue {
 
     public SumOfProducts convertToSumOfProducts() {
         SumOfProducts sumOfProducts = new SumOfProducts();
-        int solutions = sums.stream().mapToInt(s -> s.getTerms().size()).sum();
+        long solutions = sums.stream().mapToLong(s -> s.getTerms().size()).reduce(1l, (len, acc) -> acc * len);
         for (int i = 0; i < solutions; i++) {
             BooleanAndList product = new BooleanAndList();
-            int j = 1;
+            long j = 1;
             for(BooleanOrList sum : sums) {
-                product.addTerm(sum.getTerms().get((i/j)%sum.getTerms().size()));
+                product.addTerm(sum.getTerms().get((int) (i/j)%sum.getTerms().size()));
                 j *= sum.getTerms().size();
             }
             sumOfProducts.addProduct(product);
