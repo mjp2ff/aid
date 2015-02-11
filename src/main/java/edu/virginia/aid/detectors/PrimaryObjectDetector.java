@@ -47,7 +47,7 @@ public class PrimaryObjectDetector implements FeatureDetector {
     	// Calculate using statement frequency first, if that fails then fall back to
     	// path frequency instead.
     	String primaryObjectByPath = processByUniquePaths(method, features);
-    	
+
     	if (primaryObjectByPath != null) {
     		features.setPrimaryObject(primaryObjectByPath);
     	} else {
@@ -125,21 +125,19 @@ public class PrimaryObjectDetector implements FeatureDetector {
 
     	// All the paths in this method, sorted from last statements (exits) to beginning.
     	Map<IdentifierProperties, Integer> statementCounts = new HashMap<>();
-
     	Statement last = cfg.getEnd();
     	// If we have no "last" then we can't perform primary object analysis in this way.
         if (last != null) {
     		Collection<Path> paths = Path.getPathsToStatement(cfg, last);
 
     		for (Path p : paths) {    			
-    			
     	        Map<IdentifierProperties, IdentifierValue> memory = new HashMap<>();
     	        for (IdentifierProperties variable : features.getScope().getIdentifiers()) {
     	            memory.put(variable, new InitialValue(variable));
     	        }
     			
     	        for (PathElement element : p.getPathElements()) {
-    	            if (element.isStatement()) {
+    	            if (element.isStatement()) {    	    	        
     	                AssignmentVisitor assignmentVisitor = new AssignmentVisitor(features);
     	                element.getStatement().accept(assignmentVisitor);
 
@@ -149,7 +147,7 @@ public class PrimaryObjectDetector implements FeatureDetector {
     	                	memory.put(assignmentVisitor.getVariable().getResolvedIdentifier(features),
     	                			evaluationVisitor.getResult());
     	                }
-    	                
+
     	    			VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
         				visitor.clearFields();
         				element.getStatement().accept(visitor);

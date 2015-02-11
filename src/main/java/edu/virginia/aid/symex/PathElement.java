@@ -59,4 +59,15 @@ public class PathElement {
             return "Expression: " + expression.toString() + (negated ? " (negated)" : "");
         }
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	try {
+    		PathElement p = (PathElement) o;
+    		return (this.isStatement && p.isStatement && this.statement.equals(p.statement)) ||
+    				(!this.isStatement && !p.isStatement && this.expression.equals(p.expression));
+    	} catch (Exception e) {
+    		return false;
+    	}
+    }
 }
