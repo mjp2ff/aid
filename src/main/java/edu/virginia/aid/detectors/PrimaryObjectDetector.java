@@ -1,10 +1,9 @@
 package edu.virginia.aid.detectors;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -15,7 +14,13 @@ import org.eclipse.jdt.core.dom.Statement;
 import edu.virginia.aid.data.IdentifierName;
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.symex.IdentifierValue;
+import edu.virginia.aid.symex.InitialValue;
+import edu.virginia.aid.symex.Path;
+import edu.virginia.aid.symex.PathElement;
 import edu.virginia.aid.util.ControlFlowGraph;
+import edu.virginia.aid.visitors.AssignmentVisitor;
+import edu.virginia.aid.visitors.EvaluationVisitor;
 import edu.virginia.aid.visitors.VariableUsageVisitor;
 
 /**
@@ -39,15 +44,24 @@ public class PrimaryObjectDetector implements FeatureDetector {
      */
     @Override
     public void process(MethodDeclaration method, MethodFeatures features) {
-    	processByUniqueStatements(method, features);
-//    	processByUniquePaths(method, features);
+    	// Calculate using statement frequency first, if that fails then fall back to
+    	// path frequency instead.
+    	String primaryObjectByPath = processByUniquePaths(method, features);
+    	
+    	if (primaryObjectByPath != null) {
+    		features.setPrimaryObject(primaryObjectByPath);
+    	} else {
+    		String primaryObjectByStatement = processByUniqueStatements(method, features);
+    		features.setPrimaryObject(primaryObjectByStatement != null ? primaryObjectByStatement : "");
+    	}
     }
     
 	/**
 	 * Method 1: Find the identifier that appears in the most statements on any path
 	 * leading to a successful exit. Each statement is considered zero or one times.
+	 * Returns the primary object detected.
 	 */
-    public void processByUniqueStatements(MethodDeclaration method, MethodFeatures features) {
+    public String processByUniqueStatements(MethodDeclaration method, MethodFeatures features) {
     	// Creating a CFG for this method also populates it.
     	ControlFlowGraph cfg = new ControlFlowGraph(method);
     	VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
@@ -96,15 +110,16 @@ public class PrimaryObjectDetector implements FeatureDetector {
     	}
 
     	IdentifierProperties primaryObject = getPrimaryObjectFromMap(statementCounts);
-        features.setPrimaryObject(primaryObject != null ? primaryObject.getName() : "");    	
+    	return primaryObject != null ? primaryObject.getName() : null;
     }
 
     /**
      * Method 2: Find the identifier that appears on the most number of paths leading to
      * any successful function exit. Duplicate paths are not considered, but statements
      * can be considered on multiple paths.
+     * Returns the primary object detected.
      */
-    public void processByUniquePaths(MethodDeclaration method, MethodFeatures features) {
+    public String processByUniquePaths(MethodDeclaration method, MethodFeatures features) {
     	// Creating a CFG for this method also populates it.
     	ControlFlowGraph cfg = new ControlFlowGraph(method);
 
@@ -114,71 +129,53 @@ public class PrimaryObjectDetector implements FeatureDetector {
     	Statement last = cfg.getEnd();
     	// If we have no "last" then we can't perform primary object analysis in this way.
         if (last != null) {
-            // Traverse up paths, counting identifier uses as you go. Keep track of which ones
-            // have already been counted on this path, to avoid double counting. Kick off
-            // a recursive method call in order to accomplish this.
-    		updateIdentifiersOnAllPredecessorPaths(cfg, statementCounts, features,
-    				new HashSet<Statement>() /* statementsOnPath */, last);
+    		Collection<Path> paths = Path.getPathsToStatement(cfg, last);
+
+    		for (Path p : paths) {    			
+    			
+    	        Map<IdentifierProperties, IdentifierValue> memory = new HashMap<>();
+    	        for (IdentifierProperties variable : features.getScope().getIdentifiers()) {
+    	            memory.put(variable, new InitialValue(variable));
+    	        }
+    			
+    	        for (PathElement element : p.getPathElements()) {
+    	            if (element.isStatement()) {
+    	                AssignmentVisitor assignmentVisitor = new AssignmentVisitor(features);
+    	                element.getStatement().accept(assignmentVisitor);
+
+    	                if (assignmentVisitor.getValue() != null) {
+    	                	EvaluationVisitor evaluationVisitor = new EvaluationVisitor(memory, features);
+    	                	assignmentVisitor.getValue().accept(evaluationVisitor);
+    	                	memory.put(assignmentVisitor.getVariable().getResolvedIdentifier(features),
+    	                			evaluationVisitor.getResult());
+    	                }
+    	                
+    	    			VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
+        				visitor.clearFields();
+        				element.getStatement().accept(visitor);
+        				for (IdentifierName iN : visitor.getIdentifierUses()) {
+        					IdentifierProperties iP = iN.getResolvedIdentifier(features);
+        					
+        					IdentifierValue iV = memory.get(iP);
+        					// TODO: Evaluate, decide if it's important.
+        					
+        					// Ignore methods and other non-variable crap.
+        					if (iP != null) {
+        						// If not found before, put in 0 instead of 1. Every identifier is counted
+        						// an extra time, because the entire method is contained in one overarching
+        						// statement representing the method body, in addition to the specific
+        						// statement containing the identifier.
+        		    			statementCounts.put(iP,
+        		    					statementCounts.get(iP) != null ? statementCounts.get(iP) + 1 : 0);
+        					}
+        				}
+    	            }
+    	        }    			
+    		}
         }
 
     	IdentifierProperties primaryObject = getPrimaryObjectFromMap(statementCounts);
-        features.setPrimaryObject(primaryObject != null ? primaryObject.getName() : "");
-    }
-
-    /**
-     * Recursive method to update the identifier counts along all paths going backwards
-     * from some statement.
-     */
-    public void updateIdentifiersOnAllPredecessorPaths(ControlFlowGraph cfg,
-    		Map<IdentifierProperties, Integer> statementCounts, MethodFeatures features,
-    		Set<Statement> statementsOnPath, Statement curStatement) {
-		if (curStatement == null) return;
-
-		statementsOnPath.add(curStatement);
-		Set<Statement> currentPredecessors = cfg.getPredecessors().get(curStatement);
-
-		// If it's not null/empty, then make sure we haven't seen the predecessor on this path
-		// then recursively call this method on the predecessor statement.
-		boolean finished = true;
-		if (currentPredecessors != null && !currentPredecessors.isEmpty()) {
-			for (Statement curPredecessor : currentPredecessors) {
-				if (!statementsOnPath.contains(curStatement)) {
-					updateIdentifiersOnAllPredecessorPaths(cfg, statementCounts, features,
-							statementsOnPath, curPredecessor);	
-					finished = false;	// Not done, more paths to check.
-				}
-			}
-		}
-		
-		// If we didn't have any statements to process, we're finished.
-		if (finished) {
-			// No more predecessors, count the statements on this path and update statementCounts.
-			// Update uses of this statement in the statementCounts map.
-			VariableUsageVisitor visitor = new VariableUsageVisitor(features, false /* writing */);
-			for (Statement statementOnPath : statementsOnPath) {
-				visitor.clearFields();
-				statementOnPath.accept(visitor);
-				for (IdentifierName iN : visitor.getIdentifierUses()) {
-					IdentifierProperties iP = iN.getResolvedIdentifier(features);
-					// Ignore methods and other non-variable crap.
-					if (iP != null) {
-						// If not found before, put in 0 instead of 1. Every identifier is counted
-						// an extra time, because the entire method is contained in one overarching
-						// statement representing the method body, in addition to the specific
-						// statement containing the identifier.
-		    			statementCounts.put(iP,
-		    					statementCounts.get(iP) != null ? statementCounts.get(iP) + 1 : 0);
-					}
-				}
-			}
-		}
-    }
-
-    /**
-     * Method 3: Incorporate TFIDF in detection of primaryObject somehow.
-     */
-    public void processMethodThree(MethodDeclaration method, MethodFeatures features) {
-    	
+        return primaryObject != null ? primaryObject.getName() : "";
     }
 
     /**
