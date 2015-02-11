@@ -66,6 +66,15 @@ public class BinOpResult implements IdentifierValue {
         intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS, InfixExpression.Operator.LESS_EQUALS), InfixExpression.Operator.LESS);
     }
 
+    private static final Map<AbstractMap.SimpleEntry<InfixExpression.Operator, IdentifierValue>, String> commonExpressions = new HashMap();
+    static {
+        commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER_EQUALS, new Constant(0)), "is not negative");
+        commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER, new Constant(0)), "is positive");
+        commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS, new Constant(0)), "is negative");
+        commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS_EQUALS, new Constant(0)), "is not positive");
+        commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.EQUALS, new Constant(0)), "is not positive");
+    }
+
     public BinOpResult(InfixExpression.Operator operator, IdentifierValue operand1, IdentifierValue operand2) {
         this.operator = operator;
         this.operand1 = operand1;
@@ -154,6 +163,11 @@ public class BinOpResult implements IdentifierValue {
     }
 
     public String toString() {
+        // Process special cases
+        if (commonExpressions.containsKey(new AbstractMap.SimpleEntry<>(operator, operand2))) {
+            return operand1 + " " + commonExpressions.get(new AbstractMap.SimpleEntry<>(operator, operand2));
+        }
+
         String operatorString = "uninitialized";
         if (operator.equals(InfixExpression.Operator.AND)) {
             operatorString = "logical and";
@@ -164,7 +178,7 @@ public class BinOpResult implements IdentifierValue {
         } else if (operator.equals(InfixExpression.Operator.DIVIDE)) {
             operatorString = "divided by";
         } else if (operator.equals(InfixExpression.Operator.EQUALS)) {
-            operatorString = "equals";
+            operatorString = "is";
         } else if (operator.equals(InfixExpression.Operator.LESS)) {
             operatorString = "less than";
         } else if (operator.equals(InfixExpression.Operator.LESS_EQUALS)) {
@@ -178,7 +192,7 @@ public class BinOpResult implements IdentifierValue {
         } else if (operator.equals(InfixExpression.Operator.MINUS)) {
             operatorString = "minus";
         } else if (operator.equals(InfixExpression.Operator.NOT_EQUALS)) {
-            operatorString = "not equal to";
+            operatorString = "is not";
         } else if (operator.equals(InfixExpression.Operator.OR)) {
             operatorString = "or";
         } else if (operator.equals(InfixExpression.Operator.PLUS)) {
