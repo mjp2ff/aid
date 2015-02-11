@@ -50,11 +50,21 @@ public class BooleanAndList implements IdentifierValue {
             booleanAndList.getTerms().add(i, simplifiedTerm);
         }
 
+        // Remove equivalent terms
         for (int i = 0; i < booleanAndList.getTerms().size(); i++) {
             for (int j = i + 1; j < booleanAndList.getTerms().size(); j++) {
                 if (booleanAndList.getTerms().get(i).equals(booleanAndList.getTerms().get(j))) {
                     booleanAndList.getTerms().remove(j);
                     j--;
+                } else {
+                    IdentifierValue intersection = booleanAndList.getTerms().get(i).getIntersection(booleanAndList.getTerms().get(j));
+                    if (intersection != null) {
+                        booleanAndList.getTerms().remove(j);
+                        booleanAndList.getTerms().remove(i);
+                        booleanAndList.getTerms().add(i, intersection);
+                        i--;
+                        break;
+                    }
                 }
             }
         }
@@ -70,6 +80,11 @@ public class BooleanAndList implements IdentifierValue {
     @Override
     public boolean isDisjointWith(IdentifierValue iv) {
         return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+    }
+
+    @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        return null;
     }
 
     public boolean isUnsatisfiable() {

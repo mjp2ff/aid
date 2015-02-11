@@ -39,8 +39,9 @@ public class SumOfProducts implements IdentifierValue {
 
         // Simplify each term
         for (int i = 0; i < products.size(); i++) {
-            if (!products.get(i).isUnsatisfiable()) {
-                simplified.products.add(products.get(i).simplifyKeepType());
+            BooleanAndList simplifiedProduct = products.get(i).simplifyKeepType();
+            if (!simplifiedProduct.isUnsatisfiable()) {
+                simplified.products.add(simplifiedProduct);
             }
         }
 
@@ -80,6 +81,11 @@ public class SumOfProducts implements IdentifierValue {
     @Override
     public boolean isDisjointWith(IdentifierValue iv) {
         return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+    }
+
+    @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        return null;
     }
 
     public String toString() {

@@ -33,6 +33,11 @@ public class BooleanValue implements IdentifierValue {
     }
 
     @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        return null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof BooleanValue) && (value == ((BooleanValue) o).value);
     }

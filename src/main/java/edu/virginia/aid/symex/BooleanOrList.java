@@ -70,6 +70,11 @@ public class BooleanOrList implements IdentifierValue {
     }
 
     @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        return null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof BooleanOrList) {
             BooleanOrList bol = (BooleanOrList) o;

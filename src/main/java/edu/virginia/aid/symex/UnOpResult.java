@@ -33,6 +33,11 @@ public class UnOpResult implements IdentifierValue {
     }
 
     @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        return null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof UnOpResult) && (((UnOpResult) o).operator.equals(operator)) && (operand.equals(((UnOpResult) o).operand));
     }

@@ -7,4 +7,6 @@ public interface IdentifierValue {
     public IdentifierValue simplify();
 
     public boolean isDisjointWith(IdentifierValue iv);
+
+    public IdentifierValue getIntersection(IdentifierValue iv);
 }

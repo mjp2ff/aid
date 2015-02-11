@@ -1,8 +1,10 @@
 package edu.virginia.aid.symex;
 
 import org.eclipse.jdt.core.dom.InfixExpression;
+import scala.collection.concurrent.KVNode;
 
 import java.util.*;
+import java.util.zip.Inflater;
 
 public class BinOpResult implements IdentifierValue {
 
@@ -40,6 +42,28 @@ public class BinOpResult implements IdentifierValue {
         reverse.put(InfixExpression.Operator.NOT_EQUALS, InfixExpression.Operator.EQUALS);
         reverse.put(InfixExpression.Operator.LESS, InfixExpression.Operator.GREATER);
         reverse.put(InfixExpression.Operator.LESS_EQUALS, InfixExpression.Operator.GREATER_EQUALS);
+    }
+
+    private static final Map<AbstractMap.SimpleEntry<InfixExpression.Operator, InfixExpression.Operator>, InfixExpression.Operator> intersect = new HashMap();
+    static {
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER, InfixExpression.Operator.GREATER_EQUALS), InfixExpression.Operator.GREATER);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER, InfixExpression.Operator.NOT_EQUALS), InfixExpression.Operator.GREATER);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER_EQUALS, InfixExpression.Operator.GREATER), InfixExpression.Operator.GREATER);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER_EQUALS, InfixExpression.Operator.EQUALS), InfixExpression.Operator.EQUALS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER_EQUALS, InfixExpression.Operator.NOT_EQUALS), InfixExpression.Operator.GREATER);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER_EQUALS, InfixExpression.Operator.LESS_EQUALS), InfixExpression.Operator.EQUALS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.EQUALS, InfixExpression.Operator.GREATER_EQUALS), InfixExpression.Operator.EQUALS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.EQUALS, InfixExpression.Operator.LESS_EQUALS), InfixExpression.Operator.EQUALS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.NOT_EQUALS, InfixExpression.Operator.GREATER), InfixExpression.Operator.GREATER);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.NOT_EQUALS, InfixExpression.Operator.GREATER_EQUALS), InfixExpression.Operator.GREATER);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.NOT_EQUALS, InfixExpression.Operator.LESS_EQUALS), InfixExpression.Operator.LESS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.NOT_EQUALS, InfixExpression.Operator.LESS), InfixExpression.Operator.LESS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS_EQUALS, InfixExpression.Operator.GREATER_EQUALS), InfixExpression.Operator.EQUALS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS_EQUALS, InfixExpression.Operator.EQUALS), InfixExpression.Operator.EQUALS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS_EQUALS, InfixExpression.Operator.NOT_EQUALS), InfixExpression.Operator.LESS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS_EQUALS, InfixExpression.Operator.LESS), InfixExpression.Operator.LESS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS, InfixExpression.Operator.NOT_EQUALS), InfixExpression.Operator.LESS);
+        intersect.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS, InfixExpression.Operator.LESS_EQUALS), InfixExpression.Operator.LESS);
     }
 
     public BinOpResult(InfixExpression.Operator operator, IdentifierValue operand1, IdentifierValue operand2) {
@@ -97,6 +121,25 @@ public class BinOpResult implements IdentifierValue {
         }
 
         return false;
+    }
+
+    @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        if (iv instanceof BinOpResult) {
+            if (operand1.equals(((BinOpResult) iv).operand1) && operand2.equals(((BinOpResult) iv).operand2)) {
+                AbstractMap.SimpleEntry<InfixExpression.Operator, InfixExpression.Operator> key = new AbstractMap.SimpleEntry<>(operator, ((BinOpResult) iv).operator);
+                if (intersect.containsKey(key)) {
+                    return new BinOpResult(intersect.get(key), operand1, operand2);
+                }
+            } else if (operand2.equals(((BinOpResult) iv).operand1) && operand1.equals(((BinOpResult) iv).operand2) && reverse.containsKey(((BinOpResult) iv).operator)) {
+                AbstractMap.SimpleEntry<InfixExpression.Operator, InfixExpression.Operator> key = new AbstractMap.SimpleEntry<>(operator, reverse.get(((BinOpResult) iv).operator));
+                if (intersect.containsKey(key)) {
+                    return new BinOpResult(intersect.get(key), operand1, operand2);
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override

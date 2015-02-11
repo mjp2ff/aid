@@ -87,6 +87,11 @@ public class ProductOfSums implements IdentifierValue {
     }
 
     @Override
+    public IdentifierValue getIntersection(IdentifierValue iv) {
+        return null;
+    }
+
+    @Override
     public String toString() {
         BooleanAndList booleanAndList = new BooleanAndList();
         for (IdentifierValue value : sums) {
