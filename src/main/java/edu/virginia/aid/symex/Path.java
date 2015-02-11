@@ -1,13 +1,18 @@
 package edu.virginia.aid.symex;
 
-import edu.virginia.aid.util.ControlFlowGraph;
-import edu.virginia.aid.visitors.ConditionVisitor;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ForStatement;
-import org.eclipse.jdt.core.dom.IfStatement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.jdt.core.dom.Statement;
 
-import java.util.*;
+import edu.virginia.aid.util.ControlFlowGraph;
+import edu.virginia.aid.visitors.ConditionVisitor;
 
 /**
  * Representation of a single execution path through all or part of a method.
@@ -70,7 +75,6 @@ public class Path {
             for (Path path : paths) {
                 extendedPaths.addAll(path.addPreviousStatement(predecessors));
             }
-
         } while (!paths.equals(extendedPaths) && extendedPaths.size() <= 100);
 
         return extendedPaths;
@@ -106,7 +110,9 @@ public class Path {
     }
 
     private boolean containsStatement(Statement statement) {
-        return pathElements.contains(statement);
+    	// Wrap statement in a PathElement for better comparison.
+    	PathElement p = new PathElement(statement);
+        return pathElements.contains(p);
     }
 
     public int hashCode() {
