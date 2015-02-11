@@ -34,9 +34,17 @@ public class EvaluationVisitor extends ASTVisitor {
         IdentifierProperties identifier = name.getResolvedIdentifier(method);
         if (identifier != null && memory.get(identifier) != null) {
             result = memory.get(identifier);
+        } else if (identifier == null) {
+            result = new ExternalValue(node.getIdentifier()); // TODO: figure out why some fields aren't being resolved
         }
 
         return false;
+    }
+
+    public void endVisit(QualifiedName node) {
+        if (result == null) {
+            result = new ExternalValue(node.getFullyQualifiedName());
+        }
     }
 
     public boolean visit(FieldAccess node) {

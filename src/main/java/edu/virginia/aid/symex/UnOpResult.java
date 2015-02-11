@@ -49,7 +49,7 @@ public class UnOpResult implements IdentifierValue {
         } else if (operator.equals(PrefixExpression.Operator.MINUS)) {
             operatorString = "negative";
         } else if (operator.equals(PrefixExpression.Operator.NOT)) {
-            operatorString = "logical not";
+            operatorString = "not";
         } else if (operator.equals(PrefixExpression.Operator.PLUS)) {
             operatorString = "plus";
         }
