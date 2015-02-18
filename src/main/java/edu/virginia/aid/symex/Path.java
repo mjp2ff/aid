@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.Statement;
 
 import edu.virginia.aid.util.ControlFlowGraph;
 import edu.virginia.aid.visitors.ConditionVisitor;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 
 /**
  * Representation of a single execution path through all or part of a method.
@@ -87,7 +88,7 @@ public class Path {
 
         Set<Path> extendedPaths = new HashSet<>();
         for (Statement predecessor : predecessors.get(getFirstStatement())) {
-            if (!containsStatement(predecessor)) {
+            if (!containsStatement(predecessor) && !(predecessor instanceof ThrowStatement)) {
                 Path copy = new Path(this);
 
                 ConditionVisitor visitor = new ConditionVisitor(getFirstStatement());

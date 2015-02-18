@@ -28,6 +28,11 @@ public class NullValue implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o instanceof NullValue;
     }

@@ -41,7 +41,7 @@ public class AssignmentVisitor extends ASTVisitor {
     }
 
     public boolean isAssignment() {
-        return variable == null || value == null;
+        return variable != null && value != null;
     }
 
     public IdentifierName getVariable() {

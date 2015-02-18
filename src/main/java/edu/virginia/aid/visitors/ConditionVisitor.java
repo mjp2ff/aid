@@ -18,108 +18,23 @@ public class ConditionVisitor extends ASTVisitor {
     }
 
     public boolean visit(IfStatement node) {
-        if (condition == null) {
-            condition = node.getExpression();
-        }
+        condition = node.getExpression();
 
-        return matchNode(node);
+        ContainsStatementVisitor visitor = new ContainsStatementVisitor(nextStatement);
+        node.getThenStatement().accept(visitor);
+        negated = !visitor.containsStatement();
+
+        return false;
     }
 
     public boolean visit(ForStatement node) {
-        if (condition == null) {
-            condition = node.getExpression();
-        }
+        condition = node.getExpression();
 
-        return matchNode(node);
-    }
+        ContainsStatementVisitor visitor = new ContainsStatementVisitor(nextStatement);
+        node.getBody().accept(visitor);
+        negated = !visitor.containsStatement();
 
-    public boolean visit(AssertStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(Block node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(BreakStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(ConstructorInvocation node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(ContinueStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(DoStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(EmptyStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(EnhancedForStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(ExpressionStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(LabeledStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(ReturnStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(SuperConstructorInvocation node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(SwitchCase node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(SwitchStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(SynchronizedStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(ThrowStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(TryStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(TypeDeclarationStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(VariableDeclarationStatement node) {
-        return matchNode(node);
-    }
-
-    public boolean visit(WhileStatement node) {
-        return matchNode(node);
-    }
-
-    private boolean matchNode(Statement node) {
-        if (node == nextStatement) {
-            negated = false;
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     public Expression getCondition() {

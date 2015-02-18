@@ -34,6 +34,15 @@ public class Constant implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return true;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof Constant) && (((Constant) o).value == value);
     }

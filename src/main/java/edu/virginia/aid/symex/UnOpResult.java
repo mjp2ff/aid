@@ -19,12 +19,30 @@ public class UnOpResult implements IdentifierValue {
 
     @Override
     public IdentifierValue negate() {
-        return this;
+        if (operator.equals(PrefixExpression.Operator.NOT)) {
+            return operand;
+        } else {
+            return this;
+        }
     }
 
     @Override
     public IdentifierValue simplify() {
-        return this;
+        IdentifierValue operand = this.operand.simplify();
+        if (operand instanceof Constant) {
+            double value = ((Constant) operand).getValue();
+            if (operator.equals(PrefixExpression.Operator.MINUS)) {
+                return new Constant(-value);
+            } else if (operator.equals(PrefixExpression.Operator.PLUS)) {
+                return new Constant(+value);
+            }
+        } else if (operand instanceof BooleanValue) {
+            boolean value = ((BooleanValue) operand).getValue();
+            if (operator.equals(PrefixExpression.Operator.NOT)) {
+                return new BooleanValue(!value);
+            }
+        }
+        return new UnOpResult(operator, operand);
     }
 
     @Override
@@ -35,6 +53,11 @@ public class UnOpResult implements IdentifierValue {
     @Override
     public IdentifierValue getIntersection(IdentifierValue iv) {
         return null;
+    }
+
+    @Override
+    public boolean isConstantType() {
+        return false;
     }
 
     @Override

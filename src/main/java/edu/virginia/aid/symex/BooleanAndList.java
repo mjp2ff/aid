@@ -69,6 +69,14 @@ public class BooleanAndList implements IdentifierValue {
             }
         }
 
+        // Remove true terms
+        for (int i = 0; i < booleanAndList.getTerms().size(); i++) {
+            IdentifierValue term = booleanAndList.getTerms().get(i);
+            if (term instanceof BooleanValue && ((BooleanValue) term).getValue() == true) {
+                booleanAndList.getTerms().remove(i--);
+            }
+        }
+
         return booleanAndList;
     }
 
@@ -85,6 +93,11 @@ public class BooleanAndList implements IdentifierValue {
     @Override
     public IdentifierValue getIntersection(IdentifierValue iv) {
         return null;
+    }
+
+    @Override
+    public boolean isConstantType() {
+        return false;
     }
 
     public boolean isUnsatisfiable() {

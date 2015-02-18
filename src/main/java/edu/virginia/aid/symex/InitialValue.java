@@ -31,6 +31,11 @@ public class InitialValue implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof InitialValue) && (((InitialValue) o).identifier.equals(identifier));
     }

@@ -75,6 +75,11 @@ public class BooleanOrList implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof BooleanOrList) {
             BooleanOrList bol = (BooleanOrList) o;

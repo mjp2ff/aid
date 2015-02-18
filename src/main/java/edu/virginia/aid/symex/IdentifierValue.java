@@ -9,4 +9,6 @@ public interface IdentifierValue {
     public boolean isDisjointWith(IdentifierValue iv);
 
     public IdentifierValue getIntersection(IdentifierValue iv);
+
+    public boolean isConstantType();
 }

@@ -34,6 +34,11 @@ public class ExternalValue implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return name;
     }

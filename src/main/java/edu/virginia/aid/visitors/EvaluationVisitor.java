@@ -47,6 +47,12 @@ public class EvaluationVisitor extends ASTVisitor {
         }
     }
 
+    public void endVisit(ThisExpression node) {
+        if (result == null) {
+            result = new ExternalValue("this");
+        }
+    }
+
     public boolean visit(FieldAccess node) {
         IdentifierName name = new IdentifierName(node.getName().getIdentifier(),
                 IdentifierType.VARIABLE,
@@ -96,11 +102,11 @@ public class EvaluationVisitor extends ASTVisitor {
 
     public boolean visit(NumberLiteral node) {
         if (node.getToken().startsWith("0x")) {
-            result = new Constant(Integer.valueOf(node.getToken().substring(2), 16));
+            result = new Constant(Long.decode(node.getToken()));
         } else if (node.getToken().startsWith("0b")) {
-            result = new Constant(Integer.valueOf(node.getToken().substring(2), 2));
-        } else if (node.getToken().startsWith("0") && !node.getToken().contains(".") && node.getToken().length() > 1) {
-            result = new Constant(Integer.valueOf(node.getToken().substring(1), 8));
+            result = new Constant(Long.valueOf(node.getToken().substring(2), 2));
+        } else if (node.getToken().charAt(node.getToken().length() - 1) <= 57 && node.getToken().startsWith("0") && !node.getToken().contains(".") && node.getToken().length() > 1) {
+            result = new Constant(Long.valueOf(node.getToken().substring(1), 8));
         } else if (node.getToken().endsWith("l") || node.getToken().endsWith("L")) {
             result = new Constant(Long.parseLong(node.getToken().substring(0, node.getToken().length() - 1)));
         } else if (node.getToken().endsWith("f") || node.getToken().endsWith("F")) {
@@ -108,6 +114,11 @@ public class EvaluationVisitor extends ASTVisitor {
         } else {
             result = new Constant(Double.parseDouble(node.getToken()));
         }
+        return false;
+    }
+
+    public boolean visit(CharacterLiteral node) {
+        result = new CharacterValue(node.charValue());
         return false;
     }
 

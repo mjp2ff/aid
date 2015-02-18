@@ -38,6 +38,11 @@ public class BooleanValue implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof BooleanValue) && (value == ((BooleanValue) o).value);
     }

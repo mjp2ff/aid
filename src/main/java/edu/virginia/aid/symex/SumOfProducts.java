@@ -88,6 +88,11 @@ public class SumOfProducts implements IdentifierValue {
         return null;
     }
 
+    @Override
+    public boolean isConstantType() {
+        return false;
+    }
+
     public String toString() {
         BooleanOrList booleanOrList = new BooleanOrList();
         for (IdentifierValue value : products) {

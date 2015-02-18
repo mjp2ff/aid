@@ -1,13 +1,15 @@
 package edu.virginia.aid.symex;
 
 /**
- * Data wrapper for a string literal
+ * Data wrapper for a character literal in symbolic execution evaluation
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
  */
-public class StringValue implements IdentifierValue {
+public class CharacterValue implements IdentifierValue {
 
-    private String value;
+    private char value;
 
-    public StringValue(String value) {
+    public CharacterValue(char value) {
         this.value = value;
     }
 
@@ -23,7 +25,7 @@ public class StringValue implements IdentifierValue {
 
     @Override
     public boolean isDisjointWith(IdentifierValue iv) {
-        return iv instanceof BooleanValue && !((BooleanValue) iv).getValue();
+        return false;
     }
 
     @Override
@@ -38,10 +40,15 @@ public class StringValue implements IdentifierValue {
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof StringValue) && (value.equals(((StringValue) o).value));
+        if (o instanceof CharacterValue) {
+            return ((CharacterValue) o).value == value;
+        }
+
+        return false;
     }
 
+    @Override
     public String toString() {
-        return value;
+        return "" + this.value;
     }
 }

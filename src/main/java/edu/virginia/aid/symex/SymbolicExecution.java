@@ -4,8 +4,8 @@ import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.AssignmentVisitor;
 import edu.virginia.aid.visitors.EvaluationVisitor;
+import org.eclipse.jdt.core.dom.Statement;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +16,16 @@ import java.util.Map;
 public class SymbolicExecution {
 
     public static IdentifierValue inverseSymEx(MethodFeatures method, List<Path> paths) {
-        List<BooleanAndList> allConditions = new ArrayList<>();
+        SumOfProducts allConditions = new SumOfProducts();
         for (Path path : paths) {
-            allConditions.add(execute(method, path));
+            allConditions.addProduct(execute(method, path));
         }
 
+        SumOfProducts allConditionsSimplified = allConditions.simplifyKeepType();
+
         ProductOfSums negatedConditions = new ProductOfSums();
-        if (allConditions.size() > 0) {
-            for (BooleanAndList condition : allConditions) {
+        if (allConditionsSimplified.getProducts().size() > 0) {
+            for (BooleanAndList condition : allConditionsSimplified.getProducts()) {
                 BooleanOrList negatedCondition = new BooleanOrList();
                 for (IdentifierValue conditionTerm : condition.getTerms()) {
                     negatedCondition.addTerm(conditionTerm.negate());
@@ -31,7 +33,14 @@ public class SymbolicExecution {
                 negatedConditions.addSum(negatedCondition);
             }
 
-            return negatedConditions.convertToSumOfProducts().simplifyKeepType();
+            long numProducts = negatedConditions.getSums().stream()
+                    .mapToLong(s -> s.getTerms().size())
+                    .reduce(1l, (len, acc) -> acc * len);
+            if (numProducts > 1000) {
+                return null;
+            } else {
+                return negatedConditions.convertToSumOfProducts().simplifyKeepType();
+            }
         } else  {
             return null;
         }
@@ -51,25 +60,42 @@ public class SymbolicExecution {
         }
 
         BooleanAndList conditions = new BooleanAndList();
+        boolean containsLastStatement = false;
+        boolean hasAssignment = false;
+        Statement lastStatement = path.getPathElements().get(path.getPathElements().size() - 1).getStatement();
 
-        for (PathElement element : path.getPathElements()) {
-            if (element.isStatement()) {
-                AssignmentVisitor visitor = new AssignmentVisitor(method);
-                element.getStatement().accept(visitor);
+        if (lastStatement != null) {
+            for (PathElement element : path.getPathElements()) {
+                if (element.isStatement()) {
+                    AssignmentVisitor visitor = new AssignmentVisitor(method);
+                    element.getStatement().accept(visitor);
+                    hasAssignment = visitor.isAssignment();
 
-                if (visitor.getValue() != null) {
-                    EvaluationVisitor evaluationVisitor = new EvaluationVisitor(memory, method);
-                    visitor.getValue().accept(evaluationVisitor);
-                    memory.put(visitor.getVariable().getResolvedIdentifier(method),evaluationVisitor.getResult());
-                }
-            } else {
-                EvaluationVisitor evaluationVisitor = new EvaluationVisitor(memory, method);
-                element.getExpression().accept(evaluationVisitor);
-                if (evaluationVisitor.getResult() != null) {
-                    if (element.isNegated()) {
-                        conditions.addTerm(evaluationVisitor.getResult().negate());
+                    if (visitor.getValue() != null) {
+                        EvaluationVisitor evaluationVisitor = new EvaluationVisitor(memory, method);
+                        visitor.getValue().accept(evaluationVisitor);
+                        memory.put(visitor.getVariable().getResolvedIdentifier(method),evaluationVisitor.getResult());
+                    }
+
+                    // Check if this statement contains the last statement (such as if/for/while)
+                    if (element.getStatement().getStartPosition() <= lastStatement.getStartPosition() &&
+                        element.getStatement().getStartPosition() + element.getStatement().getLength() >=
+                                lastStatement.getStartPosition() + lastStatement.getLength()) {
+                        containsLastStatement = true;
                     } else {
-                        conditions.addTerm(evaluationVisitor.getResult());
+                        containsLastStatement = false;
+                    }
+                } else { // Only add condition if it is part of a containing statement or has an assignment
+                    if (containsLastStatement || hasAssignment) {
+                        EvaluationVisitor evaluationVisitor = new EvaluationVisitor(memory, method);
+                        element.getExpression().accept(evaluationVisitor);
+                        if (evaluationVisitor.getResult() != null) {
+                            if (element.isNegated()) {
+                                conditions.addTerm(evaluationVisitor.getResult().negate());
+                            } else {
+                                conditions.addTerm(evaluationVisitor.getResult());
+                            }
+                        }
                     }
                 }
             }

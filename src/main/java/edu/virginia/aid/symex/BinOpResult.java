@@ -72,7 +72,6 @@ public class BinOpResult implements IdentifierValue {
         commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.GREATER, new Constant(0)), "is positive");
         commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS, new Constant(0)), "is negative");
         commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.LESS_EQUALS, new Constant(0)), "is not positive");
-        commonExpressions.put(new AbstractMap.SimpleEntry<>(InfixExpression.Operator.EQUALS, new Constant(0)), "is not positive");
     }
 
     public BinOpResult(InfixExpression.Operator operator, IdentifierValue operand1, IdentifierValue operand2) {
@@ -114,7 +113,52 @@ public class BinOpResult implements IdentifierValue {
 
     @Override
     public IdentifierValue simplify() {
-        return this;
+        // Attempt to evaluate expression with literals
+        IdentifierValue operand1 = this.operand1.simplify();
+        IdentifierValue operand2 = this.operand2.simplify();
+        if (operand1 instanceof Constant && operand2 instanceof Constant) {
+            double value1 = ((Constant) operand1).getValue();
+            double value2 = ((Constant) operand2).getValue();
+
+            if (operator.equals(InfixExpression.Operator.PLUS)) {
+                return new Constant(value1 + value2);
+            } else if (operator.equals(InfixExpression.Operator.MINUS)) {
+                return new Constant(value1 - value2);
+            } else if (operator.equals(InfixExpression.Operator.TIMES)) {
+                return new Constant(value1 * value2);
+            } else if (operator.equals(InfixExpression.Operator.DIVIDE)) {
+                return new Constant(value1 / value2);
+            } else if (operator.equals(InfixExpression.Operator.REMAINDER)) {
+                return new Constant(value1 % value2);
+            } else if (operator.equals(InfixExpression.Operator.EQUALS)) {
+                return new BooleanValue(value1 == value2);
+            } else if (operator.equals(InfixExpression.Operator.NOT_EQUALS)) {
+                return new BooleanValue(value1 != value2);
+            } else if (operator.equals(InfixExpression.Operator.GREATER)) {
+                return new BooleanValue(value1 > value2);
+            } else if (operator.equals(InfixExpression.Operator.GREATER_EQUALS)) {
+                return new BooleanValue(value1 >= value2);
+            } else if (operator.equals(InfixExpression.Operator.LESS)) {
+                return new BooleanValue(value1 < value2);
+            } else if (operator.equals(InfixExpression.Operator.LESS_EQUALS)) {
+                return new BooleanValue(value1 <= value2);
+            }
+        } else if (operand1 instanceof BooleanValue && operand2 instanceof BooleanValue) {
+            boolean value1 = ((BooleanValue) operand1).getValue();
+            boolean value2 = ((BooleanValue) operand2).getValue();
+
+            if (operator.equals(InfixExpression.Operator.CONDITIONAL_AND)) {
+                return new BooleanValue(value1 && value2);
+            } else if (operator.equals(InfixExpression.Operator.CONDITIONAL_OR)) {
+                return new BooleanValue(value1 || value2);
+            } else if (operator.equals(InfixExpression.Operator.EQUALS)) {
+                return new BooleanValue(value1 == value2);
+            } else if (operator.equals(InfixExpression.Operator.NOT_EQUALS)) {
+                return new BooleanValue(value1 != value2);
+            }
+        }
+
+        return new BinOpResult(operator, operand2, operand1);
     }
 
     @Override
@@ -152,6 +196,11 @@ public class BinOpResult implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof BinOpResult) {
             return ((BinOpResult) o).operator.equals(this.operator) &&
@@ -176,7 +225,7 @@ public class BinOpResult implements IdentifierValue {
         } else if (operator.equals(InfixExpression.Operator.CONDITIONAL_OR)) {
             operatorString = "or";
         } else if (operator.equals(InfixExpression.Operator.DIVIDE)) {
-            operatorString = "divided by";
+            operatorString = "/";
         } else if (operator.equals(InfixExpression.Operator.EQUALS)) {
             operatorString = "is";
         } else if (operator.equals(InfixExpression.Operator.LESS)) {
@@ -190,21 +239,21 @@ public class BinOpResult implements IdentifierValue {
         } else if (operator.equals(InfixExpression.Operator.GREATER_EQUALS)) {
             operatorString = "greater than or equal to";
         } else if (operator.equals(InfixExpression.Operator.MINUS)) {
-            operatorString = "minus";
+            operatorString = "-";
         } else if (operator.equals(InfixExpression.Operator.NOT_EQUALS)) {
             operatorString = "is not";
         } else if (operator.equals(InfixExpression.Operator.OR)) {
             operatorString = "or";
         } else if (operator.equals(InfixExpression.Operator.PLUS)) {
-            operatorString = "plus";
+            operatorString = "+";
         } else if (operator.equals(InfixExpression.Operator.REMAINDER)) {
-            operatorString = "modulus";
+            operatorString = "%";
         } else if (operator.equals(InfixExpression.Operator.RIGHT_SHIFT_SIGNED)) {
             operatorString = "right shift";
         } else if (operator.equals(InfixExpression.Operator.RIGHT_SHIFT_UNSIGNED)) {
             operatorString = "right shift";
         } else if (operator.equals(InfixExpression.Operator.TIMES)) {
-            operatorString = "times";
+            operatorString = "*";
         }
 
         return operand1 + " " + operatorString + " " + operand2;

@@ -34,6 +34,11 @@ public class SubroutineResult implements IdentifierValue {
     }
 
     @Override
+    public boolean isConstantType() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof SubroutineResult) && (subroutineName.equals(((SubroutineResult) o).subroutineName));
     }
