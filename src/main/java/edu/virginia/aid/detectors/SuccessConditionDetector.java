@@ -1,16 +1,19 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.IdentifierProperties;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
+
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.symex.IdentifierValue;
 import edu.virginia.aid.symex.Path;
 import edu.virginia.aid.symex.SymbolicExecution;
 import edu.virginia.aid.util.ControlFlowGraph;
-import edu.virginia.aid.visitors.VariableUsageVisitor;
-import org.eclipse.jdt.core.dom.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class SuccessConditionDetector implements FeatureDetector {
 

@@ -3,7 +3,6 @@ package edu.virginia.aid.symex;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Product of sums form of IdentifierValue

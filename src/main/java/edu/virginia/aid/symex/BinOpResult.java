@@ -1,10 +1,12 @@
 package edu.virginia.aid.symex;
 
-import org.eclipse.jdt.core.dom.InfixExpression;
-import scala.collection.concurrent.KVNode;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-import java.util.zip.Inflater;
+import org.eclipse.jdt.core.dom.InfixExpression;
 
 public class BinOpResult implements IdentifierValue {
 

@@ -1,10 +1,39 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.*;
-import edu.virginia.aid.symex.*;
-import org.eclipse.jdt.core.dom.*;
-
 import java.util.Map;
+
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.NullLiteral;
+import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.ThisExpression;
+
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.IdentifierProperties;
+import edu.virginia.aid.data.IdentifierScope;
+import edu.virginia.aid.data.IdentifierType;
+import edu.virginia.aid.data.IdentifierUse;
+import edu.virginia.aid.data.MethodFeatures;
+import edu.virginia.aid.symex.BinOpResult;
+import edu.virginia.aid.symex.BooleanValue;
+import edu.virginia.aid.symex.CharacterValue;
+import edu.virginia.aid.symex.Constant;
+import edu.virginia.aid.symex.ExternalValue;
+import edu.virginia.aid.symex.IdentifierValue;
+import edu.virginia.aid.symex.NullValue;
+import edu.virginia.aid.symex.StringValue;
+import edu.virginia.aid.symex.SubroutineResult;
+import edu.virginia.aid.symex.UnOpResult;
 
 /**
  * ASTVisitor for building up an IdentifierValue from an Expression
