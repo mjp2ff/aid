@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 
 import edu.virginia.aid.util.ControlFlowGraph;
 import edu.virginia.aid.visitors.ConditionVisitor;
-import org.eclipse.jdt.core.dom.ThrowStatement;
 
 /**
  * Representation of a single execution path through all or part of a method.

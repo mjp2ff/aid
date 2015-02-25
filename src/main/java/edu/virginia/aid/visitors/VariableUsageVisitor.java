@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.virginia.aid.data.IdentifierProperties;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 
 import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.data.MethodInvocationProperties;
 

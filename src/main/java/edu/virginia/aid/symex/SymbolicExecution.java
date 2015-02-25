@@ -1,14 +1,15 @@
 package edu.virginia.aid.symex;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.jdt.core.dom.Statement;
+
 import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.visitors.AssignmentVisitor;
 import edu.virginia.aid.visitors.EvaluationVisitor;
-import org.eclipse.jdt.core.dom.Statement;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Static class for performing symbolic execution on one or more paths

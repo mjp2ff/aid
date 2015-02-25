@@ -154,7 +154,7 @@ public class PrimaryObjectDetector implements FeatureDetector {
         				for (IdentifierName iN : visitor.getIdentifierUses()) {
         					IdentifierProperties iP = iN.getResolvedIdentifier(features);
         					
-        					IdentifierValue iV = memory.get(iP);
+        					// IdentifierValue iV = memory.get(iP);
         					// TODO: Evaluate, decide if it's important.
         					
         					// Ignore methods and other non-variable crap.

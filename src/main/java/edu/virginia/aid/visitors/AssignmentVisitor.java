@@ -1,7 +1,15 @@
 package edu.virginia.aid.visitors;
 
-import edu.virginia.aid.data.*;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+
+import edu.virginia.aid.data.IdentifierName;
+import edu.virginia.aid.data.IdentifierScope;
+import edu.virginia.aid.data.IdentifierType;
+import edu.virginia.aid.data.IdentifierUse;
+import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * ASTVisitor for finding assignment expressions within a given statement

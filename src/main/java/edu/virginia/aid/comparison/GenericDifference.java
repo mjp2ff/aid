@@ -1,6 +1,5 @@
 package edu.virginia.aid.comparison;
 
-import java.text.DecimalFormat;
 
 public class GenericDifference extends Difference {
 
