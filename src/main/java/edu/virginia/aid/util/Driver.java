@@ -3,6 +3,7 @@ package edu.virginia.aid.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,7 +74,7 @@ public class Driver {
 
         System.out.print("\n Ranking methods by difference score... ");
         Collections.sort(differences);
-        System.out.println("DONE");
+        System.out.println("DONE\n");
 
         return differences;
     }
@@ -114,6 +115,7 @@ public class Driver {
             if (displayIndex < rankedDifferences.size()) {
                 System.out.print(" Display next " + Math.min(methodsPerPage, rankedDifferences.size() - displayIndex) + " methods? (y/n): ");
             }
+            if (displayIndex >= rankedDifferences.size()) break;
             if (!keyboard.nextLine().equalsIgnoreCase("y")) break;
         }
     }
@@ -219,6 +221,9 @@ public class Driver {
 
             String mode = promptUser("Would you like to load a project or a file? (p/f): ", Pattern.compile("p|f"), keyboard);
 
+            boolean dataDump = promptUser("Would you like a full data dump in file \"results.txt\" (y/n): ",
+            		Pattern.compile("y|n"), keyboard).equalsIgnoreCase("y");
+
             // Project mode
             if (mode.equalsIgnoreCase("p")) {
                 System.out.print("Provide the path to the project to analyze: ");
@@ -240,10 +245,18 @@ public class Driver {
                             classMethods.add(method);
                         }
                     }
+                    
+                    // Get differences for each method and rank them by most different to least different
+                    List<MethodDifferences> differences = compareAndRank(classMethods);
 
-                    displayDifferences(compareAndRank(classMethods), 10, keyboard);
+                    displayDifferences(differences, 10, keyboard);
+                    if (dataDump) dumpData(differences, "results.txt" /* filename */);
                 } else if (analysisMode.equalsIgnoreCase("p")) {
-                    displayDifferences(compareAndRank(methods), 10, keyboard);
+                    // Get differences for each method and rank them by most different to least different
+                    List<MethodDifferences> differences = compareAndRank(methods);
+                    
+                    displayDifferences(differences, 10, keyboard);
+                    if (dataDump) dumpData(differences, "results.txt" /* filename */);
                 }
 
                 System.out.println();
@@ -257,9 +270,31 @@ public class Driver {
 
                 List<MethodFeatures> methods = parser.parseMethods();
 
+                // Get differences for each method and rank them by most different to least different
                 List<MethodDifferences> differences = compareAndRank(methods);
+
                 displayDifferences(differences, 10, keyboard);
+                if (dataDump) dumpData(differences, "results.txt" /* filename */);
             }
+        }
+    }
+    
+    /**
+     * Dumps all the data about the given methods into a specified file.
+     * @param differences The differences in the method to write data about
+     * @param filename The name of a file to create and write data to
+     */
+    public static void dumpData(List<MethodDifferences> differences, String filename) {
+        try {
+			PrintWriter writer = new PrintWriter("results.txt", "UTF-8");			
+			
+			for (int i = 0; i < differences.size(); ++i) {
+				writer.println(differences.get(i).toString());
+			}
+			writer.close();
+        } catch (Exception e) {
+			System.out.println("Error writing to file.");
+			e.printStackTrace();
         }
     }
 }
