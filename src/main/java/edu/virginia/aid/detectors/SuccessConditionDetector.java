@@ -1,16 +1,18 @@
 package edu.virginia.aid.detectors;
 
-import edu.virginia.aid.data.IdentifierProperties;
 import edu.virginia.aid.data.MethodFeatures;
-import edu.virginia.aid.symex.IdentifierValue;
 import edu.virginia.aid.symex.Path;
+import edu.virginia.aid.symex.SumOfProducts;
 import edu.virginia.aid.symex.SymbolicExecution;
 import edu.virginia.aid.util.ControlFlowGraph;
-import edu.virginia.aid.visitors.VariableUsageVisitor;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SuccessConditionDetector implements FeatureDetector {
 
@@ -32,7 +34,7 @@ public class SuccessConditionDetector implements FeatureDetector {
             exceptionalPaths.addAll(Path.getPathsToStatement(cfg, throwStatement));
         }
 
-        IdentifierValue successConditions = SymbolicExecution.inverseSymEx(features, exceptionalPaths);
+        SumOfProducts successConditions = SymbolicExecution.inverseSymEx(features, exceptionalPaths);
 
         // Set conditions for success in the method
         features.setConditionsForSuccess(successConditions);

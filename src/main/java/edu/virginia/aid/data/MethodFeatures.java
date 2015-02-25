@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.virginia.aid.comparison.*;
+import edu.virginia.aid.symex.BooleanAndList;
 import edu.virginia.aid.symex.IdentifierValue;
+import edu.virginia.aid.symex.SumOfProducts;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.Type;
@@ -21,10 +24,6 @@ import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
-import edu.virginia.aid.comparison.DifferenceWeights;
-import edu.virginia.aid.comparison.GenericDifference;
-import edu.virginia.aid.comparison.MethodDifferences;
-import edu.virginia.aid.comparison.MissingIdentifierDifference;
 
 /**
  * Data wrapper for a feature list for a single method
@@ -49,7 +48,7 @@ public class MethodFeatures extends SourceElement {
 
     private String primaryAction = "";
     private String primaryObject = "";
-    private IdentifierValue conditionsForSuccess = null;
+    private SumOfProducts conditionsForSuccess = null;
 
     // Boolean parameters
     public static final String RETURNS_BOOLEAN = "returns_boolean";
@@ -291,7 +290,7 @@ public class MethodFeatures extends SourceElement {
         return conditionsForSuccess;
     }
 
-    public void setConditionsForSuccess(IdentifierValue conditionsForSuccess) {
+    public void setConditionsForSuccess(SumOfProducts conditionsForSuccess) {
         this.conditionsForSuccess = conditionsForSuccess;
     }
 
@@ -483,7 +482,14 @@ public class MethodFeatures extends SourceElement {
 
         // Process conditions for success
         if (conditionsForSuccess != null) {
-            differences.add(new GenericDifference(conditionsForSuccess.toString(), 0));
+            for (BooleanAndList product : conditionsForSuccess.getProducts()) {
+                if (!containedInComments(wordNetDictionary, product.toString())) {
+                    differences.add(new SuccessConditionDifference(product,
+                            DifferenceWeights.CONDITIONS_FOR_SUCCESS *
+                                    getTFIDF(product.toString()) /
+                                    Math.pow(conditionsForSuccess.getProducts().size(), 2)));
+                }
+            }
         }
 
         return differences;
@@ -541,8 +547,12 @@ public class MethodFeatures extends SourceElement {
      * @return TFIDF value for the given string.
      */
     public double getTFIDF(String s) {
-    	Double retVal = TFIDF.get(s);
-    	return retVal != null ? retVal : 1.0;
+        double totalTFIDF = 0;
+        for (String word : s.split(" ")) {
+            Double retVal = TFIDF.get(word);
+            totalTFIDF += (retVal != null ? retVal : 1.0);
+        }
+        return totalTFIDF / s.split(" ").length;
     }
         
     /**

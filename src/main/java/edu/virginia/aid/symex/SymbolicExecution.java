@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class SymbolicExecution {
 
-    public static IdentifierValue inverseSymEx(MethodFeatures method, List<Path> paths) {
+    public static SumOfProducts inverseSymEx(MethodFeatures method, List<Path> paths) {
         SumOfProducts allConditions = new SumOfProducts();
         for (Path path : paths) {
             allConditions.addProduct(execute(method, path));
