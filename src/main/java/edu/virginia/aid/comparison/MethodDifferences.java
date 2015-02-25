@@ -1,5 +1,6 @@
 package edu.virginia.aid.comparison;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -66,12 +67,13 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
      */
     @Override
     public String toString() {
-        String result = "Total difference score for " + method.getParentClass().getClassName() +
+    	DecimalFormat df = new DecimalFormat("0.000");
+        String result = "[" + df.format(getDifferenceScore()) + "] " + method.getParentClass().getClassName() +
         		"." + method.getMethodSignature() + " (" + method.getFilepath() + ", line " +
-        		method.getElementLineNumber() + "): " + getDifferenceScore() + "\n";
+        		method.getElementLineNumber() + "):\n";
         Collections.sort(this);
         for (Difference difference : this) {
-            result += "\t" + difference.toString() + "\n";
+            result += "\t* " + difference.toString() + "\n";
         }
         return result;
     }
