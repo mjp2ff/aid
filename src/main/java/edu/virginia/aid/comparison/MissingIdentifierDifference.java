@@ -9,6 +9,9 @@ import edu.virginia.aid.data.IdentifierProperties;
  */
 public class MissingIdentifierDifference extends Difference {
 
+    /**
+     * The identifier missing in the comments
+     */
     private IdentifierProperties identifier;
 
     /**
