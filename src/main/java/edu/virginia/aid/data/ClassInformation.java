@@ -14,20 +14,40 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  */
 public class ClassInformation extends SourceElement {
 
+    /**
+     * The name of the class
+     */
     private String className;
 
-    // File path
+    /**
+     * The path to the file containing the class
+     */
     private String filepath;
 
-    // Fields
+    /**
+     * List of fields in the class
+     */
     private List<IdentifierProperties> fields;
 
-    // Method Declarations
+    /**
+     * List of methods declared in the class
+     */
     private List<MethodDeclaration> methodDeclarations;
 
-    // Comments
+    /**
+     * List of comments contained within the method (not including method JavaDoc)
+     */
     private List<CommentInfo> comments;
 
+    /**
+     * Creates a ClassInformation with the following properties:
+     *
+     * @param className         The name of the class
+     * @param filepath          The path to the file containing the class
+     * @param startPos          The position of the first character of the class in the file
+     * @param endPos            The position of the last character of the class in the file
+     * @param sourceContext     Information and content for the containing file
+     */
     public ClassInformation(String className, String filepath, int startPos, int endPos, final SourceContext sourceContext) {
         super(startPos, endPos, sourceContext);
 
@@ -38,10 +58,20 @@ public class ClassInformation extends SourceElement {
         this.comments = new ArrayList<>();
     }
 
+    /**
+     * Get the name of the class
+     *
+     * @return The name of the class
+     */
     public String getClassName() {
         return this.className;
     }
 
+    /**
+     * Get the path to the file containing the class
+     *
+     * @return The path to the file containing the class
+     */
     public String getFilepath() {
         return filepath;
     }
@@ -121,6 +151,11 @@ public class ClassInformation extends SourceElement {
     	comments.add(comment);
     }
 
+    /**
+     * Converts the class's information to a human-readable form
+     *
+     * @return Human-readable output for the class
+     */
     @Override
     public String toString() {
         return "Class " + className + ":\n" +

@@ -14,8 +14,16 @@ import edu.virginia.aid.data.MethodFeatures;
 @SuppressWarnings("serial")
 public class MethodDifferences extends ArrayList<Difference> implements Comparable<MethodDifferences> {
 
+    /**
+     * The method being tracked
+     */
     private MethodFeatures method;
 
+    /**
+     * Create a difference tracker with the given method
+     *
+     * @param method The method for which to track differences
+     */
     public MethodDifferences(MethodFeatures method) {
         this.method = method;
     }
@@ -51,6 +59,12 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
     	}
     }
 
+    /**
+     * Presents a human-readable representation of all differences in the method, sorted from highest
+     * to lowest differenceScore
+     *
+     * @return Human-readable representation of differences
+     */
     @Override
     public String toString() {
     	DecimalFormat df = new DecimalFormat("0.000");

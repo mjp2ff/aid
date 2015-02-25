@@ -1,19 +1,32 @@
 package edu.virginia.aid.comparison;
 
 /**
- * Data wrapper for information about one difference between
- * a method's comments and its contents
+ * Data wrapper for information about a single difference between
+ * a method's comments and its contents.
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
 public abstract class Difference implements Comparable<Difference> {
 
+    /**
+     * Numerical value for this difference's severity and significance (higher = more severe/significant)
+     */
     private double differenceScore;
 
+    /**
+     * Create a new difference with the provided differenceScore
+     *
+     * @param differenceScore The numeric weight of this difference
+     */
     public Difference(double differenceScore) {
         this.differenceScore = differenceScore;
     }
 
+    /**
+     * Get the weighted numeric  value for the difference
+     *
+     * @return The weighted numeric value for the difference
+     */
     public double getDifferenceScore() {
         return differenceScore;
     }

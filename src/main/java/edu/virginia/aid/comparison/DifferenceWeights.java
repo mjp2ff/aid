@@ -2,6 +2,8 @@ package edu.virginia.aid.comparison;
 
 /**
  * Data wrapper for weighting information in differences
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
  */
 public final class DifferenceWeights {
 
@@ -10,13 +12,9 @@ public final class DifferenceWeights {
     public static final double PARAMETER_WRITE = 4;
     public static final double FIELD_READ = 1;
     public static final double FIELD_WRITE = 2;
-    public static final double IN_RETURN_STATEMENT = 5;
 
     // Concepts
     public static final double METHOD_NAME = 5;
-
-    // Structures
-    public static final double ONLY_METHOD_INVOCATION = 4;
 
     // Components
     public static final double PRIMARY_VERB = 25;
