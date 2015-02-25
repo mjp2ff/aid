@@ -30,8 +30,6 @@ import edu.virginia.aid.data.CommentInfo;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.data.MethodSignature;
 import edu.virginia.aid.detectors.CommentDetector;
-import edu.virginia.aid.detectors.ControlFlowDetector;
-import edu.virginia.aid.detectors.ExpressionDetector;
 import edu.virginia.aid.detectors.IdentifierDetector;
 import edu.virginia.aid.detectors.MethodSignatureProcessor;
 import edu.virginia.aid.detectors.ParameterCopyDetector;
@@ -260,10 +258,6 @@ public abstract class MethodParser {
                 methodProcessor.addFeatureDetector(new MethodSignatureProcessor());
                 // Add detector to process methods
                 methodProcessor.addFeatureDetector(new IdentifierDetector());
-                // Add detector to process control flow
-                methodProcessor.addFeatureDetector(new ControlFlowDetector());
-                // Add detector to process expressions
-                methodProcessor.addFeatureDetector(new ExpressionDetector());
                 // Add detector to reduce words to stems.
                 methodProcessor.addFeatureDetector(new StemmingProcessor());
                 // Add detector to remove words in stoplist. Stoplist should be LAST! so words aren't re-added in.
