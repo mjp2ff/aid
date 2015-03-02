@@ -6,15 +6,35 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Container and associated operations for all of the identifiers that are in scope for a certain block of code.
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
+ */
 public class ScopeProperties {
 
+    /**
+     * The list of identifiers in scope
+     */
     public List<IdentifierProperties> identifiers;
+
+    /**
+     * The scope for the containing block/class
+     */
     public ScopeProperties parentScope;
 
+    /**
+     * Creates a new ScopeProperties with no identifiers in scope
+     */
     public ScopeProperties() {
         identifiers = new ArrayList<>();
     }
 
+    /**
+     * Creates a new ScopeProperties with the given parent scope
+     *
+     * @param parent The parent scope of this scope
+     */
     public ScopeProperties(ScopeProperties parent) {
         identifiers = new ArrayList<>();
         parentScope = parent;
@@ -139,6 +159,11 @@ public class ScopeProperties {
                 .collect(Collectors.toSet()));
     }
 
+    /**
+     * Gets a list of all identifiers in the scope
+     *
+     * @return List of all identifiers in the scope
+     */
     public List<IdentifierProperties> getIdentifiers() {
         return identifiers;
     }

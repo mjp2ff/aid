@@ -20,28 +20,93 @@ import weka.core.Instances;
 import java.util.*;
 
 /**
- * Data wrapper for a feature list for a single method
+ * Overarching container for complete processed information about a single method to be analyzed.
+ * Each method has a single MethodFeatures object that is updated as the various data processing
+ * steps happen during execution.
  *
  * @author Matt Pearson-Beck & Jeff Principe
  */
 public class MethodFeatures extends SourceElement {
 
+    /**
+     * The absolute system file path to the file containing this method
+     */
     private String filepath;
+
+    /**
+     * Information about the class that contains this method
+     */
     private ClassInformation parentClass;
+
+    /**
+     * The name of this method
+     */
     private String methodName;
+
+    /**
+     * The static return type of this method
+     */
     private Type returnType;
+
+    /**
+     * The name of the method, optionally processed for comparison
+     */
     private String processedMethodName;
+
+    /**
+     * Map of various boolean-valued features about the method to their values
+     */
     private Map<String, Boolean> booleanFeatures;
+
+    /**
+     * Map of various string-valued features about the method to their values
+     */
     private Map<String, String> stringFeatures;
+
+    /**
+     * Map of various integer-valued features about the method to their values
+     */
     private Map<String, Integer> numericFeatures;
+
+    /**
+     * All of the variables that are in scope for the method
+     */
     private ScopeProperties scope;
+
+    /**
+     * The Javadoc comment provided with the method in source code
+     */
     private Javadoc javadoc;
+
+    /**
+     * Map of words to TF/IDF values
+     */
     private Map<String, Double> TFIDF;
+
+    /**
+     * Map of words to the number of times each occurs
+     */
     private Map<String, Integer> wordFrequencies;
+
+    /**
+     * Set of all words in the corpus of the program analyzed, not including comments
+     */
     private Set<String> allWordsNoComments;
 
+    /**
+     * The main action performed by the method, as determined by the tool
+     */
     private String primaryAction = "";
+
+    /**
+     * The main object acted upon or used in the method, as determined by the tool
+     */
     private String primaryObject = "";
+
+    /**
+     * The predicate that must be satisfied in order for the method to not throw an explicit exception.
+     * This is based on a static analysis and is neither complete nor consistent, but is rather an approximation.
+     */
     private SumOfProducts conditionsForSuccess = null;
 
     // Boolean parameters
@@ -55,7 +120,7 @@ public class MethodFeatures extends SourceElement {
     public static final String NUM_FIELD_WRITES = "num_field_writes";
 
     /**
-     * Specific constructor for MethodFeatures class
+     * Creates a MethodFeatures using the given parameters:
      * 
      * @param methodName The name of the current method
      * @param parentClass The parent class of the current method
@@ -280,10 +345,22 @@ public class MethodFeatures extends SourceElement {
         this.primaryObject = primaryObject;
     }
 
+    /**
+     * Gets the tool's approximation of the predicate that has to be satisfied for the method to not
+     * throw an explicit exception.
+     *
+     * @return The predicate that has to be satisfied for the method to not throw an explicit exception
+     */
     public IdentifierValue getConditionsForSuccess() {
         return conditionsForSuccess;
     }
 
+    /**
+     * Sets the predicate that must be satisfied for the method to not throw an explicit exception.
+     *
+     * @param conditionsForSuccess Updated predicate that has to be satisfied for the method to not throw
+     *                             an explicit exception
+     */
     public void setConditionsForSuccess(SumOfProducts conditionsForSuccess) {
         this.conditionsForSuccess = conditionsForSuccess;
     }
@@ -301,7 +378,7 @@ public class MethodFeatures extends SourceElement {
     }
 
     /**
-     * Calculate the word frequencies for this method, and return a list of all the words in the method.
+     * Calculates the word frequencies for this method, and return a list of all the words in the method.
      */
     public void calculateWordFrequencies() {
     	wordFrequencies = new HashMap<>();

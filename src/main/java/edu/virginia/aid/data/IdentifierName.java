@@ -74,6 +74,11 @@ public class IdentifierName extends SourceElement implements StringListable {
         return null;
     }
 
+    /**
+     * Gets the name of the identifier
+     *
+     * @return The name of the identifier
+     */
     public String getName() {
         return name;
     }
@@ -96,18 +101,38 @@ public class IdentifierName extends SourceElement implements StringListable {
         return type == IdentifierType.VARIABLE;
     }
 
+    /**
+     * Gets the type of the use of the identifier
+     *
+     * @return The type of the use of the identifier
+     */
     public IdentifierUse getUse() {
         return use;
     }
 
+    /**
+     * Gets the name of the identifier after processing (e.g. stemmed)
+     *
+     * @return The name of the identifier after processing
+     */
     public String getProcessedName() {
         return processedName;
     }
 
+    /**
+     * Updates the processed name of the identifier
+     *
+     * @param processedName The newly processed identifier name
+     */
     public void setProcessedName(String processedName) {
         this.processedName = processedName;
     }
-    
+
+    /**
+     * Creates a singleton list of the processed name of the identifier
+     *
+     * @return A singleton list of the processed name of the identifier
+     */
     public List<String> getData() {
     	return Arrays.asList(processedName);
     }
