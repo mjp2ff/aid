@@ -1,5 +1,10 @@
 package edu.virginia.aid.util;
 
+/**
+ * Utility class for working with Strings specific to the types of Java programs analyzed by this tool.
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
+ */
 public class StringHelper {
 	
     /**

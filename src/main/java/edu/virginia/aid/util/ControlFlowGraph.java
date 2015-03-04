@@ -29,7 +29,14 @@ import org.eclipse.jdt.core.dom.Statement;
 
 import edu.virginia.aid.visitors.ControlFlowGraphVisitor;
 
+/**
+ * Class for mapping statements in Eclipse JDT MethodDeclaration objects to their control flow
+ * representation
+ *
+ * @author Anders Hessellund (modified by Matt Pearson-Beck & Jeff Principe)
+ */
 public class ControlFlowGraph {
+
 	/** the method which we build the control flow graph for */
 	private final MethodDeclaration method;
 	/** maps a {@link Statement} to its predecessors */
