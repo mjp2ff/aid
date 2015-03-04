@@ -42,6 +42,13 @@ import edu.virginia.aid.util.Driver;
 import edu.virginia.aid.util.MethodProcessor;
 import edu.virginia.aid.visitors.ClassVisitor;
 
+/**
+ * Abstract class for a parser of one or more methods within a corpus of possible methods. Surfaces a method
+ * for finding all of the methods specified by concrete implementations and provides some utility functions
+ * to help with the process.
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
+ */
 public abstract class MethodParser {
 
     private Classifier primaryActionClassifier;
@@ -60,7 +67,12 @@ public abstract class MethodParser {
         return primaryActionClassifier;
     }
 
-    public Attribute getPrimaryAcitonClassAttribute() {
+    /**
+     * Returns the primaryAction class for the current instance, instantiating it if necessary
+     *
+     * @return The primary action class for the current instance
+     */
+    public Attribute getPrimaryActionClassAttribute() {
         if (primaryActionClassAttribute == null) {
             initializeClassifier();
         }
@@ -129,6 +141,8 @@ public abstract class MethodParser {
     }
 
     /**
+     * Gets the text content of the file at the path provided
+     *
 	 * @return The text of the specified file.
 	 */
 	protected static String readFile(String filePath) {
@@ -267,7 +281,7 @@ public abstract class MethodParser {
 
                 if (!trainingMode) {
                     // Add detector to parse out the information for primary action and primary object of the method
-                    methodProcessor.addFeatureDetector(new PrimaryActionDetector(getPrimaryActionClassifier(), getPrimaryAcitonClassAttribute()));
+                    methodProcessor.addFeatureDetector(new PrimaryActionDetector(getPrimaryActionClassifier(), getPrimaryActionClassAttribute()));
                     methodProcessor.addFeatureDetector(new PrimaryObjectDetector());
                     methodProcessor.addFeatureDetector(new SuccessConditionDetector());
                 }
@@ -283,6 +297,15 @@ public abstract class MethodParser {
         return methodFeaturesList;
     }
 
+    /**
+     * Tests whether the searchNode method can be reached from the start method using the graph provided in
+     * the methodDeclarationMap. This is primarily used for alias analysis.
+     *
+     * @param methodDeclarationMap Map of methods to other methods that they alias
+     * @param start The start location of the search
+     * @param searchNode The end location of the search
+     * @return Whether searchNode is reachable from start using the methodDeclarationMap
+     */
     private static boolean canReachNode(Map<MethodDeclaration, MethodDeclaration> methodDeclarationMap, MethodDeclaration start, MethodDeclaration searchNode) {
         MethodDeclaration current = start;
         if (current == searchNode) return true;
@@ -296,6 +319,13 @@ public abstract class MethodParser {
         return false;
     }
 
+    /**
+     * Finds the method at the root of an alias chain using the given start node
+     *
+     * @param methodDeclarationMap Graph mapping alias methods to the methods they alias
+     * @param start The method at which to start the search
+     * @return The method at the root of the start method's alias chain
+     */
     private static MethodDeclaration getChainRoot(Map<MethodDeclaration, MethodDeclaration> methodDeclarationMap, MethodDeclaration start) {
         MethodDeclaration current = start;
         while (methodDeclarationMap.containsKey(current)) {

@@ -8,10 +8,23 @@ import java.util.Set;
 
 import edu.virginia.aid.data.MethodFeatures;
 
+/**
+ * Parser for finding and processing all methods located within a given directory on disk.
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
+ */
 public class DirectoryMethodParser extends MethodParser {
 
+    /**
+     * The directory containing the methods to parse
+     */
     String directory;
 
+    /**
+     * Creates a new parser for methods within the given directory
+     *
+     * @param directory The directory containing the methods to parse
+     */
     public DirectoryMethodParser(String directory) {
         this.directory = directory;
     }
