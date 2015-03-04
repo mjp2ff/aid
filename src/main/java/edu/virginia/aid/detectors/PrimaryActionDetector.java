@@ -8,6 +8,8 @@ import edu.virginia.aid.data.MethodFeatures;
 
 /**
  * Detector that finds a single verb to describe the method
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
  */
 public class PrimaryActionDetector implements FeatureDetector {
 

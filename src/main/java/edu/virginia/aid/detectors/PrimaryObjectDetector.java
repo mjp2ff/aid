@@ -25,6 +25,8 @@ import edu.virginia.aid.visitors.VariableUsageVisitor;
 
 /**
  * Detector that finds a single noun that is the most important within the method
+ *
+ * @author Matt Pearson-Beck
  */
 public class PrimaryObjectDetector implements FeatureDetector {
 
