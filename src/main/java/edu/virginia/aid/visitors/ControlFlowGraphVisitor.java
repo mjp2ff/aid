@@ -49,6 +49,11 @@ import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
+/**
+ * ASTVisitor for building up a ControlFlowGraph
+ *
+ * @author Anders Hessellund (modified by Matt Pearson-Beck & Jeff Principe)
+ */
 public class ControlFlowGraphVisitor extends ASTVisitor {
 	
 	/** statements in method */

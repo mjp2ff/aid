@@ -38,6 +38,11 @@ public class VariableUsageVisitor extends NameVisitor {
         super(methodFeatures, writing);
     }
 
+    /**
+     * Gets the list of all uses of identifiers in the AST
+     *
+     * @return List of identifier uses in the AST
+     */
     public List<IdentifierName> getIdentifierUses() {
         List<IdentifierName> allIdentifierUses = new ArrayList<>();
         allIdentifierUses.addAll(identifierUses);
@@ -45,6 +50,11 @@ public class VariableUsageVisitor extends NameVisitor {
         return allIdentifierUses;
     }
 
+    /**
+     * Gets all of the method invocations in the AST
+     *
+     * @return List of method invocations in the AST
+     */
     public List<MethodInvocationProperties> getMethodInvocations() {
         List<MethodInvocationProperties> allMethodInvocations = new ArrayList<>();
         allMethodInvocations.addAll(methodInvocations);
@@ -87,8 +97,8 @@ public class VariableUsageVisitor extends NameVisitor {
     /**
      * Find all reads and writes of variables within an assignment
      *
-     * @param node
-     * @return
+     * @param node The assigment node to analyze
+     * @return false
      */
     @Override
     public boolean visit(Assignment node) {

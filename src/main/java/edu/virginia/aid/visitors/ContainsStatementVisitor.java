@@ -30,97 +30,241 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  */
 public class ContainsStatementVisitor extends ASTVisitor {
 
+    /**
+     * The statement to search for
+     */
     private Statement statement;
+
+    /**
+     * Whether or not the ASTNode contains the search statement
+     */
     private boolean containsStatement = false;
 
+    /**
+     * Creates an ASTVisitor for determining whether an ASTNode subtree contains the given statement
+     *
+     * @param statement The statement to search for in the subtree
+     */
     public ContainsStatementVisitor(Statement statement) {
         this.statement = statement;
     }
 
+    /**
+     * Tests whether the ASTNode subtree contains the provided statement
+     *
+     * @return Whether the visited subtree contains the provided statement
+     */
     public boolean containsStatement() {
         return containsStatement;
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(AssertStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(Block node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(BreakStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(ConstructorInvocation node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(ContinueStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(DoStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(EmptyStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(EnhancedForStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(ExpressionStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(LabeledStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(ReturnStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(SuperConstructorInvocation node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(SwitchCase node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(SwitchStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(SynchronizedStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(ThrowStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(TryStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(TypeDeclarationStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(VariableDeclarationStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the given statement node matches the statement provided
+     *
+     * @param node The node to check against the statement
+     * @return False if the statement is found, otherwise true (keep searching)
+     */
     public boolean visit(WhileStatement node) {
         return matchNode(node);
     }
 
+    /**
+     * Checks if the provided node matches the statement that is being searched for using direct
+     * name equivalence.
+     *
+     * @param node The statement to search for
+     * @return False if the statements match, otherwise true (keep searching)
+     */
     private boolean matchNode(Statement node) {
         if (node == statement) {
             containsStatement = true;

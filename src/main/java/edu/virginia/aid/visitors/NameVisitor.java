@@ -16,13 +16,36 @@ import edu.virginia.aid.data.IdentifierUse;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.data.MethodInvocationProperties;
 
+/**
+ * ASTVisitor for finding and logging the identifier uses in an AST
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
+ */
 public class NameVisitor extends ASTVisitor {
 
+    /**
+     * The list of identifier uses in the AST
+     */
     List<IdentifierName> identifiers = new ArrayList<>();
+
+    /**
+     * The methods invoked in the AST
+     */
     List<MethodInvocationProperties> methods = new ArrayList<>();
 
+    /**
+     * The method containing the AST
+     */
     MethodFeatures methodFeatures;
+
+    /**
+     * Whether the current portion of the AST is part of an assignment expression
+     */
     boolean writing;
+
+    /**
+     * Whether the current portion of the AST is part of a method invocation
+     */
     boolean invoking = false;
 
     /**
@@ -36,10 +59,20 @@ public class NameVisitor extends ASTVisitor {
         this.writing = writing;
     }
 
+    /**
+     * Get all of the identifier uses from the AST
+     *
+     * @return List of identifier uses from the AST
+     */
     public List<IdentifierName> getIdentifiers() {
         return identifiers;
     }
 
+    /**
+     * Gets all of the method invocations from the AST
+     *
+     * @return List of all method invocations from the AST
+     */
     public List<MethodInvocationProperties> getMethods() {
         return methods;
     }

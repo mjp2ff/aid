@@ -19,8 +19,8 @@ public class ExpressionVisitor extends ASTVisitor {
     /**
      * Count infix expressions
      *
-     * @param node
-     * @return
+     * @param node The infix expression to analyze
+     * @return true (look recursively for more)
      */
     @Override
     public boolean visit (InfixExpression node) {
@@ -51,13 +51,5 @@ public class ExpressionVisitor extends ASTVisitor {
         }
 
         return true;
-    }
-
-    public void clearNumComparisons() {
-        numComparisons = 0;
-    }
-
-    public int getNumComparisons() {
-        return numComparisons;
     }
 }

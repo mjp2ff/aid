@@ -12,16 +12,42 @@ import edu.virginia.aid.data.SourceContext;
 
 /**
  * Finds class definitions in an AST
+ *
+ * @author Matt Pearson-Beck & Jeff Principe
  */
 public class ClassVisitor extends ASTVisitor {
 
+    /**
+     * The path to the file containing this class on disk
+     */
     private String filepath;
+
+    /**
+     * The contents of the file containing this class
+     */
     private final String fileData;
+
+    /**
+     * Property object to populate with information about the class found
+     */
     private ClassInformation classInformation = null;
+
+    /**
+     * Gets the property object populated with information about the class
+     *
+     * @return The property object populated with information about the class
+     */
     public ClassInformation getClassInformation() {
         return classInformation;
     }
 
+    /**
+     * Creates a new ASTVisitor for finding a class in the file at the specified
+     * filepath and with the given file data
+     *
+     * @param filepath The location of the file to search on disk
+     * @param fileData The contents of the file to search on disk
+     */
     public ClassVisitor(String filepath, final String fileData) {
         this.filepath = filepath;
         this.fileData = fileData;
