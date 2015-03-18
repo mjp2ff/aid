@@ -1,5 +1,7 @@
 package edu.virginia.aid.comparison;
 
+import java.text.DecimalFormat;
+
 import edu.virginia.aid.symex.IdentifierValue;
 
 /**
@@ -33,5 +35,11 @@ public class SuccessConditionDifference extends Difference {
     @Override
     public String toString() {
         return "Comments do not discuss the following condition for success: " + condition.toString() + ": " + getDifferenceScore();
+    }
+
+    @Override
+    public String dumpData() {
+    	DecimalFormat df = new DecimalFormat("0.000");
+    	return df.format(getDifferenceScore()) + ";" + "Comments do not discuss the following condition for success: " + condition.toString() + ";";
     }
 }

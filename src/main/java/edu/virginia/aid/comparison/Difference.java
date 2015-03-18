@@ -46,4 +46,6 @@ public abstract class Difference implements Comparable<Difference> {
     		return 0;
     	}
     }
+
+    public abstract String dumpData();
 }

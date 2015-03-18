@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
+import edu.virginia.aid.comparison.Difference;
 import edu.virginia.aid.comparison.MethodDifferences;
 import edu.virginia.aid.data.MethodFeatures;
 import edu.virginia.aid.data.MethodSignature;
@@ -221,8 +223,10 @@ public class Driver {
 
             String mode = promptUser("Would you like to load a project or a file? (p/f): ", Pattern.compile("p|f"), keyboard);
 
-            boolean dataDump = promptUser("Would you like a full data dump in file \"results.txt\" (y/n): ",
+            boolean dataDump = promptUser("Would you like a full data dump? (y/n): ",
             		Pattern.compile("y|n"), keyboard).equalsIgnoreCase("y");
+            String fileName = "";
+            if (dataDump) fileName = promptUser("Specify file name to dump to (will overrite existing files): ", Pattern.compile("^(?=\\s*\\S).*$"), keyboard);	
 
             // Project mode
             if (mode.equalsIgnoreCase("p")) {
@@ -250,13 +254,13 @@ public class Driver {
                     List<MethodDifferences> differences = compareAndRank(classMethods);
 
                     displayDifferences(differences, 10, keyboard);
-                    if (dataDump) dumpData(differences, "results.txt" /* filename */);
+                    if (dataDump) dumpData(differences, fileName);
                 } else if (analysisMode.equalsIgnoreCase("p")) {
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = compareAndRank(methods);
                     
                     displayDifferences(differences, 10, keyboard);
-                    if (dataDump) dumpData(differences, "results.txt" /* filename */);
+                    if (dataDump) dumpData(differences, fileName);
                 }
 
                 System.out.println();
@@ -274,7 +278,7 @@ public class Driver {
                 List<MethodDifferences> differences = compareAndRank(methods);
 
                 displayDifferences(differences, 10, keyboard);
-                if (dataDump) dumpData(differences, "results.txt" /* filename */);
+                if (dataDump) dumpData(differences, fileName);
             }
         }
     }
@@ -285,11 +289,17 @@ public class Driver {
      * @param filename The name of a file to create and write data to
      */
     public static void dumpData(List<MethodDifferences> differences, String filename) {
+    	DecimalFormat df = new DecimalFormat("0.000");
         try {
-			PrintWriter writer = new PrintWriter("results.txt", "UTF-8");			
-			
+			PrintWriter writer = new PrintWriter(filename, "UTF-8");			
+
 			for (int i = 0; i < differences.size(); ++i) {
-				writer.println(differences.get(i).toString());
+				MethodDifferences curMethodDiff = differences.get(i);
+				writer.print(df.format(curMethodDiff.getDifferenceScore()) + ";");
+				for (Difference curDiff : curMethodDiff) {
+					writer.print(curDiff.dumpData());
+				}
+				writer.println();
 			}
 			writer.close();
         } catch (Exception e) {

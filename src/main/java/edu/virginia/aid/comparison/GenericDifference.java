@@ -1,5 +1,7 @@
 package edu.virginia.aid.comparison;
 
+import java.text.DecimalFormat;
+
 /**
  * Concrete implementation of a Difference that simply takes in and provides a string description of the Difference
  *
@@ -32,5 +34,11 @@ public class GenericDifference extends Difference {
     @Override
     public String toString() {
         return differenceMessage + ": " + getDifferenceScore();
+    }
+
+    @Override
+    public String dumpData() {
+    	DecimalFormat df = new DecimalFormat("0.000");
+    	return df.format(getDifferenceScore()) + ";" + differenceMessage + ";";
     }
 }

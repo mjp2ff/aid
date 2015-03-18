@@ -1,5 +1,7 @@
 package edu.virginia.aid.comparison;
 
+import java.text.DecimalFormat;
+
 import edu.virginia.aid.data.IdentifierProperties;
 
 /**
@@ -36,5 +38,12 @@ public class MissingIdentifierDifference extends Difference {
         return "No reference to " + identifier.getContextString() + " '" + identifier.getName() + "' in comments (reads: "
                 + identifier.getReads() + ", writes: " + identifier.getWrites() + (identifier.isInReturnStatement() ? ", in return statment" : "") + ")" +
                 ": " + getDifferenceScore();
+    }
+
+    @Override
+    public String dumpData() {
+    	DecimalFormat df = new DecimalFormat("0.000");
+    	return df.format(getDifferenceScore()) + ";" + "No reference to " + identifier.getContextString() + " '" + identifier.getName() + "' in comments (reads: "
+        + identifier.getReads() + ", writes: " + identifier.getWrites() + (identifier.isInReturnStatement() ? ", in return statment" : "") + ")" + ";";
     }
 }
