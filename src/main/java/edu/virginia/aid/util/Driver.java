@@ -25,6 +25,7 @@ import edu.virginia.aid.parsers.DirectoryMethodParser;
 import edu.virginia.aid.parsers.FileMethodParser;
 import edu.virginia.aid.parsers.IndividualMethodParser;
 import edu.virginia.aid.parsers.MethodParser;
+import org.apache.commons.cli.*;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -122,6 +123,12 @@ public class Driver {
         }
     }
 
+    public static Options getCommandLineOptions() {
+        Options options = new Options();
+        options.addOption("m", "mode", true, "The mode that the tool should run in. Value can be any of the following: " +
+                "train, files, projects, directories, methods");
+    }
+
     /**
      * Runs tool on input files as specified in the command line parameters. There are two modes, either project or file,
      * set using the -projects or -files flag as shown below.
@@ -131,39 +138,29 @@ public class Driver {
      *
      * @param args Command line arguments
      */
-    public static void main(String[] args) {
-        if (args.length > 0) {
-            if (args[0].equals("-train")) {
-                if (args.length >= 3) {
+    public static void main(String[] args) throws ParseException {
+        CommandLineParser argParser = new GnuParser();
+        CommandLine cmd = argParser.parse(getCommandLineOptions(), args);
 
-                    MethodParser parser = new DirectoryMethodParser(args[1]);
+        if (cmd.hasOption("mode")) {
+            if (cmd.getOptionValue("mode").equals("train")) {
+                if (cmd.getArgs().length == 2) {
+
+                    MethodParser parser = new DirectoryMethodParser(cmd.getArgs()[0]);
 
                     // Parse this directory to get the appropriate data
                     Map<String, List<MethodFeatures>> labeledMethods = parser.createTrainingSet("primaryAction");
 
                     // Create training data set
-                    WekaHelper.buildTrainingDataFile(labeledMethods, "primaryAction", args[2]);
+                    WekaHelper.buildTrainingDataFile(labeledMethods, "primaryAction", cmd.getArgs()[1]);
 
                 } else {
                     throw new RuntimeException("No directory provided for training set and/or location for training data file");
                 }
-            } else if (args[0].equals("-files")) {
-                for(int i = 1; i < args.length; i++) {
+            } else if (cmd.getOptionValue("mode").equals("files")) {
+                for(int i = 0; i < cmd.getArgs().length; i++) {
 
-                    MethodParser parser = new FileMethodParser(args[i]);
-
-                    // Parse this file to get the appropriate data
-                    List<MethodFeatures> methods = parser.parseMethods();
-
-                    // Get differences for each method and rank them by most different to least different
-                    List<MethodDifferences> differences = compareAndRank(methods);
-
-                    displayDifferences(differences, 10, new Scanner(System.in));
-                }
-            } else if (args[0].equals("-projects")) {
-                for(int i = 1; i < args.length; i++) {
-
-                    MethodParser parser = new AntProjectMethodParser(args[i]);
+                    MethodParser parser = new FileMethodParser(cmd.getArgs()[i]);
 
                     // Parse this file to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -173,10 +170,23 @@ public class Driver {
 
                     displayDifferences(differences, 10, new Scanner(System.in));
                 }
-            } else if (args[0].equals("-directories")) {
-                for(int i = 1; i < args.length; i++) {
+            } else if (cmd.getOptionValue("mode").equals("projects")) {
+                for(int i = 0; i < cmd.getArgs().length; i++) {
 
-                    MethodParser parser = new DirectoryMethodParser(args[i]);
+                    MethodParser parser = new AntProjectMethodParser(cmd.getArgs()[i]);
+
+                    // Parse this file to get the appropriate data
+                    List<MethodFeatures> methods = parser.parseMethods();
+
+                    // Get differences for each method and rank them by most different to least different
+                    List<MethodDifferences> differences = compareAndRank(methods);
+
+                    displayDifferences(differences, 10, new Scanner(System.in));
+                }
+            } else if (cmd.getOptionValue("mode").equals("directories")) {
+                for(int i = 0; i < cmd.getArgs().length; i++) {
+
+                    MethodParser parser = new DirectoryMethodParser(cmd.getArgs()[i]);
 
                     // Parse this directory to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -186,10 +196,10 @@ public class Driver {
 
                     displayDifferences(differences, 10, new Scanner(System.in));
                 }
-            } else if (args[0].equals("-methods")) {
+            } else if (cmd.getOptionValue("mode").equals("methods")) {
                 Map<String, List<MethodSignature>> methodsToParse = new HashMap<>();
                 try {
-                    Scanner csvReader = new Scanner(new File(args[1]));
+                    Scanner csvReader = new Scanner(new File(cmd.getArgs()[0]));
                     while (csvReader.hasNextLine()) {
                         String line = csvReader.nextLine();
                         if (!line.startsWith("#")) {
