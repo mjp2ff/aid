@@ -260,4 +260,9 @@ public class BinOpResult implements IdentifierValue {
 
         return operand1 + " " + operatorString + " " + operand2;
     }
+
+    @Override
+    public boolean isComplete() {
+    	return operator != null && operand1 != null && operand1.isComplete() && operand2 != null && operand2.isComplete();
+    }
 }

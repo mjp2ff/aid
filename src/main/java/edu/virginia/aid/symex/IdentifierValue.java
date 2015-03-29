@@ -11,4 +11,6 @@ public interface IdentifierValue {
     public IdentifierValue getIntersection(IdentifierValue iv);
 
     public boolean isConstantType();
+
+    public boolean isComplete();
 }
