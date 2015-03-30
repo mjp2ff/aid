@@ -23,11 +23,7 @@ public class SymbolicExecution {
         }
         
         // Check if any conditions null, if so return null.
-        for (BooleanAndList bl : allConditions.getProducts()) {
-        	if (bl == null || !bl.isComplete())
-        		return null;
-        }
-        
+        if (!allConditions.isComplete()) return null;
 
         SumOfProducts allConditionsSimplified = allConditions.simplifyKeepType();
 

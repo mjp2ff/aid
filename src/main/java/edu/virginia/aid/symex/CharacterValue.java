@@ -51,4 +51,9 @@ public class CharacterValue implements IdentifierValue {
     public String toString() {
         return "" + this.value;
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }

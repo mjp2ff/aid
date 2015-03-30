@@ -50,4 +50,9 @@ public class ExternalValue implements IdentifierValue {
         }
         return false;
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }

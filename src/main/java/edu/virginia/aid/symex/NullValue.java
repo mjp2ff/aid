@@ -40,4 +40,9 @@ public class NullValue implements IdentifierValue {
     public String toString() {
         return "null";
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }

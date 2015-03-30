@@ -46,4 +46,9 @@ public class SubroutineResult implements IdentifierValue {
     public String toString() {
         return subroutineName;
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }

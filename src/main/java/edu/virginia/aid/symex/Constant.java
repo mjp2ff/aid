@@ -50,4 +50,9 @@ public class Constant implements IdentifierValue {
     public String toString() {
         return Double.toString(value);
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }

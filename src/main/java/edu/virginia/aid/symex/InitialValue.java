@@ -43,4 +43,9 @@ public class InitialValue implements IdentifierValue {
     public String toString() {
         return identifier.getName();
     }
+
+    @Override
+    public boolean isComplete() {
+    	return identifier != null;
+    }
 }
