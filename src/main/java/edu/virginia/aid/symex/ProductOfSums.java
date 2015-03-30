@@ -109,7 +109,7 @@ public class ProductOfSums implements IdentifierValue {
     public boolean isComplete() {
     	if (sums == null) return false;
     	for (BooleanOrList bl : sums) {
-    		if (!bl.isComplete()) return false;
+    		if (bl == null || !bl.isComplete()) return false;
     	}
     	return true;    	
     }

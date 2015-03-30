@@ -127,7 +127,7 @@ public class BooleanOrList implements IdentifierValue {
     public boolean isComplete() {
     	if (terms == null) return false;
     	for (IdentifierValue iV : terms) {
-    		if (!iV.isComplete()) return false;
+    		if (iV == null || !iV.isComplete()) return false;
     	}
     	return true;
     }

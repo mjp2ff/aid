@@ -82,6 +82,6 @@ public class UnOpResult implements IdentifierValue {
 
     @Override
     public boolean isComplete() {
-    	return operator != null && operand.isComplete();
+    	return operator != null && operand != null && operand.isComplete();
     }
 }

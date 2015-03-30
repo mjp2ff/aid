@@ -105,7 +105,7 @@ public class SumOfProducts implements IdentifierValue {
     public boolean isComplete() {
     	if (products == null) return false;
     	for (BooleanAndList bl : products) {
-    		if (!bl.isComplete()) return false;
+    		if (bl == null || !bl.isComplete()) return false;
     	}
     	return true;    	
     }
