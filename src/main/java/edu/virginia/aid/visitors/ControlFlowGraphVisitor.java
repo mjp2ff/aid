@@ -271,6 +271,10 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
 	@Override public boolean visit(SwitchStatement node) {
 		Set<Statement> set = getStatements(relations, node);
         assert set.size() == 1;
+        
+        // Hack fix to prevent errors on next() call.
+        if (!set.iterator().hasNext()) return false;
+       
         Statement next = set.iterator().next();
         
         // switch stmt can not be skipped if there is a default branch
@@ -464,11 +468,15 @@ public class ControlFlowGraphVisitor extends ASTVisitor {
     }
 	private Statement first(List<?> statements) {
 		assert !statements.isEmpty();
+		// Hack fix to prevent error on empty list.
+		if (statements.size() == 0) return null;
 		return (Statement) statements.get(0);
 	}
 
 	private Statement last(List<?> statements) {
 		assert !statements.isEmpty();
+		// Hack fix to prevent error on empty list.
+		if (statements.size() == 0) return null;
 		return (Statement) statements.get(statements.size() - 1);
 	}
 	/** get the set corresponding to the statement
