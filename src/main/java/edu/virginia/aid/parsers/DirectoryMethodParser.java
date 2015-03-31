@@ -24,8 +24,10 @@ public class DirectoryMethodParser extends MethodParser {
      * Creates a new parser for methods within the given directory
      *
      * @param directory The directory containing the methods to parse
+     * @param documentedOnly Whether to exclude methods that have no javadoc summary
      */
-    public DirectoryMethodParser(String directory) {
+    public DirectoryMethodParser(String directory, boolean documentedOnly) {
+        super(documentedOnly);
         this.directory = directory;
     }
 

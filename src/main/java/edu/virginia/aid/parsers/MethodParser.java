@@ -53,6 +53,11 @@ public abstract class MethodParser {
 
     private Classifier primaryActionClassifier;
     private Attribute primaryActionClassAttribute;
+    private boolean documentedOnly;
+
+    public MethodParser(boolean documentedOnly) {
+        this.documentedOnly = documentedOnly;
+    }
 
     /**
      * Returns the primaryAction classifier for the current instance, instantiating it if necessary
@@ -289,7 +294,10 @@ public abstract class MethodParser {
                 // Run all detectors
                 MethodFeatures methodFeatures = methodProcessor.runDetectors();
 
-                methodFeaturesList.add(methodFeatures);
+                // Do not add methods that have no javadoc summary if the documentedOnly flag is set
+                if (!documentedOnly || !methodFeatures.getJavadocSummary().equals("")) {
+                    methodFeaturesList.add(methodFeatures);
+                }
                 methodFeaturesMap.put(m, methodFeatures);
             }
         }

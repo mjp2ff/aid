@@ -17,8 +17,10 @@ public class FileMethodParser extends MethodParser {
      * Constructs a parser pointing to the given file
      *
      * @param filePath The path to the source file to consider
+     * @param documentedOnly Whether to exclude methods that have no javadoc summary
      */
-    public FileMethodParser(String filePath) {
+    public FileMethodParser(String filePath, boolean documentedOnly) {
+        super(documentedOnly);
         this.filePath = filePath;
     }
 

@@ -24,8 +24,10 @@ public class IndividualMethodParser extends MethodParser {
      * Constructs a parser pointing to the given file that parses the given methods
      *
      * @param methods Map of files to the internal methods to be parsed
+     * @param documentedOnly Whether to exclude methods that have no javadoc summary
      */
-    public IndividualMethodParser(Map<String, List<MethodSignature>> methods) {
+    public IndividualMethodParser(Map<String, List<MethodSignature>> methods, boolean documentedOnly) {
+        super(documentedOnly);
         this.methods = methods;
     }
 

@@ -660,21 +660,9 @@ public class MethodFeatures extends SourceElement {
 		}
     	
         boolean foundInComments = false;
-        
-        Javadoc javadocElem = getJavadoc();
-        // Restrict attention to summary
-        String javadocSummary = "";
-        if (javadocElem != null) {
-            for (TagElement tag : (List<TagElement>) javadocElem.tags()) {
-            	// Only one element will have no tag, which will be the summary sentence.
-            	// This ignores all tagged elements because we aren't considering them here.
-                if (tag.getTagName() == null) {
-                    javadocSummary = tag.toString();
-                    break;
-                }
-            }
-        }
-        
+
+        String javadocSummary = getJavadocSummary();
+
         List<String> synonymsList = new ArrayList<>(synonyms);
         for (int i = 0; i < synonymsList.size() && !foundInComments; ++i) {
         	String synonym = synonymsList.get(i);
@@ -747,6 +735,25 @@ public class MethodFeatures extends SourceElement {
         }
 
         return instance;
+    }
+
+    /**
+     * Gets the summary portion of the Javadoc for the method, returning the empty string if there is none
+     *
+     * @return the summary portion of the method's Javadoc, or empty string if there is none
+     */
+    public String getJavadocSummary() {
+        String summary = "";
+
+        if (javadoc != null) {
+            for (TagElement tag : (List<TagElement>) javadoc.tags()) {
+                if (tag.getTagName() == null) {
+                    summary = tag.toString();
+                }
+            }
+        }
+
+        return summary;
     }
 
     /**

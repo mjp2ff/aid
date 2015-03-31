@@ -127,6 +127,8 @@ public class Driver {
         Options options = new Options();
         options.addOption("m", "mode", true, "The mode that the tool should run in. Value can be any of the following: " +
                 "train, files, projects, directories, methods");
+        options.addOption("d", "documented-only", false, "Limits output to only methods that contain a Javadoc summary");
+        return options;
     }
 
     /**
@@ -134,7 +136,7 @@ public class Driver {
      * set using the -projects or -files flag as shown below.
      *
      * Usage:
-     *      java Driver [-projects|-files] [project1/file1 project2/file2 ...]
+     *      java Driver -m [train/files/projects/directories/methods] path1 path2 ...
      *
      * @param args Command line arguments
      */
@@ -146,7 +148,7 @@ public class Driver {
             if (cmd.getOptionValue("mode").equals("train")) {
                 if (cmd.getArgs().length == 2) {
 
-                    MethodParser parser = new DirectoryMethodParser(cmd.getArgs()[0]);
+                    MethodParser parser = new DirectoryMethodParser(cmd.getArgs()[0], cmd.hasOption('d'));
 
                     // Parse this directory to get the appropriate data
                     Map<String, List<MethodFeatures>> labeledMethods = parser.createTrainingSet("primaryAction");
@@ -160,7 +162,7 @@ public class Driver {
             } else if (cmd.getOptionValue("mode").equals("files")) {
                 for(int i = 0; i < cmd.getArgs().length; i++) {
 
-                    MethodParser parser = new FileMethodParser(cmd.getArgs()[i]);
+                    MethodParser parser = new FileMethodParser(cmd.getArgs()[i], cmd.hasOption('d'));
 
                     // Parse this file to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -173,7 +175,7 @@ public class Driver {
             } else if (cmd.getOptionValue("mode").equals("projects")) {
                 for(int i = 0; i < cmd.getArgs().length; i++) {
 
-                    MethodParser parser = new AntProjectMethodParser(cmd.getArgs()[i]);
+                    MethodParser parser = new AntProjectMethodParser(cmd.getArgs()[i], cmd.hasOption('d'));
 
                     // Parse this file to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -186,7 +188,7 @@ public class Driver {
             } else if (cmd.getOptionValue("mode").equals("directories")) {
                 for(int i = 0; i < cmd.getArgs().length; i++) {
 
-                    MethodParser parser = new DirectoryMethodParser(cmd.getArgs()[i]);
+                    MethodParser parser = new DirectoryMethodParser(cmd.getArgs()[i], cmd.hasOption('d'));
 
                     // Parse this directory to get the appropriate data
                     List<MethodFeatures> methods = parser.parseMethods();
@@ -218,7 +220,7 @@ public class Driver {
                     throw new RuntimeException(e);
                 }
 
-                MethodParser parser = new IndividualMethodParser(methodsToParse);
+                MethodParser parser = new IndividualMethodParser(methodsToParse, cmd.hasOption('d'));
 
                 // Parse these methods to get the appropriate data
                 List<MethodFeatures> methods = parser.parseMethods();
@@ -243,7 +245,7 @@ public class Driver {
                 System.out.print("Provide the path to the project to analyze: ");
                 String projectPath = keyboard.nextLine();
 
-                MethodParser parser = new AntProjectMethodParser(projectPath);
+                MethodParser parser = new AntProjectMethodParser(projectPath, cmd.hasOption('d'));
 
                 List<MethodFeatures> methods = parser.parseMethods();
 
@@ -280,7 +282,7 @@ public class Driver {
                 System.out.print("Provide the path to the file to analyze: ");
                 filePath = keyboard.nextLine();
 
-                MethodParser parser = new FileMethodParser(filePath);
+                MethodParser parser = new FileMethodParser(filePath, cmd.hasOption('d'));
 
                 List<MethodFeatures> methods = parser.parseMethods();
 

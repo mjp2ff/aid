@@ -34,10 +34,11 @@ public class AntProjectMethodParser extends DirectoryMethodParser {
      * project directory
      *
      * @param directory The directory of the project for which to analyze a buildfile
+     * @param documentedOnly Whether to exclude methods that have no javadoc summary
      */
-    public AntProjectMethodParser(String directory) {
+    public AntProjectMethodParser(String directory, boolean documentedOnly) {
 
-        super(directory);
+        super(directory, documentedOnly);
 
         final String buildfileName = "build.xml";
         String path = ((directory.charAt(directory.length() - 1)) == File.separatorChar) ?
