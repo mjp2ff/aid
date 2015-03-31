@@ -21,6 +21,9 @@ public class SymbolicExecution {
         for (Path path : paths) {
             allConditions.addProduct(execute(method, path));
         }
+        
+        // Check if any conditions null, if so return null.
+        if (!allConditions.isComplete()) return null;
 
         SumOfProducts allConditionsSimplified = allConditions.simplifyKeepType();
 

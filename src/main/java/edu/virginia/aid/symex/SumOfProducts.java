@@ -100,4 +100,13 @@ public class SumOfProducts implements IdentifierValue {
         }
         return booleanOrList.toString();
     }
+
+    @Override
+    public boolean isComplete() {
+    	if (products == null) return false;
+    	for (BooleanAndList bl : products) {
+    		if (bl == null || !bl.isComplete()) return false;
+    	}
+    	return true;    	
+    }
 }

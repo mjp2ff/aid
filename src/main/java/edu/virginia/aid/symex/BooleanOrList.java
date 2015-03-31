@@ -122,4 +122,13 @@ public class BooleanOrList implements IdentifierValue {
             return "( " + joinedTerms + " )";
         }
     }
+
+    @Override
+    public boolean isComplete() {
+    	if (terms == null) return false;
+    	for (IdentifierValue iV : terms) {
+    		if (iV == null || !iV.isComplete()) return false;
+    	}
+    	return true;
+    }
 }

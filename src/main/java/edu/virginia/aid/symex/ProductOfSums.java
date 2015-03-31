@@ -105,5 +105,13 @@ public class ProductOfSums implements IdentifierValue {
         return booleanAndList.toString();
     }
 
+    @Override
+    public boolean isComplete() {
+    	if (sums == null) return false;
+    	for (BooleanOrList bl : sums) {
+    		if (bl == null || !bl.isComplete()) return false;
+    	}
+    	return true;    	
+    }
 
 }

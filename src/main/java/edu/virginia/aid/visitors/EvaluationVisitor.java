@@ -201,19 +201,23 @@ public class EvaluationVisitor extends ASTVisitor {
      * @return false
      */
     public boolean visit(NumberLiteral node) {
-        if (node.getToken().startsWith("0x")) {
-            result = new Constant(Long.decode(node.getToken()));
-        } else if (node.getToken().startsWith("0b")) {
-            result = new Constant(Long.valueOf(node.getToken().substring(2), 2));
-        } else if (node.getToken().charAt(node.getToken().length() - 1) <= 57 && node.getToken().startsWith("0") && !node.getToken().contains(".") && node.getToken().length() > 1) {
-            result = new Constant(Long.valueOf(node.getToken().substring(1), 8));
-        } else if (node.getToken().endsWith("l") || node.getToken().endsWith("L")) {
-            result = new Constant(Long.parseLong(node.getToken().substring(0, node.getToken().length() - 1)));
-        } else if (node.getToken().endsWith("f") || node.getToken().endsWith("F")) {
-            result = new Constant(Float.parseFloat(node.getToken().substring(0, node.getToken().length() - 1)));
-        } else {
-            result = new Constant(Double.parseDouble(node.getToken()));
-        }
+    	try {
+            if (node.getToken().startsWith("0x")) {
+                result = new Constant(Long.decode(node.getToken()));
+            } else if (node.getToken().startsWith("0b")) {
+                result = new Constant(Long.valueOf(node.getToken().substring(2), 2));
+            } else if (node.getToken().charAt(node.getToken().length() - 1) <= 57 && node.getToken().startsWith("0") && !node.getToken().contains(".") && node.getToken().length() > 1) {
+                result = new Constant(Long.valueOf(node.getToken().substring(1), 8));
+            } else if (node.getToken().endsWith("l") || node.getToken().endsWith("L")) {
+                result = new Constant(Long.parseLong(node.getToken().substring(0, node.getToken().length() - 1)));
+            } else if (node.getToken().endsWith("f") || node.getToken().endsWith("F")) {
+                result = new Constant(Float.parseFloat(node.getToken().substring(0, node.getToken().length() - 1)));
+            } else {
+                result = new Constant(Double.parseDouble(node.getToken()));
+            }    		
+    	} catch (Exception e) {
+    		// Don't set result, will catch null later.
+    	}
         return false;
     }
 

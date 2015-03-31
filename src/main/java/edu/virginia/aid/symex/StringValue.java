@@ -44,4 +44,9 @@ public class StringValue implements IdentifierValue {
     public String toString() {
         return value;
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }

@@ -50,4 +50,9 @@ public class BooleanValue implements IdentifierValue {
     public String toString() {
         return (value ? "true" : "false");
     }
+
+    @Override
+    public boolean isComplete() {
+    	return true;
+    }
 }
