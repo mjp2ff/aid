@@ -140,6 +140,7 @@ public class Driver {
             }
 
             if (!keyboard.nextLine().equalsIgnoreCase("y")) break;
+            displayIndex++;
         }
     }
 
