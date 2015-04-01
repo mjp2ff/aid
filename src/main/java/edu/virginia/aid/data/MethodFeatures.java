@@ -623,7 +623,7 @@ public class MethodFeatures extends SourceElement {
             Double retVal = TFIDF.get(word);
             totalTFIDF += (retVal != null ? retVal : 1.0);
         }
-        return Math.min(2, totalTFIDF / s.split(" ").length);
+        return Math.min(1.0, totalTFIDF / s.split(" ").length);
     }
         
     /**

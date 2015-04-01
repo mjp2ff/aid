@@ -60,6 +60,15 @@ public class MethodDifferences extends ArrayList<Difference> implements Comparab
     }
 
     /**
+     * Gets the MethodFeatures associated with the differences
+     *
+     * @return The MethodFeatures associated with the differences
+     */
+    public MethodFeatures getMethod() {
+        return this.method;
+    }
+
+    /**
      * Presents a human-readable representation of all differences in the method, sorted from highest
      * to lowest differenceScore
      *

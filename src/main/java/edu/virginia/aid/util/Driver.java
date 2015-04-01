@@ -26,6 +26,7 @@ import edu.virginia.aid.parsers.FileMethodParser;
 import edu.virginia.aid.parsers.IndividualMethodParser;
 import edu.virginia.aid.parsers.MethodParser;
 import org.apache.commons.cli.*;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * A Driver is used to analyze a file or project, parse out the code and comments, and split
@@ -123,11 +124,32 @@ public class Driver {
         }
     }
 
+    public static void displayMethodDetails(List<MethodDifferences> rankedDifferences, Scanner keyboard) {
+        int displayIndex = 0;
+
+        while (displayIndex < rankedDifferences.size()) {
+            System.out.println("\n");
+            System.out.println("\033[1m" + rankedDifferences.get(displayIndex).getMethod().getParentClass().getClassName()
+                    + "." + rankedDifferences.get(displayIndex).getMethod().getMethodName() + "()\033[0m");
+            System.out.println(rankedDifferences.get(displayIndex));
+            System.out.println("Method Source:");
+            System.out.println(rankedDifferences.get(displayIndex).getMethod().getElementText());
+
+            if (displayIndex < rankedDifferences.size() - 1) {
+                System.out.print("Display next method? (y/n): ");
+            }
+
+            if (!keyboard.nextLine().equalsIgnoreCase("y")) break;
+        }
+    }
+
     public static Options getCommandLineOptions() {
         Options options = new Options();
         options.addOption("m", "mode", true, "The mode that the tool should run in. Value can be any of the following: " +
                 "train, files, projects, directories, methods");
         options.addOption("d", "documented-only", false, "Limits output to only methods that contain a Javadoc summary");
+        options.addOption("i", "individual", false, "Displays methods one at a time with both the differences and the " +
+                "method's source code");
         return options;
     }
 
@@ -170,7 +192,11 @@ public class Driver {
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = compareAndRank(methods);
 
-                    displayDifferences(differences, 10, new Scanner(System.in));
+                    if (cmd.hasOption("i")) {
+                        displayMethodDetails(differences, new Scanner(System.in));
+                    } else {
+                        displayDifferences(differences, 10, new Scanner(System.in));
+                    }
                 }
             } else if (cmd.getOptionValue("mode").equals("projects")) {
                 for(int i = 0; i < cmd.getArgs().length; i++) {
@@ -183,7 +209,11 @@ public class Driver {
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = compareAndRank(methods);
 
-                    displayDifferences(differences, 10, new Scanner(System.in));
+                    if (cmd.hasOption("i")) {
+                        displayMethodDetails(differences, new Scanner(System.in));
+                    } else {
+                        displayDifferences(differences, 10, new Scanner(System.in));
+                    }
                 }
             } else if (cmd.getOptionValue("mode").equals("directories")) {
                 for(int i = 0; i < cmd.getArgs().length; i++) {
@@ -196,7 +226,11 @@ public class Driver {
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = compareAndRank(methods);
 
-                    displayDifferences(differences, 10, new Scanner(System.in));
+                    if (cmd.hasOption("i")) {
+                        displayMethodDetails(differences, new Scanner(System.in));
+                    } else {
+                        displayDifferences(differences, 10, new Scanner(System.in));
+                    }
                 }
             } else if (cmd.getOptionValue("mode").equals("methods")) {
                 Map<String, List<MethodSignature>> methodsToParse = new HashMap<>();
@@ -228,7 +262,11 @@ public class Driver {
                 // Get differences for each method and rank them by most different to least different
                 List<MethodDifferences> differences = compareAndRank(methods);
 
-                displayDifferences(differences, 10, new Scanner(System.in));
+                if (cmd.hasOption("i")) {
+                    displayMethodDetails(differences, new Scanner(System.in));
+                } else {
+                    displayDifferences(differences, 10, new Scanner(System.in));
+                }
             }
         } else {
             Scanner keyboard = new Scanner(System.in);
@@ -265,13 +303,21 @@ public class Driver {
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = compareAndRank(classMethods);
 
-                    displayDifferences(differences, 10, keyboard);
+                    if (cmd.hasOption("i")) {
+                        displayMethodDetails(differences, keyboard);
+                    } else {
+                        displayDifferences(differences, 10, keyboard);
+                    }
                     if (dataDump) dumpData(differences, fileName);
                 } else if (analysisMode.equalsIgnoreCase("p")) {
                     // Get differences for each method and rank them by most different to least different
                     List<MethodDifferences> differences = compareAndRank(methods);
-                    
-                    displayDifferences(differences, 10, keyboard);
+
+                    if (cmd.hasOption("i")) {
+                        displayMethodDetails(differences, keyboard);
+                    } else {
+                        displayDifferences(differences, 10, keyboard);
+                    }
                     if (dataDump) dumpData(differences, fileName);
                 }
 
@@ -289,7 +335,11 @@ public class Driver {
                 // Get differences for each method and rank them by most different to least different
                 List<MethodDifferences> differences = compareAndRank(methods);
 
-                displayDifferences(differences, 10, keyboard);
+                if (cmd.hasOption("i")) {
+                    displayMethodDetails(differences, keyboard);
+                } else {
+                    displayDifferences(differences, 10, keyboard);
+                }
                 if (dataDump) dumpData(differences, fileName);
             }
         }
