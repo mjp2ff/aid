@@ -316,13 +316,16 @@ In the first part of our study, test subjects were given code for a method with 
 
 In the second part of our study, participants were given the code for a method with the comments removed, along with the same surrounding class information. They were then presented with 10 pairs of proposed comments for that method. The sample methods were taken from the result of the first part of the human study. Each pair contained one sample that was written with AID's results available and one without. Participants in the second part of the study selected which documentation sample they preferred in each pair, with the options being 1 (significantly prefer the left sample), 2 (slightly prefer the left sample), 3 (slightly prefer the right sample), and 4 (significantly prefer the right sample). The positions in which the documentation was presented, with respect to whether or not it used AID's results, was scrambled to avoid biases. Participants completed 10 pairs of documentation for each method, and completed 10 methods in total. The same 20 methods were analyzed here as in the first part of the study. Participants were also asked to describe qualities of good documentation at the end of the survey, which was used as a flag to show if they followed the instructions and understood the given task. We had 100 new participants complete the second part of the survey, and we accepted 45 responses after removing some based on the freeform question mentioned previously.
 
-\subsection{Difficulty}
+\subsection{Quantitative Analysis}
+Overall effectiveness of AID is measured along three different metrics: difficulty, efficiency and quality of documentation. The first two metrics are derived from the first stage of the survey, while the third comes from the results of the second stage.
+
+\subsubsection{Difficulty}
 In the first stage of the human study, participants were asked to provide an assessment of the overall difficulty of updating documentation for the 10 methods they were presented with. Judgments were made on a Likert scale from 1-5, where 1 was very easy and 5 was very hard. Participants who were given use of the output from AID reported an average difficulty of 3.5, compared with 3.815 for those who did not have any assistance. A two-sample unequal variances t-test revealed that the result is significant at p = 0.0758.
 
-\subsection{Time to Document}
+\subsubsection{Time to Document}
 The time taken to write each piece of documentation in the first stage was recorded for comparison. Participants with access to the output of AID took 3:17 on average, while those without the tool took 3:15. However, a two-sample unequal variances t-test does not find the result significant, leading us to conclude that participants took equal time regardless of whether or not they were in the treatment group.
 
-\subsection{Documentation Quality}
+\subsubsection{Documentation Quality}
 Most importantly, developers should be able to write better documentation with the use of AID. This was measured using judgments provided by participants in the second stage of the study. Results are first normalized such that higher values for the Likert rating always indicate a stronger preference for documentation generated with use of AID, with 4 indicating the strongest preference for AID-assisted documentation and 1 indicating the strongest preference against it. Once normalized, the average Likert rating is 2.487, with 2.5 indicating no overall preference. A one-sample t-test does not find a significant difference between the results and the expected mean; therefore, we cannot conclude any preference for or against documentation generated with the assistance of AID.
 
 \subsection{Qualitative Analysis}
