@@ -109,13 +109,13 @@ AID seeks to reduce the time necessary to improve the documentation of methods i
 
 This paper's main contributions are:
 \begin{itemize}
-\item A study of method summary descriptions in the Java programming language for well-documented methods of the Java Development Kit. Key concepts present in these methods leads to a model for summary documentation of Java methods in the general case.
+\item A study of method summary descriptions in the Java programming language for well-documented methods of the Java Development Kit. Key concepts present in these methods lead to a model for summary documentation of Java methods in the general case.
 \item An algorithm that identifies values for the key concepts that should be present in summary documentation and searches for them in documentation. Methods are prioritized on the overall difference between the concepts present in the source and those discussed in the comments.
 \item A preliminary implementation of AID and an accompanying human study of its effectiveness in improving the efficiency and resulting quality of updating documentation with the use of AID. The results are inconclusive using the current prototype, but they provide a series of next steps for improving the effectiveness of AID.
 \end{itemize}
 
 \section{Motivating Examples}
-Projects that are large in scope and develop over a long period of time often have documentation that does not reflect the current state of the code \cite{lethbridge}. These examples are not meant to criticize the projects in question, but merely to illustrate a problem that occurs through large software projects, and is realistically unavoidable as they grow and change over time.
+Projects that are large in scope and developed over a long period of time often have documentation that does not reflect the current state of the code \cite{lethbridge}. These examples are not meant to criticize the projects in question, but merely to illustrate a problem that occurs through large software projects, and is realistically unavoidable as they grow and change over time.
 
 Consider the method shown below, from the jEdit project, a text editor for programmers.
 
@@ -135,7 +135,7 @@ public static void execute()
 }
 \end{lstlisting}
 
-The comments associated with this method are inadequate for a few reasons. First, the methods actual purpose is discussed briefly and insufficiently, and it specifies the method call incorrectly. The comments do not discuss data or method flow, nor the purpose or details of the actions performed. Finally, the comments rely heavily on general class information to explain the method's purpose. This is problematic, because someone trying to use this method might be viewing the comments through Javadoc as they write code, rather than looking at the class' source directly.
+The comments associated with this method are inadequate for a few reasons. First, the method's actual purpose is barely mentioned, and it specifies the method call incorrectly. The comments do not discuss data or method flow, nor the purpose or details of the actions performed. Finally, the comments rely heavily on general class information to explain the method's purpose. This is problematic because someone trying to use this method might be viewing the comments through Javadoc rather than looking at the class' source directly.
 
 Consider the second example, shown below. This method is from the TV-Browser project, a Java-based TV guide.
 
