@@ -34,23 +34,36 @@
 
 \usepackage{color}
 \usepackage{listings}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
 \lstset{ %
-language=Java,                % choose the language of the code
-basicstyle=\footnotesize,       % the size of the fonts that are used for the code
-numbers=left,                   % where to put the line-numbers
-numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
-stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
-numbersep=5pt,                  % how far the line-numbers are from the code
-backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
-showspaces=false,               % show spaces adding particular underscores
-showstringspaces=false,         % underline spaces within strings
-showtabs=false,                 % show tabs within strings adding particular underscores
-frame=single,           % adds a frame around the code
-tabsize=2,          % sets default tabsize to 2 spaces
-captionpos=b,           % sets the caption-position to bottom
-breaklines=true,        % sets automatic line breaking
-breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
-escapeinside={\%*}{*)}          % if you want to add a comment within your code
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=n,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Java,                 % the language of the code
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
 
 \begin{document}
@@ -124,14 +137,14 @@ Consider the method shown below, from the jEdit project, a text editor for progr
         OneTimeMigrationService */
 public static void execute()
 {
-    String[] migrations = ServiceManager.getServiceNames(OneTimeMigrationService.class);
-    if (migrations.length == 0) return;
-    for (String migration: migrations)
-    {
-        Object obj = ServiceManager.getService(OneTimeMigrationService.class, migration);
-        OneTimeMigrationService svc = (OneTimeMigrationService) obj;
-        svc.doMigration();
-    }
+  String[] migrations = ServiceManager.getServiceNames(OneTimeMigrationService.class);
+  if (migrations.length == 0) return;
+  for (String migration: migrations)
+  {
+    Object obj = ServiceManager.getService(OneTimeMigrationService.class, migration);
+    OneTimeMigrationService svc = (OneTimeMigrationService) obj;
+    svc.doMigration();
+  }
 }
 \end{lstlisting}
 
@@ -141,42 +154,42 @@ Consider the second example, shown below. This method is from the TV-Browser pro
 
 \begin{lstlisting}
 /**
-   * reads an instance from a DataInput.
-   *
-   * @param in the input to read from
-   * @return the new created instance
-   * @throws IOException if somethin went wrong
-   */
+ * reads an instance from a DataInput.
+ *
+ * @param in the input to read from
+ * @return the new created instance
+ * @throws IOException if somethin went wrong
+ */
 public static Date readData(final DataInput in) throws IOException
 {
-    int version = in.readInt();
-    short year;
-    byte month;
-    byte day;
-    if (version == 1) {
-        // currently, version==3 is used
-        int date = in.readInt();
-        long l = (long) date * 24 * 60 * 60 * 1000;
-        java.util.Date d = new java.util.Date(l);
-        Calendar mCalendar = Calendar.getInstance();
-        mCalendar.setTime(d);
-        year = (short) mCalendar.get(Calendar.YEAR);
-        month = (byte) (mCalendar.get(Calendar.MONTH) + 1);
-        day = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
-    }
-    else if (version == 2)
-    {
-        year = (short) in.readInt();
-        month = (byte) in.readInt();
-        day = (byte) in.readInt();
-    }
-    else
-    {
-        year = in.readShort();
-        month = in.readByte();
-        day = in.readByte();
-    }
-    return new Date(year, month, day);
+  int version = in.readInt();
+  short year;
+  byte month;
+  byte day;
+  if (version == 1) {
+    // currently, version==3 is used
+    int date = in.readInt();
+    long l = (long) date * 24 * 60 * 60 * 1000;
+    java.util.Date d = new java.util.Date(l);
+    Calendar mCalendar = Calendar.getInstance();
+    mCalendar.setTime(d);
+    year = (short) mCalendar.get(Calendar.YEAR);
+    month = (byte) (mCalendar.get(Calendar.MONTH) + 1);
+    day = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
+  }
+  else if (version == 2)
+  {
+    year = (short) in.readInt();
+    month = (byte) in.readInt();
+    day = (byte) in.readInt();
+  }
+  else
+  {
+    year = in.readShort();
+    month = in.readByte();
+    day = in.readByte();
+  }
+  return new Date(year, month, day);
 }
 \end{lstlisting}
 
@@ -336,8 +349,44 @@ The time taken to write each piece of documentation in the first stage was recor
 \subsubsection{Documentation Quality}
 Most importantly, developers should be able to write better documentation with the use of AID. This was measured using judgments provided by participants in the second stage of the study. Results are first normalized such that higher values for the Likert rating always indicate a stronger preference for documentation generated with use of AID, with 4 indicating the strongest preference for AID-assisted documentation and 1 indicating the strongest preference against it. Once normalized, the average Likert rating is 2.487, with 2.5 indicating no overall preference. A one-sample t-test does not find a significant difference between the results and the expected mean; therefore, we cannot conclude any preference for or against documentation generated with the assistance of AID.
 
-\subsection{Conditions for Success}
-While respondents in stage two of the survey indicated no overall preference for or against documentation generated with the help of AID, this result does not necessarily apply to the individual concepts emphasized by the algorithm. In particular, we noticed that respondents emphasized the value of documentation that explains conditions for successful execution (see Section \ref{Qualitative Analysis}).
+\subsection{Surveyed Qualities of Good Summary Documentation}
+From our human studies, we gathered significant freeform feedback from our testers as to what they thought about the tool, how difficult it was to write documentation, what they valued in good documentation, etc.
+
+\subsubsection{Conciseness}
+
+Feedback about what constitutes good documentation repeatedly highlighted the importance of conciseness in documentation - shorter documentation that conveys the same information is more useful and desired. Comments in response to the prompt: ``Based on the documentation samples you read, identify a few characteristics of good documentation.'' included the following:
+
+\begin{itemize}
+\item ``Quick and concise.''
+\item ``Good documentation is succinct.''
+\item ``Complete and details in brief.''
+\item ``Concise''
+\item ``Not too long''
+\end{itemize}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=\columnwidth]{length-vs-favorability.png}
+	\end{center}
+	\caption{Scatterplot of documentation length and average favorability, measured in characters and average Likert rating, respectively. A logarithmic regression is applied with equation \(-0.205\ln{x} + 3.4305\) and \(R^2 = 0.248\).}
+	\label{figure-length-favorability}
+\end{figure}
+
+Using all of the judgments performed using each documentation sample, we plotted the length of the documentation sample in characters against the average rating it received (4 being the best and 1 being the worst). Applying a logarithmic regression to the dataset, we get a fit with equation \(-0.205\ln{x} + 3.4305\). The regression expression has \(R^2 = 0.248\), indicating a weak negative correlation between length and favorability that levels out as the length increases. This relationship can be seen in Figure \ref{figure-length-favorability}.
+
+Unfortunately, the prevailing desire for conciseness runs counter to AID's effect on documentation length. Documentation written by testers using AID is actually about 10\% longer, on average, than documentation written without it. This suggests that users rely on AID and feel compelled to include all the information presented, rather than using it as a resource as intended. Further work needs to be put into improving the quality of output to inform users as to its intended purpose.
+
+\subsubsection{Discusses Conditions for Success}
+
+Users also valued the conditions for success identified by AID. In response to the same prompt, users said:
+
+\begin{itemize}
+\item ``The condition and if/else clauses are clearly mentioned''
+\item ``...any error conditions...''
+\item ``Under which conditions the method or class will throw an exception''
+\end{itemize}
+
+None of these users were exposed to the results of AID, so they could not know that we provided these conditions for success in our feedback. This suggests to us that these conditions for success should be more heavily incorporated into AID's responses, and presented more clearly to the user.
 
 To determine the favorability of documenting conditions for success, we manually annotated each documentation instance from stage one of the study with whether or not it mentions the conditions for success for its associated method. Next, we restricted attention to only the pairings of documentation samples where one sample discusses conditions for success and the other does not. The resulting data set contains \(1581\) comparison of documentation samples.
 
@@ -353,30 +402,7 @@ When comparing instances with documented conditions for success to those without
 
 Since documentation writers given the output of AID were told specifically about the conditions for success, it stands to reason that they would document such conditions more often than those with no information. However, at a rate of \(41.4\%\), those with the use of AID only documented conditions for success slightly more often than those without it (\(40.8\%\)). One possible explanation is that AID either exposed too much information to documentation writers, making it tough to identify individual concepts that were important, or it did not make the information clear enough to understand. Another possibility is that a portion of developers do not believe conditions for success should be included in method summary documentation and chose not to include it even with the suggestion.
 
-\subsection{Qualitative Analysis}
-From our human studies, we gathered significant freeform feedback from our testers as to what they thought about the tool, how difficult it was to write documentation, what they valued in good documentation, etc.
-
-Feedback about what constitutes good documentation repeatedly highlighted the importance of conciseness in documentation - shorter documentation that conveys the same information is more useful and desired. Comments in response to the prompt: ``Based on the documentation samples you read, identify a few characteristics of good documentation.'' included the following:
-
-\begin{itemize}
-\item ``Quick and concise.''
-\item ``Good documentation is succinct.''
-\item ``Complete and details in brief.''
-\item ``Concise''
-\item ``Not too long''
-\end{itemize}
-
-However, we found that documentation written by testers using AID was actually 10\% longer, on average, than documentation written without it. This suggests that users relied on AID and felt compelled to include all the information presented, rather than using it as a resource as intended. Further work needs to be put into improving the quality of output to inform users as to its intended purpose.
-
-Users also valued the conditions for success identified by AID. In response to the same prompt, users said:
-
-\begin{itemize}
-\item ``The condition and if/else clauses are clearly mentioned''
-\item ``...any error conditions...''
-\item ``Under which conditions the method or class will throw an exception''
-\end{itemize}
-
-None of these users were exposed to the results of AID, so they could not know that we provided these conditions for success in our feedback. This suggests to us that these conditions for success should be more heavily incorporated into AID's responses, and presented more clearly to the user.
+\subsubsection{Mentions Primary Action}
 
 Finally, users also valued the primary action we identified through AID that concisely summarized the purpose of the method. Again, these users were not exposed to AID so did not know what it provided (nor even that it existed). Comments to this effect in response to the same prompt include:
 
