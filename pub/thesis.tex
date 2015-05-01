@@ -320,13 +320,30 @@ In the second part of our study, participants were given the code for a method w
 Overall effectiveness of AID is measured along three different metrics: difficulty, efficiency and quality of documentation. The first two metrics are derived from the first stage of the survey, while the third comes from the results of the second stage.
 
 \subsubsection{Difficulty}
-In the first stage of the human study, participants were asked to provide an assessment of the overall difficulty of updating documentation for the 10 methods they were presented with. Judgments were made on a Likert scale from 1-5, where 1 was very easy and 5 was very hard. Participants who were given use of the output from AID reported an average difficulty of 3.5, compared with 3.815 for those who did not have any assistance. A two-sample unequal variances t-test revealed that the result is significant at p = 0.0758.
+In the first stage of the human study, participants were asked to provide an assessment of the overall difficulty of updating documentation for the 10 methods they were presented with. Judgments were made on a Likert scale from 1-5, where 1 was very easy and 5 was very hard. Participants who were given use of the output from AID reported an average difficulty of 3.5, compared with 3.815 for those who did not have any assistance. A two-sample unequal variances t-test revealed that the result is significant at \(p = 0.0758\).
 
 \subsubsection{Time to Document}
 The time taken to write each piece of documentation in the first stage was recorded for comparison. Participants with access to the output of AID took 3:17 on average, while those without the tool took 3:15. However, a two-sample unequal variances t-test does not find the result significant, leading us to conclude that participants took equal time regardless of whether or not they were in the treatment group.
 
 \subsubsection{Documentation Quality}
 Most importantly, developers should be able to write better documentation with the use of AID. This was measured using judgments provided by participants in the second stage of the study. Results are first normalized such that higher values for the Likert rating always indicate a stronger preference for documentation generated with use of AID, with 4 indicating the strongest preference for AID-assisted documentation and 1 indicating the strongest preference against it. Once normalized, the average Likert rating is 2.487, with 2.5 indicating no overall preference. A one-sample t-test does not find a significant difference between the results and the expected mean; therefore, we cannot conclude any preference for or against documentation generated with the assistance of AID.
+
+\subsection{Conditions for Success}
+While respondents in stage two of the survey indicated no overall preference for or against documentation generated with the help of AID, this result does not necessarily apply to the individual concepts emphasized by the algorithm. In particular, we noticed that respondents emphasized the value of documentation that explains conditions for successful execution (see Section \ref{Qualitative Analysis}).
+
+To determine the favorability of documenting conditions for success, we manually annotated each documentation instance from stage one of the study with whether or not it mentions the conditions for success for its associated method. Next, we restricted attention to only the pairings of documentation samples where one sample discusses conditions for success and the other does not. The resulting data set contains \(1581\) comparison of documentation samples.
+
+\begin{figure}
+	\begin{center}
+	\end{center}
+	\includegraphics[width=\columnwidth]{conditions-for-success-likert.png}
+	\caption{Favorability of documentation samples describing conditions for success. In \(1581\) comparisons between one documentation sample that describes conditions for success and one that doesn't, respondents indicated a preference for the sample that discusses conditions for success over \(66\%\) of the time, including over \(30\%\) who indicated a strong preference (Likert rating of \(4\)).}
+	\label{figure-cfs}
+\end{figure}
+
+When comparing instances with documented conditions for success to those without, respondents provided an average Likert rating of \(2.842\), where \(4\) indicates a strong preference for documentation with conditions for success and \(1\) indicates a strong preference for documentation that does not mention success conditions. Using a one-sample t-test comparing against an expected average of \(2.5\), \(t = 13.55\) with \(1580\) degrees of freedom, yielding a significant result for \(p = 0.0005\). Overall, users indicated a preference for samples containing a description of conditions for success over \(66\%\) of the time and a strong preference over \(30\%\) of the time.
+
+Since documentation writers given the output of AID were told specifically about the conditions for success, it stands to reason that they would document such conditions more often than those with no information. However, at a rate of \(41.4\%\), those with the use of AID only documented conditions for success slightly more often than those without it (\(40.8\%\)). One possible explanation is that AID either exposed too much information to documentation writers, making it tough to identify individual concepts that were important, or it did not make the information clear enough to understand. Another possibility is that a portion of developers do not believe conditions for success should be included in method summary documentation and chose not to include it even with the suggestion.
 
 \subsection{Qualitative Analysis}
 From our human studies, we gathered significant freeform feedback from our testers as to what they thought about the tool, how difficult it was to write documentation, what they valued in good documentation, etc.
