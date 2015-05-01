@@ -76,7 +76,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \title{Assisted Improvement of Software Documentation}
 
-\authorinfo{Matthew Pearson-Beck \and Jeffrey Principe}
+\authorinfo{Matt Pearson-Beck \and Jeffrey Principe}
            {The University of Virginia}
            {\{mjp2ff, jwp3ce\}@virginia.edu}
            
@@ -99,7 +99,7 @@ documentation, human factors
 Javadoc, methods, machine learning, symbolic execution, natural language processing
 
 \section{Introduction}
-Maintenance is the most time-consuming part of the software development process, taking up two-thirds of development time \cite{buse10}. Documentation is a key component of software maintenance, helping developers understand code \cite{desouza}. However, most developers agree that software documentation is frequently incomplete or out-of-date, limiting its usefulness to developers \cite{lethbridge}. With many large projects containing over 1 million lines of code, searching for and updating poor documentation quickly becomes prohibitively expensive and time-consuming \citep{windows, mac, linux}.
+Maintenance is the most time-consuming part of the software development process, taking up two-thirds of development time \cite{buse10}. Documentation is a key component of software maintenance, helping developers understand code \cite{desouza}. However, most developers agree that software documentation is frequently incomplete or out-of-date, limiting its usefulness to developers \cite{lethbridge}. With many large projects containing millions of lines of code, searching for and updating poor documentation quickly becomes prohibitively expensive and time-consuming.
 
 This paper focuses on the documentation of procedures, particularly in large software projects. Functions and methods are the functional unit of many programming languages, making them an important unit to document. For the Java programming language, Javadoc provides a standardized way of documenting methods. Javadoc comments allow developers to specify application programming interface (API) documentation for methods for use by application programmers, quality control engineers and external groups making use of the application \cite{kramer}.
 
@@ -117,7 +117,7 @@ This paper's main contributions are:
 \section{Motivating Examples}
 Projects that are large in scope and develop over a long period of time often have documentation that does not reflect the current state of the code \cite{lethbridge}. These examples are not meant to criticize the projects in question, but merely to illustrate a problem that occurs through large software projects, and is realistically unavoidable as they grow and change over time.
 
-Consider the method shown below, from the jEdit project, a text editor for programmers \cite{jedit}.
+Consider the method shown below, from the jEdit project, a text editor for programmers.
 
 \begin{lstlisting}
 /** Performs doMigrate() on each installed 
@@ -137,7 +137,7 @@ public static void execute()
 
 The comments associated with this method are inadequate for a few reasons. First, the methods actual purpose is discussed briefly and insufficiently, and it specifies the method call incorrectly. The comments do not discuss data or method flow, nor the purpose or details of the actions performed. Finally, the comments rely heavily on general class information to explain the method's purpose. This is problematic, because someone trying to use this method might be viewing the comments through Javadoc as they write code, rather than looking at the class' source directly.
 
-Consider the second example, shown below. This method is from the TV-Browser project, a Java-based TV guide \cite{tvbrowser}.
+Consider the second example, shown below. This method is from the TV-Browser project, a Java-based TV guide.
 
 \begin{lstlisting}
 /**
@@ -266,10 +266,10 @@ Relative importance of individual variables is determined using the density of r
 We integrated two natural language processing (NLP) techniques to process the comments we read from the program text in order to standardize them without losing any meaning. Specifically, we focused on processing human-written sentences prior to comparison between comments and the code they are associated with. These techniques are discussed below.
 
 \subsubsection{Word Stemming}
-Word stemming is the process of converting inflected or derived words to their most basic form \cite{xapian}. This allows us to recognize, for example, that ``run'' and ``running'' are forms of the same word. We used the Snowball Stemmer \cite{snowball} to process all the text read in from comments associated with each method, and saved the processed results for future comparison.
+Word stemming is the process of converting inflected or derived words to their most basic form. This allows us to recognize, for example, that ``run'' and ``running'' are forms of the same word. We used the Snowball Stemmer to process all the text read in from comments associated with each method, and saved the processed results for future comparison.
 
 \subsubsection{Stoplisting}
-Stoplisting is the process of removing selected words that are deemed unimportant or insignificant to the overall meaning of natural language \cite{rajaraman}. Some examples of words we would stoplist are ``the'' and ``is''. Whether these words appear in both, either, or neither of the code or associated comments is unimportant. For our algorithm, we took our stemmed words and removed any that were present in an extensive list of commonly stoplisted words \cite{xpo6}.
+Stoplisting is the process of removing selected words that are deemed unimportant or insignificant to the overall meaning of natural language. Some examples of words we would stoplist are ``the'' and ``is''. Whether these words appear in both, either, or neither of the code or associated comments is unimportant. For our algorithm, we took our stemmed words and removed any that were present in an extensive list of commonly stoplisted words \cite{xpo6}.
 
 \subsection{Comparison and Ranking}
 After analyzing the code for a method and processing the associated comments, the last step in our algorithm is to compare the two and provide a measurement for how effective the documentation is. We use two specific techniques discussed below to modify the comparison, but beyond that we simply do a set comparison.
@@ -310,7 +310,7 @@ Documentation must effectively describe its associated code for it to be useful.
 We have implemented the algorithm described in Section 4 in the form of AID, a prototype tool that analyzes Java projects and highlights the method it determines have the most inadequate documentation. In this section we discuss our evaluation methodology as well as quantitative and qualitative results from a study of AID.
 
 \subsection{Methodology}
-We performed our evaluation with a two-part human study, conducted through the use of paid participants on Amazon's Mechanical Turk \cite{mturk}. All participants had to pass a basic Java competency quiz to ensure they were qualified for the task.
+We performed our evaluation with a two-part human study, conducted through the use of paid participants on Amazon's Mechanical Turk. All participants had to pass a basic Java competency quiz to ensure they were qualified for the task.
 
 In the first part of our study, test subjects were given code for a method with the comments removed, along with relevant information from the surrounding class (class name, fields). Participants had to write comments that would go along with the highlighted method. Half the participants were given the output of AID to use in writing documentation, while the other half were not. Each participant completed this process for 10 methods. We had 100 participants complete the first part of the  survey, and we accepted 49 responses after removing those that did not follow the instructions or did not express an adequate understanding the given task. There were 20 total methods analyzed across all participants.
 
@@ -399,50 +399,25 @@ Acknowledgments, if needed.
 \begin{thebibliography}{}
 \softraggedright
 
-\bibitem{jedit}
-http://www.jedit.org/
-
-\bibitem{tvbrowser}
-http://www.tvbrowser.org/
-
 \bibitem{hessellund}
+A. Hessellund and P. Sestoft. Flow Analysis of Code Customizations. In \emph{ECOOP}, pages 285-308, 2008.
 https://www.itu.dk/people/sestoft/papers/hessellund-sestoft-ecoop.pdf
 
-\bibitem{snowball}
-http://snowball.tartarus.org/
-
-\bibitem{xapian}
-http://xapian.org/docs/stemming.html
-
-\bibitem{rajaraman}
-http://i.stanford.edu/~ullman/mmds/ch1.pdf
-
 \bibitem{xpo6}
+XPO6. List of English Stop Words. \emph{Self-published}, 2014.
 http://xpo6.com/list-of-english-stop-words/
 
 \bibitem{stanford}
-http://nlp.stanford.edu/IR-book/html/htmledition/tf-idf-weighting-1.html
+C. Manning, P. Raghavan, and H. Schütze. \emph{Introduction to Information Retrieval.} Cambridge University Press, 2008.
 
 \bibitem{wordnet}
-https://wordnet.princeton.edu/
-
-\bibitem{mturk}
-https://www.mturk.com/mturk/welcome
+G. Miller. WordNet: A Lexical Database for English. In \emph{Communications of the ACM} 38(11), pages 39-41, 1995.
 
 \bibitem{buse08}
-https://www.cs.virginia.edu/~weimer/p/weimer-issta2008-docinf.pdf
+R. Buse and W. Weimer. Automatic Documentation Inference for Exceptions. In \emph{ISSTA}, 2008.
 
 \bibitem{buse10}
-https://www.cs.virginia.edu/~weimer/p/weimer-ase2010-deltadoc-preprint.pdf
-
-\bibitem{windows}
-https://www.facebook.com/windows/posts/155741344475532
-
-\bibitem{mac}
-http://www.engadget.com/2006/08/07/live-from-wwdc-2006-steve-jobs-keynote/
-
-\bibitem{linux}
-https://web.archive.org/web/20131219054847/http://www.h-online.com/open/features/What-s-new-in-Linux-3-6-1714690.html?page=3
+R. Buse and W. Weimer, Automatically Documenting Program Changes. In \emph{ASE}, 2010.
 
 \bibitem{desouza}
 de Souza, S. C. B., Anquetil, N., \& de Oliveira, K. M. (2005). A study of the documentation essential to software maintenance. In Proceedings of the 23rd annual international conference on Design of communication: documenting \& designing for pervasive information (pp. 68-75). doi:10.1145/1085313.1085331
