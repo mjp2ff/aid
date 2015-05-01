@@ -122,13 +122,13 @@ AID seeks to reduce the time necessary to improve the documentation of methods i
 
 This paper's main contributions are:
 \begin{itemize}
-\item A study of method summary descriptions in the Java programming language for well-documented methods of the Java Development Kit. Key concepts present in these methods leads to a model for summary documentation of Java methods in the general case.
+\item A study of method summary descriptions in the Java programming language for well-documented methods of the Java Development Kit. Key concepts present in these methods lead to a model for summary documentation of Java methods in the general case.
 \item An algorithm that identifies values for the key concepts that should be present in summary documentation and searches for them in documentation. Methods are prioritized on the overall difference between the concepts present in the source and those discussed in the comments.
 \item A preliminary implementation of AID and an accompanying human study of its effectiveness in improving the efficiency and resulting quality of updating documentation with the use of AID. The results are inconclusive using the current prototype, but they provide a series of next steps for improving the effectiveness of AID.
 \end{itemize}
 
 \section{Motivating Examples}
-Projects that are large in scope and develop over a long period of time often have documentation that does not reflect the current state of the code \cite{lethbridge}. These examples are not meant to criticize the projects in question, but merely to illustrate a problem that occurs through large software projects, and is realistically unavoidable as they grow and change over time.
+Projects that are large in scope and developed over a long period of time often have documentation that does not reflect the current state of the code \cite{lethbridge}. These examples are not meant to criticize the projects in question, but merely to illustrate a problem that occurs through large software projects, and is realistically unavoidable as they grow and change over time.
 
 Consider the method shown below, from the jEdit project, a text editor for programmers.
 
@@ -148,7 +148,7 @@ public static void execute()
 }
 \end{lstlisting}
 
-The comments associated with this method are inadequate for a few reasons. First, the methods actual purpose is discussed briefly and insufficiently, and it specifies the method call incorrectly. The comments do not discuss data or method flow, nor the purpose or details of the actions performed. Finally, the comments rely heavily on general class information to explain the method's purpose. This is problematic, because someone trying to use this method might be viewing the comments through Javadoc as they write code, rather than looking at the class' source directly.
+The comments associated with this method are inadequate for a few reasons. First, the method's actual purpose is barely mentioned, and it specifies the method call incorrectly. The comments do not discuss data or method flow, nor the purpose or details of the actions performed. Finally, the comments rely heavily on general class information to explain the method's purpose. This is problematic because someone trying to use this method might be viewing the comments through Javadoc rather than looking at the class' source directly.
 
 Consider the second example, shown below. This method is from the TV-Browser project, a Java-based TV guide.
 
@@ -198,9 +198,9 @@ Again, the comments here have a few major flaws. The method's behavior is only d
 \section{Exploration of Method Summary Documentation}
 Though software documentation can reference many different types of information, certain concepts appear in the documentation for many methods. To that end, we sampled documentation from various methods from the Java Development Kit version 7 (JDK).
 
-All of the methods in 11 JDK classes were sampled. With only a handful of exceptions, all of the public methods contained a Javadoc comment, and had at least one sentence in the general description section of the comment. Since the JDK provides descriptions for core libraries in the Java language, it establishes a documentation standard for other Java projects. Therefore, we believe that summary documentation in Javadoc comments is both prevalent and relevant in well-documented Java code.
+All of the methods in 11 JDK classes were sampled. With only a handful of exceptions, all of the public methods contained a Javadoc comment, and had at least one sentence in the general description section of the comment. Since the JDK provides descriptions for core libraries in the Java language, it establishes a documentation standard for other Java projects. Therefore, we believe that summary documentation in Javadoc comments is both prevalent and important in well-documented Java code.
 
-The summary sentences of the methods analyzed contained many common structural and semantic components. Four concepts in particular were particularly common in summary descriptions. These were a verb describing the primary action undertaken by the method, a description of a primary object acted upon by the method, conditions that input parameters must satisfy for the method to execute normally, and other variables or objects that are important to the method's functionality.
+The summary sentences of the methods analyzed contained many common structural and semantic components. Four concepts in particular were especially common in summary descriptions. These were a verb describing the primary action undertaken by the method, a description of a primary object acted upon by the method, conditions that input parameters must satisfy for the method to execute normally, and other variables or objects that are important to the method's functionality.
 
 For example, the \verb|equals()| method within the String class in the JDK provides the following description at the beginning of the method's Javadoc comment:
 
@@ -270,7 +270,7 @@ In the case of the first process failing, our fallback approach focused on the s
 \subsubsection{Conditions for Success}
 Though determining exceptional behavior in is undecidable in the general case, a reasonable approximation can be made through static analyses. Previous efforts have been made to specifically address documenting exceptions, which is largely accomplished through symbolic execution \cite{buse08}. A similar approach is employed here.
 
-In this intraprocedural analysis, we focus on explicit throws statements contained within a method and the predicate that must be satisfied for each statement to be reached. Once all of the throws statements are found in a method, paths to each statement are enumerated using a control flow graph generated from an off-the-shelf tool. Loop bodies are treated like if statements, executing either 0 or 1 times depending on the path. While such a simplification can lead to incorrect judgments upon evaluation, it allows for reasonably accurate determinations to be made in many cases.
+In this intraprocedural analysis, we focus on explicit throws statements contained within a method and the predicate that must be satisfied for each statement to be reached. Once all of the throws statements are found in a method, paths to each statement are enumerated using the control flow graph. Loop bodies are treated like if statements, executing either 0 or 1 times depending on the path. While such a simplification can lead to incorrect judgments upon evaluation, it allows for reasonably accurate determinations to be made in many cases.
 
 Next, each path to a throws statement is symbolically executed. Each parameter and field used in the method is set to a placeholder initial value, and each statement with an assignment updates the value of the variable on the left side of the assignment. When a predicate such as an if statement condition is encountered, the expression is evaluated using symbolic values for the relevant variables at that point in execution. All of the predicates for a given path are combined via conjunction. To determine the predicate necessary to avoid all of the throws statements, the predicates for all exceptional paths are combined with disjunction, then negated.
 
@@ -284,7 +284,7 @@ Unlike the other three key concepts identified in method source, additional comp
 Relative importance of individual variables is determined using the density of reads and writes involving that variable. Each statement is analyzed for uses of variables. If a variable is present on the left hand side of an assignment, a write is logged. Any other use of a variable (including method invocations) is logged as a read. Each parameter or field used at least once is logged as a term for comparison. The number of reads and writes for each is used later to help determine the relative importance of any inconsistencies.
 
 \subsection{Comment Processing}
-We integrated two natural language processing (NLP) techniques to process the comments we read from the program text in order to standardize them without losing any meaning. Specifically, we focused on processing human-written sentences prior to comparison between comments and the code they are associated with. These techniques are discussed below.
+We integrated two natural language processing (NLP) techniques to process the comments we read from the program text in order to standardize them without losing any meaning. Specifically, we focused on processing human-written sentences prior to comparison between comments and the code they are associated with.
 
 \subsubsection{Word Stemming}
 Word stemming is the process of converting inflected or derived words to their most basic form. This allows us to recognize, for example, that ``run'' and ``running'' are forms of the same word. We used the Snowball Stemmer to process all the text read in from comments associated with each method, and saved the processed results for future comparison.
@@ -293,8 +293,8 @@ Word stemming is the process of converting inflected or derived words to their m
 Stoplisting is the process of removing selected words that are deemed unimportant or insignificant to the overall meaning of natural language. Some examples of words we would stoplist are ``the'' and ``is''. Whether these words appear in both, either, or neither of the code or associated comments is unimportant. For our algorithm, we took our stemmed words and removed any that were present in an extensive list of commonly stoplisted words \cite{xpo6}.
 
 \subsection{Comparison and Ranking}
-After analyzing the code for a method and processing the associated comments, the last step in our algorithm is to compare the two and provide a measurement for how effective the documentation is. We use two specific techniques discussed below to modify the comparison, but beyond that we simply do a set comparison.
-This comparison is between the expected words determined from the analyzed code and the processed words found in the comments. Any word we determined important that was not featured in the comments is a penalty against that method's comments, in the form of a ``difference score'' given to each method. The lower the difference score, the better the method's comments.
+After analyzing the code for a method and processing the associated comments, the last step in our algorithm is to compare the two and provide a measurement for how effective the documentation is. We use two specific techniques discussed below to modify the comparison, but beyond that we do a set comparison.
+This comparison is between the expected words determined from the analyzed code and the processed words found in the comments. Any word we determined important that was not featured in the comments is a penalty, in the form of a ``difference score'' given to each method. The lower the difference score, the better the method's comments.
 
 \begin{table}
 	\begin{center}
@@ -316,7 +316,7 @@ For each difference score, there are a few set penalties that are applied based 
 \subsubsection{TF/IDF}
 TF/IDF is a statistical analysis that identifies the relative importance of a specific word as a part of a larger body, or corpus, of words \cite{stanford}. A term is considered more important if it appears many times in the current document, as well as if it appears in relatively few documents compared to the size of the corpus.
 
-We use this as part of our text analysis to give each word relatively more or less significance based on its use, and more impact on the difference score. This is capped at a maximum value for each term, so that no one word, no matter how important, cannot individually invalidate a method's documentation. For our algorithm, the corpus was all the methods contained in the project to be analyzed, and each method is treated as an individual document.
+We use this as part of our text analysis to give each word relatively more or less significance based on its use, and more impact on the difference score. This is capped at a maximum value for each term, so that no one word can individually invalidate a method's documentation. For our algorithm, the corpus was all the methods contained in the project to be analyzed, and each method is treated as an individual document.
 
 TF/IDF is integral to our comment analysis and comparison, because a word that appears throughout the corpus is likely not relevant to this specific method, and does not need to appear in the documentation.
 
@@ -422,7 +422,7 @@ Secondly, the order of methods served up in the first part of the human study wa
 Finally, we measured the elapsed time that each user spent on each page in both parts of our human study, but we cannot guarantee that this is equivalent to the amount of time the user spent analyzing that method. They may have left their computer for a period of time, which could increase their elapsed time for one or many methods. There is no effective way to mitigate this. We attempted to look for anomalies in the elapsed time field for any one method for a specific user, but we were unable to determine with certainty any specific instances of this.
 
 \section{Future Work}
-There are many opportunities for further exploration in this field; our algorithm and implementation in the form of AID are just first steps in this area. A likely next step continuing from our implementation and using the results of the human studies would be to focus on reducing the length of the output from AID. Making it focus more on essential that components which are missing rather than providing breadth in its advice could lead to more concise and effective documentation.
+There are many opportunities for further exploration in this field; our algorithm and implementation in the form of AID are just first steps in this area. A likely next step continuing from our implementation and using the results of the human studies would be to focus on reducing the length of the output from AID. Making it focus more on essential components which are missing rather than providing breadth in its advice could lead to more concise and effective documentation.
 
 One aspect that AID lacks is the ability to provide context for concepts that are missing in the method's comments. For example, giving context to the variable uses that are being considered in the code/comment comparison would make it easier for users to incorporate the most important aspects of the method into their documentation, moreso than simply knowing the names of the variables that are used.
 
