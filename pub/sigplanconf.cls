@@ -580,8 +580,7 @@
     \parbox[b]{20pc}{%
       \scriptsize
       \if \@preprint
-        [Copyright notice will appear here
-         once 'preprint' option is removed.]\par
+        \par
       \else
         \@toappear
       \fi
@@ -958,7 +957,7 @@
   \def \@evenfoot {\scriptsize
                    \rlap{\textit{\@preprintfooter}}\hfil
                    \thepage \hfil
-                   \llap{\textit{\@formatyear}}}%
+                   }%
   \let \@oddhead = \@empty
   \let \@oddfoot = \@evenfoot}
 
