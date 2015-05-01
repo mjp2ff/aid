@@ -229,7 +229,7 @@ To address the issue of creating high-quality summary documentation for Java met
 	\label{figure-algorithm-summary}
 \end{figure*}
 
-The overarching algorithm used is fundamentally sequential in nature. A series of processing steps search for each of the four key concepts discussed above. These concepts are first identified in the method source and key terms are extracted from the content of each concept (section 4.1). Next, each term is processed and compared with the summary description of the method, receiving a relative significance of the difference if the term is not present (section 4.2). Finally, methods are sorted based on the values assigned to each missing term and those with the highest overall scores--those that are worst-documented--are presented to the user, along with suggestions for improving the documentation (section 4.3).
+The overarching algorithm used is fundamentally sequential in nature. A series of processing steps search for each of the four key concepts discussed above. These concepts are first identified in the method source and key terms are extracted from the content of each concept (section 4.1). Next, each term is processed and compared with the summary description of the method, receiving a relative significance of the difference if the term is not present (section 4.2). Finally, methods are sorted based on the values assigned to each missing term and those with the highest overall scores--those that are worst-documented--are presented to the user, along with suggestions for improving the documentation (section 4.3). See a high-level view of our algorithm in Figure \ref{figure-algorithm-summary}.
 
 \subsection{Key Concept Identification}
 Once a method has been found in the source code, several processing operations are performed to search for appropriate values for each of the four key concepts identified in the method summary documentation analysis (section 3). Each concept's analysis operates independently of one another and outputs a set of zero or more terms that should be present in the documentation.
@@ -260,7 +260,7 @@ However, this seven-way classifier is incomplete, since some methods do not belo
 	\label{table-classifier}
 \end{table}
 
-The final eight-way Naive Bayes classifier was populated with a training set of \(362\) methods pulled from several files in the JDK. When tested in 10-fold cross-validation, \(45.9\%\) of methods were correctly classified, compared with \(48.3\%\) when testing directly on the training data set. Notable strengths include the create, test and get categories, with F1-measures of \(0.852\), \(0.552\) and \(0.489\) under cross-validation. Overall, the classifier performs with an F1-measure of \(0.417\), compared with \(0.141\) for the best-case trivial categorization of all methods into the fallback category. Therefore, we assert that this model does a significantly better job of identifying the primary action than simply using the method name for everything, particularly when the original developer is not trusted to include the primary action in the method name.
+The final eight-way Naive Bayes classifier (results shown in Table \ref{table-classifier} was populated with a training set of \(362\) methods pulled from several files in the JDK. When tested in 10-fold cross-validation, \(45.9\%\) of methods were correctly classified, compared with \(48.3\%\) when testing directly on the training data set. Notable strengths include the create, test and get categories, with F1-measures of \(0.852\), \(0.552\) and \(0.489\) under cross-validation. Overall, the classifier performs with an F1-measure of \(0.417\), compared with \(0.141\) for the best-case trivial categorization of all methods into the fallback category. Therefore, we assert that this model does a significantly better job of identifying the primary action than simply using the method name for everything, particularly when the original developer is not trusted to include the primary action in the method name.
 
 Once a category has been assigned to the method's primary action, the primary action is recorded in a single term for detection in the method's comments; this comparison is discussed in Section 4.3 below. The term used for the seven specific actions classified is the same as the verb used for the category label (e.g. convert). When using the fallback of the method name, the term used is the method's actual name (e.g. addObject for method \verb|addObject()|).
 
@@ -355,7 +355,7 @@ The time taken to write each piece of documentation in the first stage was recor
 \subsubsection{Documentation Quality}
 Most importantly, developers should be able to write better documentation with the use of AID. This was measured using judgments provided by participants in the second stage of the study. Results are first normalized such that higher values for the Likert rating always indicate a stronger preference for documentation generated with use of AID, with 4 indicating the strongest preference for AID-assisted documentation and 1 indicating the strongest preference against it. Once normalized, the average Likert rating is \(2.487\), where \(2.5\) indicates no overall preference. A one-sample t-test does not find a significant difference between the results and the expected mean; therefore, we cannot conclude any preference for or against documentation generated with the assistance of AID.
 
-\subsection{Surveyed Qualities of Good Summary Documentation}
+\subsection{Qualities Desired by Users}
 From our human studies, we gathered significant freeform feedback from our testers as to what they thought about the tool, how difficult it was to write documentation, and what they valued in good documentation.
 
 \subsubsection{Conciseness}
@@ -382,7 +382,7 @@ Using all of the judgments performed using each documentation sample, we plotted
 
 Unfortunately, the prevailing desire for conciseness runs counter to AID's effect on documentation length. Documentation written by testers using AID is actually about 10\% longer, on average, than documentation written without it. This suggests that users rely on AID and feel compelled to include all the information presented, rather than using it as a resource as intended. Further work needs to be put into improving the quality of output to inform users as to its intended purpose.
 
-\subsubsection{Discusses Conditions for Success}
+\subsubsection{Conditions for Success}
 
 Users also valued the conditions for success identified by AID. In response to the same prompt, users said:
 
@@ -404,11 +404,11 @@ To determine the favorability of documenting conditions for success, we manually
 	\label{figure-cfs}
 \end{figure}
 
-When comparing instances with documented conditions for success to those without, respondents provided an average Likert rating of \(2.842\), where \(4\) indicates a strong preference for documentation with conditions for success and \(1\) indicates a strong preference for documentation that does not mention success conditions. Using a one-sample t-test comparing against an expected average of \(2.5\), \(t = 13.55\) with \(1580\) degrees of freedom, yielding a significant result for \(p = 0.0005\). Overall, users indicated a preference for samples containing a description of conditions for success over \(66\%\) of the time and a strong preference over \(30\%\) of the time.
+See a summary of users' preferences in Figure \ref{figure-cfs}. When comparing instances with documented conditions for success to those without, respondents provided an average Likert rating of \(2.842\), where \(4\) indicates a strong preference for documentation with conditions for success and \(1\) indicates a strong preference for documentation that does not mention success conditions. Using a one-sample t-test comparing against an expected average of \(2.5\), \(t = 13.55\) with \(1580\) degrees of freedom, yielding a significant result for \(p = 0.0005\). Overall, users indicated a preference for samples containing a description of conditions for success over \(66\%\) of the time and a strong preference over \(30\%\) of the time.
 
 Since documentation writers given the output of AID were told specifically about the conditions for success, it stands to reason that they would document such conditions more often than those with no information. However, at a rate of \(41.4\%\), those with the use of AID only documented conditions for success slightly more often than those without it (\(40.8\%\)). One possible explanation is that AID either exposed too much information to documentation writers, making it tough to identify individual concepts that were important, or it did not make the information clear enough to understand. Another possibility is that a portion of developers do not believe conditions for success should be included in method summary documentation and chose not to include it even with the suggestion.
 
-\subsubsection{Mentions Primary Action}
+\subsubsection{Primary Action}
 
 Finally, users also valued the primary action we identified through AID that concisely summarized the purpose of the method. Again, these users were not exposed to AID so did not know what it provided (nor even that it existed). Comments to this effect in response to the same prompt include:
 
@@ -456,20 +456,6 @@ The authors are grateful to Westley Weimer for his tireless work as research adv
 \begin{thebibliography}{}
 \softraggedright
 
-\bibitem{hessellund}
-A. Hessellund and P. Sestoft. Flow Analysis of Code Customizations. In \emph{ECOOP}, pages 285-308, 2008.
-https://www.itu.dk/people/sestoft/papers/hessellund-sestoft-ecoop.pdf
-
-\bibitem{xpo6}
-XPO6. List of English Stop Words. \emph{Self-published}, 2014.
-http://xpo6.com/list-of-english-stop-words/
-
-\bibitem{stanford}
-C. Manning, P. Raghavan, and H. Schütze. \emph{Introduction to Information Retrieval.} Cambridge University Press, 2008.
-
-\bibitem{wordnet}
-G. Miller. WordNet: A Lexical Database for English. In \emph{Communications of the ACM} 38(11), pages 39-41, 1995.
-
 \bibitem{buse08}
 R. Buse and W. Weimer. Automatic Documentation Inference for Exceptions. In \emph{ISSTA}, 2008.
 
@@ -479,14 +465,28 @@ R. Buse and W. Weimer, Automatically Documenting Program Changes. In \emph{ASE},
 \bibitem{desouza}
 de Souza, S. C. B., Anquetil, N., \& de Oliveira, K. M. (2005). A study of the documentation essential to software maintenance. In Proceedings of the 23rd annual international conference on Design of communication: documenting \& designing for pervasive information (pp. 68-75). doi:10.1145/1085313.1085331
 
-\bibitem{lethbridge}
-Lethbridge, T. C., Singer, J., \& Forward, A. (2003). How software engineers use documentation: The state of the practice. Software, IEEE, 20(6), 35-39. doi:10.1109/MS.2003.1241364
+\bibitem{forward}
+Forward, A., \& Lethbridge, T. C. (2002). The relevance of software documentation, tools and technologies: a survey. In Proceedings of the 2002 ACM symposium on Document engineering (pp. 26-33). doi:10.1145/585058.585065
+
+\bibitem{hessellund}
+A. Hessellund and P. Sestoft. Flow Analysis of Code Customizations. In \emph{ECOOP}, pages 285-308, 2008.
+https://www.itu.dk/people/sestoft/papers/hessellund-sestoft-ecoop.pdf
 
 \bibitem{kramer}
 Kramer, D. (1999). API documentation from source code comments: a case study of Javadoc. In Proceedings of the 17th annual international conference on Computer documentation (pp. 147-153). doi:10.1145/318372.318577
 
-\bibitem{forward}
-Forward, A., \& Lethbridge, T. C. (2002). The relevance of software documentation, tools and technologies: a survey. In Proceedings of the 2002 ACM symposium on Document engineering (pp. 26-33). doi:10.1145/585058.585065
+\bibitem{lethbridge}
+Lethbridge, T. C., Singer, J., \& Forward, A. (2003). How software engineers use documentation: The state of the practice. Software, IEEE, 20(6), 35-39. doi:10.1109/MS.2003.1241364
+
+\bibitem{stanford}
+C. Manning, P. Raghavan, and H. Schütze. \emph{Introduction to Information Retrieval.} Cambridge University Press, 2008.
+
+\bibitem{wordnet}
+G. Miller. WordNet: A Lexical Database for English. In \emph{Communications of the ACM} 38(11), pages 39-41, 1995.
+
+\bibitem{xpo6}
+XPO6. List of English Stop Words. \emph{Self-published}, 2014.
+http://xpo6.com/list-of-english-stop-words/
 
 \end{thebibliography}
 
