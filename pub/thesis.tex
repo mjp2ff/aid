@@ -189,6 +189,14 @@ All of the methods in 11 JDK classes were sampled. With only a handful of except
 
 The summary sentences of the methods analyzed contained many common structural and semantic components. Four concepts in particular were particularly common in summary descriptions. These were a verb describing the primary action undertaken by the method, a description of a primary object acted upon by the method, conditions that input parameters must satisfy for the method to execute normally, and other variables or objects that are important to the method's functionality.
 
+For example, the \verb|equals()| method within the String class in the JDK provides the following description at the beginning of the method's Javadoc comment:
+
+\begin{quotation}
+Compares this string to the specified object. The result is true if and only if the argument is not null and is a String object that represents the same sequence of characters as this object.
+\end{quotation}
+
+In keeping with the typical documentation pattern of the JDK, \verb|equals()| begins its description by providing the action undertaken by the method (compares). This specific method has two primary objects, \verb|this| and the object passed to the method for comparison. Both are mentioned immediately after the primary action with ``this string to the specified object''. While there are no explicit exceptions thrown by the \verb|equals()| method, the conditions for reaching the normal execution path are described next, followed by an additional description of attributes of the relevant variables in the method's execution.
+
 We use this analysis to focus on the four components of summary documentation described above. Our approach for identifying these concepts in source and comparing them to comments is described in the next section.
 
 \section{Algorithm Description}
