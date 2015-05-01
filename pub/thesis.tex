@@ -96,7 +96,7 @@
 \maketitle
 
 \begin{abstract}
-Software documentation helps developers understand code and aids in the process of maintaining software. However, documentation is frequently inconsistent and out-of-date, limiting its usefulness to developers, particularly in large projects where there is too much code to efficiently identify and fix poor documentation.
+Software documentation helps developers understand code and aids in the process of maintaining software. However, documentation is frequently inconsistent and out-of-date, limiting its usefulness to developers. This is especially true in large projects where there is too much code to efficiently identify and fix poor documentation.
 
 We propose an algorithm that helps developers identify poor documentation of Java methods and update it more efficiently and effectively. The algorithm searches for four key concepts in source code and compares them with the accompanying summary documentation. A ranked list of the worst-documented methods is presented to developers with suggestions for improvement.
 
@@ -114,7 +114,7 @@ Javadoc, methods, machine learning, symbolic execution, natural language process
 \section{Introduction}
 Maintenance is the most time-consuming part of the software development process, taking up two-thirds of development time \cite{buse10}. Documentation is a key component of software maintenance, helping developers understand code \cite{desouza}. However, most developers agree that software documentation is frequently incomplete or out-of-date, limiting its usefulness to developers \cite{lethbridge}. With many large projects containing millions of lines of code, searching for and updating poor documentation quickly becomes prohibitively expensive and time-consuming.
 
-This paper focuses on the documentation of procedures, particularly in large software projects. Functions and methods are the functional unit of many programming languages, making them an important unit to document. For the Java programming language, Javadoc provides a standardized way of documenting methods. Javadoc comments allow developers to specify application programming interface (API) documentation for methods for use by application programmers, quality control engineers and external groups making use of the application \cite{kramer}.
+This paper focuses on the documentation of procedures, particularly in large software projects. Functions and methods are the functional unit of many programming languages, making them an important unit to document. For the Java programming language, Javadoc provides a standardized way of documenting methods. Javadoc comments allow developers to specify application programming interface (API) documentation for methods for use by application programmers, quality control engineers and external users of the application \cite{kramer}.
 
 Though Javadoc provides a way to specify many types of information about methods, we restrict attention to the summary of the method's functionality, typically seen in the first sentence or two of the comment's general description. We propose an algorithm for the Assisted Improvement of Documentation (AID) which identifies concepts present in the source code that are missing in the accompanying summary description and presents a prioritized list of the worst-documented methods along with suggestions for developers to improve them.
 
@@ -193,10 +193,10 @@ public static Date readData(final DataInput in) throws IOException
 }
 \end{lstlisting}
 
-Again, the comments here have a few major flaws. The method's behavior is only described in a vague, general way that restates the method's name. There are spelling errors in the Javadoc header. There is no mention that the method's behavior is completely different based on the version of DataInput, an integral part of the method. Finally, there is no explanation of how each version is specifically handled.
+Again, the comments here have a few major flaws. The method's behavior is only described in a vague, general way that restates the method's name. There are spelling errors in the Javadoc header. There is no mention that the method's behavior is completely different based on the version of \verb|DataInput|, an integral part of the method. Finally, there is no explanation of how each version is specifically handled.
 
 \section{Exploration of Method Summary Documentation}
-Though software documentation can reference many different types of information, certain concepts appear in the documentation for many methods. To that end, we sampled documentation from various methods from the Java Development Kit version 7 (JDK).
+Though software documentation can reference many different types of information, certain concepts appear in the documentation for many methods. To that end, we sampled documentation from various methods in the Java Development Kit version 7 (JDK).
 
 All of the methods in 11 JDK classes were sampled. With only a handful of exceptions, all of the public methods contained a Javadoc comment, and had at least one sentence in the general description section of the comment. Since the JDK provides descriptions for core libraries in the Java language, it establishes a documentation standard for other Java projects. Therefore, we believe that summary documentation in Javadoc comments is both prevalent and important in well-documented Java code.
 
@@ -204,9 +204,15 @@ The summary sentences of the methods analyzed contained many common structural a
 
 For example, the \verb|equals()| method within the String class in the JDK provides the following description at the beginning of the method's Javadoc comment:
 
-\begin{quotation}
-Compares this string to the specified object. The result is true if and only if the argument is not null and is a String object that represents the same sequence of characters as this object.
-\end{quotation}
+\begin{lstlisting}
+/**
+ * Compares this string to the specified object.
+ * The result is true if and only if the argument
+ * is not null and is a String object that
+ * represents the same sequence of characters
+ * as this object.
+ */
+\end{lstlisting}
 
 In keeping with the typical documentation pattern of the JDK, \verb|equals()| begins its description by providing the action undertaken by the method (compares). This specific method has two primary objects, \verb|this| and the object passed to the method for comparison. Both are mentioned immediately after the primary action with ``this string to the specified object''. While there are no explicit exceptions thrown by the \verb|equals()| method, the conditions for reaching the normal execution path are described next, followed by an additional description of attributes of the relevant variables in the method's execution.
 
@@ -231,7 +237,7 @@ Once a method has been found in the source code, several processing operations a
 \subsubsection{Primary Action}
 Usually a one-word verb, the primary action summarizes all of the statements of the method. Since one verb must be derived from many statements or operations in the method's concept that may or may not make mention of the verb, standard program analysis techniques alone are a poor candidate for primary action identification. Instead, machine learning is used to synthesize a model for determining the higher level model from underlying parameters derived from standard program analysis techniques.
 
-Machine learning presents its own challenges. Classification algorithms require a list of categories into which instances are grouped. The verb options for the primary action quickly become too numerous to be practical as categories in an n-way classifier. Rather than trying to enumerate as many verbs as possible, we selected a small set of common actions to classify. The verbs covered by these actions are compute, compare, convert, create, get, set and test.
+Machine learning presents its own challenges. Classification algorithms require a list of categories into which instances are grouped. The verb options for the primary action quickly become too numerous to be practical as categories in an n-way classifier. Rather than trying to enumerate as many verbs as possible, we selected a small set of common actions to classify. The verbs covered by these actions are \emph{compute}, \emph{compare}, \emph{convert}, \emph{create}, \emph{get}, \emph{set} and \emph{test}.
 
 However, this seven-way classifier is incomplete, since some methods do not belong to any of the above categories. For those methods, another category was added to the classifier, indicating that a fallback should be used to determine the primary action. The method's name serves as a reasonable fallback, since Java naming conventions often lead to method names that contain a verb describing the action of the method. Though this fallback relies on the original developer writing a descriptive method name, it provides some information for methods that could not otherwise be classified.
 
@@ -254,9 +260,9 @@ However, this seven-way classifier is incomplete, since some methods do not belo
 	\label{table-classifier}
 \end{table}
 
-The final seven-way Naive Bayes classifier was populated with a training set of 362 methods pulled from several files in the Java Development Kit, version 7. When tested in 10-fold cross-validation, 45.9\% of methods were correctly classified, compared with 48.3\% when testing directly on the training data set. Notable strengths include the create, test and get categories, with F1-measures of 0.852, 0.552 and 0.489 under cross-validation. Overall, the classifier performs with an F1-measure of 0.417, compared with 0.141 for the best-case trivial categorization of all methods into the fallback category. Therefore, we assert that this model does a significantly better job of identifying the primary action than simply using the method name for everything, particularly when the original developer is not trusted to include the primary action in the method name.
+The final eight-way Naive Bayes classifier was populated with a training set of \(362\) methods pulled from several files in the JDK. When tested in 10-fold cross-validation, \(45.9\%\) of methods were correctly classified, compared with \(48.3\%\) when testing directly on the training data set. Notable strengths include the create, test and get categories, with F1-measures of \(0.852\), \(0.552\) and \(0.489\) under cross-validation. Overall, the classifier performs with an F1-measure of \(0.417\), compared with \(0.141\) for the best-case trivial categorization of all methods into the fallback category. Therefore, we assert that this model does a significantly better job of identifying the primary action than simply using the method name for everything, particularly when the original developer is not trusted to include the primary action in the method name.
 
-Once a category has been assigned to the method's primary action, the primary action is recorded in a single term for detection in the method's comments; this comparison is discussed in Section 4.3 below. The term used for the six specific actions classified is the same as the verb used for the category label (e.g. convert). When using the fallback of the method name, the term used is the method's actual name (e.g. addObject for a method with name addObject).
+Once a category has been assigned to the method's primary action, the primary action is recorded in a single term for detection in the method's comments; this comparison is discussed in Section 4.3 below. The term used for the seven specific actions classified is the same as the verb used for the category label (e.g. convert). When using the fallback of the method name, the term used is the method's actual name (e.g. addObject for method \verb|addObject()|).
 
 \subsubsection{Primary Object}
 The primary object represents the single most important identifier contained in the method, and is intended to represent the main object upon which the method acts or is otherwise most relevant to this method. This is an important aspect to the method's meaning, and should be featured in the method's comments in order to properly address the method's behavior.
@@ -268,7 +274,7 @@ There were two main approaches to analyzing the control flow graph. The first fo
 In the case of the first process failing, our fallback approach focused on the statements upon which an identifier appeared; we found the identifier that appeared on the most statements on any path to a successful function exit. This was more rudimentary than the first process, but worked more generally when the first failed.
 
 \subsubsection{Conditions for Success}
-Though determining exceptional behavior in is undecidable in the general case, a reasonable approximation can be made through static analyses. Previous efforts have been made to specifically address documenting exceptions, which is largely accomplished through symbolic execution \cite{buse08}. A similar approach is employed here.
+Though determining exceptional behavior is undecidable in the general case, a reasonable approximation can be made through static analyses. Previous efforts have been made to specifically address documenting exceptions, which is largely accomplished through symbolic execution \cite{buse08}. A similar approach is employed here.
 
 In this intraprocedural analysis, we focus on explicit throws statements contained within a method and the predicate that must be satisfied for each statement to be reached. Once all of the throws statements are found in a method, paths to each statement are enumerated using the control flow graph. Loop bodies are treated like if statements, executing either 0 or 1 times depending on the path. While such a simplification can lead to incorrect judgments upon evaluation, it allows for reasonably accurate determinations to be made in many cases.
 
@@ -311,7 +317,7 @@ This comparison is between the expected words determined from the analyzed code 
 	\label{table-concept-penalty}
 \end{table}
 
-For each difference score, there are a few set penalties that are applied based on the code analysis done above. Each concept receives a maximum difference score that can be associated with it. Within the additional components group, any penalty is distributed proportionally among the constituent variables, which are separately weighted based on the number of reads and writes as well as whether each is a field or parameter. Table \ref{table-concept-penalty} shows the weights applied to each major concept, and the relative contribution of uses to a variable's share of the additional components penalty.
+For each difference score, there are a few set penalties that are applied based on the code analysis done above. Each concept receives a maximum difference score that can be associated with it. Within the additional components group, any penalty is distributed proportionally among the constituent variables, which are separately weighted based on the number of reads and writes as well as whether each is a field or parameter. Table \ref{table-concept-penalty} shows the weights applied to each major concept.
 
 \subsubsection{TF/IDF}
 TF/IDF is a statistical analysis that identifies the relative importance of a specific word as a part of a larger body, or corpus, of words \cite{stanford}. A term is considered more important if it appears many times in the current document, as well as if it appears in relatively few documents compared to the size of the corpus.
@@ -323,12 +329,12 @@ TF/IDF is integral to our comment analysis and comparison, because a word that a
 \subsubsection{WordNet}
 WordNet is a lexical database for the English language that is used to identify synonyms \cite{wordnet}. We used the WordNet library to recognize when two different words represented the same concept.
 
-In comparing terms from the analyzed methods and processed words from the associated comments, we performed a WordNet comparison to determine if the words were related, instead, instead of simply checking string equality. This allowed us to further recognize when the comments addressed the necessary information in an equivalent but differently-worded form.
+In comparing terms from the analyzed methods and processed words from the associated comments, we performed a WordNet comparison to determine if the words were related, instead of simply checking string equality. This allowed us to further recognize when the comments addressed the necessary information in an equivalent but differently-worded form.
 
 \section{Evaluation}
 Documentation must effectively describe its associated code for it to be useful. There is a tendency for documentation to fall out of date over time, especially in large projects \cite{forward}. As a result, maintaining good documentation becomes a serious problem beyond maintaining code itself.
 
-We have implemented the algorithm described in Section 4 in the form of AID, a prototype tool that analyzes Java projects and highlights the method it determines have the most inadequate documentation. In this section we discuss our evaluation methodology as well as quantitative and qualitative results from a study of AID.
+We have implemented the AID algorithm described in Section 4 in the form of a prototype tool that analyzes Java projects and highlights the method it determines have the most inadequate documentation. In this section we discuss our evaluation methodology as well as quantitative and qualitative results from a study of AID.
 
 \subsection{Methodology}
 We performed our evaluation with a two-part human study, conducted through the use of paid participants on Amazon's Mechanical Turk. All participants had to pass a basic Java competency quiz to ensure they were qualified for the task.
@@ -341,20 +347,20 @@ In the second part of our study, participants were given the code for a method w
 Overall effectiveness of AID is measured along three different metrics: difficulty, efficiency and quality of documentation. The first two metrics are derived from the first stage of the survey, while the third comes from the results of the second stage.
 
 \subsubsection{Difficulty}
-In the first stage of the human study, participants were asked to provide an assessment of the overall difficulty of updating documentation for the 10 methods they were presented with. Judgments were made on a Likert scale from 1-5, where 1 was very easy and 5 was very hard. Participants who were given use of the output from AID reported an average difficulty of 3.5, compared with 3.815 for those who did not have any assistance. A two-sample unequal variances t-test revealed that the result is significant at \(p = 0.0758\).
+In the first stage of the human study, participants were asked to provide an assessment of the overall difficulty of updating documentation for the 10 methods they were presented with. Judgments were made on a Likert scale from 1-5, where 1 was very easy and 5 was very hard. Participants who were given use of the output from AID reported an average difficulty of \(3.5\), compared with \(3.815\) for those who did not have any assistance. A two-sample unequal variances t-test revealed that the result is significant at \(p = 0.0758\).
 
 \subsubsection{Time to Document}
 The time taken to write each piece of documentation in the first stage was recorded for comparison. Participants with access to the output of AID took 3:17 on average, while those without the tool took 3:15. However, a two-sample unequal variances t-test does not find the result significant, leading us to conclude that participants took equal time regardless of whether or not they were in the treatment group.
 
 \subsubsection{Documentation Quality}
-Most importantly, developers should be able to write better documentation with the use of AID. This was measured using judgments provided by participants in the second stage of the study. Results are first normalized such that higher values for the Likert rating always indicate a stronger preference for documentation generated with use of AID, with 4 indicating the strongest preference for AID-assisted documentation and 1 indicating the strongest preference against it. Once normalized, the average Likert rating is 2.487, with 2.5 indicating no overall preference. A one-sample t-test does not find a significant difference between the results and the expected mean; therefore, we cannot conclude any preference for or against documentation generated with the assistance of AID.
+Most importantly, developers should be able to write better documentation with the use of AID. This was measured using judgments provided by participants in the second stage of the study. Results are first normalized such that higher values for the Likert rating always indicate a stronger preference for documentation generated with use of AID, with 4 indicating the strongest preference for AID-assisted documentation and 1 indicating the strongest preference against it. Once normalized, the average Likert rating is \(2.487\), where \(2.5\) indicates no overall preference. A one-sample t-test does not find a significant difference between the results and the expected mean; therefore, we cannot conclude any preference for or against documentation generated with the assistance of AID.
 
 \subsection{Surveyed Qualities of Good Summary Documentation}
-From our human studies, we gathered significant freeform feedback from our testers as to what they thought about the tool, how difficult it was to write documentation, what they valued in good documentation, etc.
+From our human studies, we gathered significant freeform feedback from our testers as to what they thought about the tool, how difficult it was to write documentation, and what they valued in good documentation.
 
 \subsubsection{Conciseness}
 
-Feedback about what constitutes good documentation repeatedly highlighted the importance of conciseness in documentation - shorter documentation that conveys the same information is more useful and desired. Comments in response to the prompt: ``Based on the documentation samples you read, identify a few characteristics of good documentation.'' included the following:
+Feedback about what constitutes good documentation repeatedly highlighted the importance of conciseness in documentation--shorter documentation that conveys the same information is more useful and desired. Comments in response to the prompt: ``Based on the documentation samples you read, identify a few characteristics of good documentation.'' included the following:
 
 \begin{itemize}
 \item ``Quick and concise.''
@@ -415,18 +421,18 @@ Finally, users also valued the primary action we identified through AID that con
 This again suggests that AID should emphasize this feature, and make it more presentable so that users know how and when to make use of it in creating documentation.
 
 \subsection{Threats to Validity}
-There are a few major limitations to our human studies that may have affected the results. Firstly, we had fewer samples for the half (10/20) of our methods with the use of AID in the first part of our human study. This is because of the rate at which Mechanical Turk participants started the study and the distribution mechanisms for serving up methods. However, we believe that there are still enough samples for each method to ensure statistical significance in our results, although some configurations of method number and use/absence of AID have more samples than others.
+There are a few major limitations to our human studies that may have affected the results. Firstly, half (10/20) of our methods had significantly fewer samples created with the assistance of AID than without in the first part of our human study. However, we believe that there are still enough samples for each method to ensure statistical significance in our results, although some configurations of method number and use/absence of AID have more samples than others.
 
 Secondly, the order of methods served up in the first part of the human study was not randomized, so many people completed the same methods in the same order, which may have introduced unintended patterns of interaction or biases introduced by earlier methods on later ones. We have no way of measuring the effect of this, but we did mitigate this in the second human study by randomizing not only the order of methods shown, but the order of pairs shown within a method.
 
 Finally, we measured the elapsed time that each user spent on each page in both parts of our human study, but we cannot guarantee that this is equivalent to the amount of time the user spent analyzing that method. They may have left their computer for a period of time, which could increase their elapsed time for one or many methods. There is no effective way to mitigate this. We attempted to look for anomalies in the elapsed time field for any one method for a specific user, but we were unable to determine with certainty any specific instances of this.
 
 \section{Future Work}
-There are many opportunities for further exploration in this field; our algorithm and implementation in the form of AID are just first steps in this area. A likely next step continuing from our implementation and using the results of the human studies would be to focus on reducing the length of the output from AID. Making it focus more on essential components which are missing rather than providing breadth in its advice could lead to more concise and effective documentation.
+There are many opportunities for further exploration in this field; our algorithm and implementation in the form of AID are just first steps in this area. A likely next step continuing from our implementation and using the results of the human studies would be to focus on reducing the length of the output from AID. Making it focus more on essential components that are missing rather than providing breadth in its advice could lead to more concise and effective documentation.
 
 One aspect that AID lacks is the ability to provide context for concepts that are missing in the method's comments. For example, giving context to the variable uses that are being considered in the code/comment comparison would make it easier for users to incorporate the most important aspects of the method into their documentation, moreso than simply knowing the names of the variables that are used.
 
-AID's output itself provides a lot of information, but is not currently in the most human-readable format. Further study into the aesthetics and HCI for AID's output could provide good returns in overall documentation improvement. Not much focus was spent on this in the first iteration, in favor of algorithmic improvements.
+AID's output itself provides a lot of information, but is not currently in the most human-readable format. Further study into the aesthetics and usability of AID's output could provide good returns in overall documentation improvement. Not much focus was spent on this in the first iteration, in favor of algorithmic improvements.
 
 At a more complex level, an area requiring significant further exploration is a study of AID's ability to identify the worst-documented methods in a project. We believe that AID can effectively identify poorly-documented methods, but we have not yet confirmed this with any kind of human study. If AID is effective in simply identifying the most poorly-documented methods out of a large group, this would provide a huge improvement in productivity by maximizing the benefit of time spent improving documentation project-wide.
 
@@ -435,11 +441,11 @@ Software maintenance is a costly and time-consuming portion of the software life
 
 We propose AID to help developers identify and improve poorly documented methods. The algorithm identifies four key concepts in a method's source code and tries to match them to descriptions in the accompanying documentation. Concepts missing in documentation contribute to a measure of the documentation's quality, which is then used to rank methods in order such that those that need the most attention are shown first. This ranked list of methods is shown to developers along with specific suggestions for improving poorly documented methods.
 
-In a two-stage study of 49 and 45 Java developers, respectively, documentation was updated with slightly greater ease when developers were given the use of AID to assist them. Otherwise, developers produced documentation of roughly equal quality with or without the use of AID and did so in about the same amount of time. It is hypothesized that an increase in the length of documentation resulting from the use of AID contributed to this result. Further investigation is proposed in two areas: (1) reducing AID's output to essential components of documentation that are missing and (2) transforming the output into a more human-friendly form.
+In a two-stage study of 49 and 45 Java developers, respectively, documentation was updated with slightly greater ease when developers were given the use of AID to assist them. Otherwise, developers produced documentation of roughly equal quality with or without the use of AID and did so in about the same amount of time. It is hypothesized that an increase in the length of documentation resulting from the use of AID contributed to this result. Further investigation is proposed in three areas: (1) reducing AID's output to essential components of documentation that are missing, (2) transforming the output into a more human-friendly form, and (3) refining and testing its ranking of methods based on documentation quality.
 
 \acks
 
-The authors are grateful to Westley Weimer for his tireless work as research advisor, and to Jonathan Dorn for facilitating the human studies.
+The authors are grateful to Westley Weimer for his tireless work as research advisor, and to Jonathan Dorn for facilitating human studies.
 
 % We recommend abbrvnat bibliography style.
 
